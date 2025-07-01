@@ -25,7 +25,7 @@ would look like:
 }
 ```
 
-### Atlassian Authorization
+### Claude Code Atlassian Authorization
 
 Once the configuration is complete, relaunch Claude Code by running `claude` in
 a terminal window. When the MCP initializes for the first time, it will prompt
@@ -34,10 +34,89 @@ Atlassian configuration page. Ensure the ‘linuxfoundation’ instance is selec
 review the permissions, and approve it. Once approved, the MCP should be
 accessible.
 
-### Validation
+### Claude Code Validation
 
 To validate the setup, start Claude Code and issue the `/mcp` command. This
 should return details of the configured MCP servers.
+
+Additionally, you can generate a prompt to inquire about a specific Jira ticket.
+See the Validation section below for an example.
+
+## Cursor AI Jira MCP Setup
+
+To configure Cursor AI to use the Jira MCP, the MCP server needs to be added to
+the global MCP configuration. Unlike Claude Code, Cursor AI does not need a
+separate API token. The authorization workflow is handled when Cursor AI is
+launched/restarted.
+
+### Cursor Global MCP Configuration
+
+Here is an example of the Cursor AI MCP configuration for the Jira MCP:
+
+Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
+
+```json
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+    }
+  }
+}
+```
+
+## Google Gemini Jira MCP Setup
+
+To setup a Jira MCP for Gemini CLI, a MCP configuration entry should be added to
+the Claude `mcpServers` configuration section of the `~/.gemini/settings.json`
+file. Once added, Gemini CLI must be restarted on the command line. The user
+must authorize the connection the first time the MCP connection is used.
+
+The MCP set up in the `~/.gemini/settings.json` file for the LF Atlassian Jira
+instance would look like:
+
+```json
+{
+  ...
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+    }
+  }
+}
+```
+
+A full reference of the Gemini CLI MCP configuration can be found in the
+[Gemini CLI MCP Configuration](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md)
+documentation.
+
+### Gemini CLI Atlassian Authorization
+
+Once the configuration is complete, relaunch Gemini CLI by running `gemini` in a
+terminal window. When the MCP initializes for the first time, it will prompt you
+to click on a link to authorize the configuration (if not already done). This
+will take you to an Atlassian configuration page.  Ensure the ‘linuxfoundation’
+instance is selected, review the permissions, and approve it.  Once approved,
+the MCP should be accessible.
+
+Optionally, you may need to provide the `cloudId` value for the MCP
+configuration. If prompted, enter: 'linuxfoundation.atlassian.net' for the
+value.
+
+### Gemini CLI Validation
+
+To validate the setup, start Gemini CLI and issue the `/mcp` command. This
+should return details of the configured MCP servers.
+
+Additionally, you can generate a prompt to inquire about a specific Jira ticket.
+See the Validation section below for an example.
+
+## Validation
+
+To validate the setup, start Claude Code or Gemini CLI and issue the `/mcp`
+command. This should return details of the configured MCP servers.
 
 Additionally, you can generate a prompt to inquire about a specific Jira ticket.
 The AI should query Jira and return a valid response. An example prompt might
@@ -47,11 +126,11 @@ be:
 What is the current status of the Jira ticket number: ME-36?
 ```
 
-Claude Code may ask for permission to make the MCP Jira request. You can approve
-it the first time or choose to approve and not ask again, allowing Claude Code
-to make the request.
+Claude Code or Gemini CLI may ask for permission to make the MCP Jira request.
+You can approve it the first time or choose to approve and not ask again,
+allowing the tool to make the request.
 
-Example output:
+Here's an example output from Claude Code:
 
 ```code
 What is the current status of the Jira ticket: ME-36?
@@ -79,28 +158,4 @@ What is the current status of the Jira ticket: ME-36?
   was about adding a link for next steps in RISC-V Individual Membership to ensure
   members complete Schedule A forms. The work was completed on June 18, 2025, with the
   solution deployed to production.
-```
-
-## Cursor AI Jira MCP Setup
-
-To configure Cursor AI to use the Jira MCP, the MCP server needs to be added to
-the global MCP configuration. Unlike Claude Code, Cursor AI does not need a
-separate API token. The authorization workflow is handled when Cursor AI is
-launched/restarted.
-
-### Cursor Global MCP Configuration
-
-Here is an example of the Cursor AI MCP configuration for the Jira MCP:
-
-Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
-
-```json
-{
-  "mcpServers": {
-    "mcp-atlassian": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
-    }
-  }
-}
 ```
