@@ -73,7 +73,7 @@ lfx-engineering/
 
 ## Key Features
 
-### Jira Integration
+### MCP Jira Integration
 
 - Complete MCP setup for Jira API access
 - Support for both individual and team configurations
