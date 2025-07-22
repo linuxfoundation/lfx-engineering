@@ -13,9 +13,9 @@ MCP connection is used.
 The MCP set up in the `~/.claude.json` file for the LF Atlassian Jira instance
 would look like:
 
-```json
+```jsonc
 {
-  ...
+  // ...
   "mcpServers": {
     "mcp-atlassian": {
       "type": "sse",
@@ -76,9 +76,9 @@ must authorize the connection the first time the MCP connection is used.
 The MCP set up in the `~/.gemini/settings.json` file for the LF Atlassian Jira
 instance would look like:
 
-```json
+```jsonc
 {
-  ...
+  // ...
   "mcpServers": {
     "mcp-atlassian": {
       "command": "npx",
@@ -112,6 +112,45 @@ should return details of the configured MCP servers.
 
 Additionally, you can generate a prompt to inquire about a specific Jira ticket.
 See the Validation section below for an example.
+
+## Zed
+
+Zed supports agentic editing including tools. Like Cursor, it does not support SSE MCP servers natively, and needs a `stdio->sse` proxy. Use `Cmd-,` to bring up the configuration, and add the following:
+
+```jsonc
+{
+  // ...
+  "context_servers": {
+    // ...
+    "mcp-atlassian": {
+      "source": "custom",
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+    }
+  }
+}
+```
+### Zed validation
+
+The agent panel settings show the status of each enabled MCP server (green or red). If the Jira MCP times out, this has been connected to an issue where global `npx` invocations of `mcp-remote` fail on missing dependencies (same behavior in Zed as in a CLI `npx` invocation. For a workaround, install mcp-remote globally:
+
+```bash
+npm i -g mcp-remote
+which mcp-remote
+```
+
+If `which` does not return the location of mcp-remote, ensure that the global Node `bin` folder is in your `PATH`.
+
+Then, modify the Zed MCP command and args to use the globally-installed `mcp-remote`:
+
+```jsonc
+    "mcp-atlassian": {
+      "enabled": true,
+      "source": "custom",
+      "command": "mcp-remote",
+      "args": ["https://mcp.atlassian.com/v1/sse"]
+    }
+```
 
 ## Validation
 
