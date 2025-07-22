@@ -13,9 +13,9 @@ MCP connection is used.
 The MCP set up in the `~/.claude.json` file for the LF Atlassian Jira instance
 would look like:
 
-```json
+```jsonc
 {
-  ...
+  //...
   "mcpServers": {
     "mcp-atlassian": {
       "type": "sse",
@@ -55,8 +55,9 @@ Here is an example of the Cursor AI MCP configuration for the Jira MCP:
 
 Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
 
-```json
+```jsonc
 {
+  //...
   "mcpServers": {
     "mcp-atlassian": {
       "command": "npx",
@@ -76,9 +77,9 @@ must authorize the connection the first time the MCP connection is used.
 The MCP set up in the `~/.gemini/settings.json` file for the LF Atlassian Jira
 instance would look like:
 
-```json
+```jsonc
 {
-  ...
+  // ...
   "mcpServers": {
     "mcp-atlassian": {
       "command": "npx",
