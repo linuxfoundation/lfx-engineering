@@ -132,7 +132,7 @@ Zed supports agentic editing including tools. Like Cursor, it does not support S
 ```
 ### Zed validation
 
-The agent panel settings show the status of each enabled MCP server (green or red). If the Jira MCP times out, this has been connected to an issue where global `npx` invocations of `mcp-remote` fail on missing dependencies (same behavior in Zed as in a CLI `npx` invocation. For a workaround, install mcp-remote globally:
+The agent panel settings show the status of each enabled MCP server (green or red). If the Jira MCP times out, this has been connected to an issue where global `npx` invocations of `mcp-remote` fail on missing dependencies (e.g. `iconv-lite`) both when run via the CLI or in Zed. For a workaround, install mcp-remote globally:
 
 ```bash
 npm i -g mcp-remote
