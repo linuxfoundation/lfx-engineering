@@ -1,6 +1,7 @@
 # Adding Copilot support in NeoVim
 
-Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), find the latest version number, and replace `<latest_version>` in the command below:
+Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), find the latest version number,
+and replace `<latest_version>` in the command below:
 
 ```bash
 # Replace <latest_version> with the latest version number from the NeoVim GitHub releases page.
