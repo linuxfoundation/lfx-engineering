@@ -56,8 +56,9 @@ Here is an example of the Cursor AI MCP configuration for the Jira MCP:
 
 Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
 
-```json
+```jsonc
 {
+  //...
   "mcpServers": {
     "mcp-atlassian": {
       "command": "npx",

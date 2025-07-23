@@ -9,8 +9,6 @@ on:
     paths:
       - '**/*.md'
       - '.markdownlint.json'
-      - 'package.json'
-      - 'package-lock.json'
 
 jobs:
   markdown-lint:
@@ -20,14 +18,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: markdownlint-cli2-action
+      uses: DavidAnson/markdownlint-cli2-action@v9
       with:
-        node-version: '24'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run markdown linter
-      run: npm run lint:md
+        globs: '**/*.md'
