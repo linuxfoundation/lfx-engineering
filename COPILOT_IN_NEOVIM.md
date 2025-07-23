@@ -1,6 +1,6 @@
 # Adding Copilot support in NeoVim
 
-Go to [Neovim Github releases](https://github.com/neovim/neovim/releases), choose the latest release and download it:
+Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), choose the latest release and download it:
 - `` wget https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage && chmod +x nvim-linux-x86_64.appimage && sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim ``.
 
 Confirm that you can run nvim: `nvim`.
@@ -67,14 +67,14 @@ Run `:Copilot status`. It can say `Error: You are not signed into GitHub`, then 
 
 Then it should return `Ready`.
 
-Now test in Copilot works in `nvim`: `` nvim test.py ``.
+Now test that Copilot works in `nvim`: `` nvim test.py ``.
 
 Start writing some function, for example start typing: `def add(a, b):` and it will suggest something like:
 ```
     """Returns the sum of a and b."""
-    return a + b:
+    return a + b
 ```
-In grayed/shadowed text - you can accept via: CTRL+J, reject by CTRL+H, iprev/next suggestions via CTRL+L/K, refresh copilot via CTRL+space, see: `~/.config/nvim/lua/plugins/copilot.lua` for bindings.
+In grayed/shadowed text - you can accept via: CTRL+J, reject by CTRL+H, prev/next suggestions via CTRL+L/K, refresh copilot via CTRL+space, see: `~/.config/nvim/lua/plugins/copilot.lua` for bindings.
 
 
 More info can be found in [official documentation](https://github.com/github/copilot.vim) and via `:Copilot help`/`:help copilot` inside `nvim`.
