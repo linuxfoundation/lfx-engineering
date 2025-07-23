@@ -1,14 +1,20 @@
 # Adding Copilot support in NeoVim
 
 Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), choose the latest release and download it:
-- `` wget https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage && chmod +x nvim-linux-x86_64.appimage && sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim ``.
+
+```bash
+wget https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage && \
+    chmod +x nvim-linux-x86_64.appimage && \
+    sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim
+```
 
 Confirm that you can run nvim: `nvim`.
 
 Install and configure `git` (I'm assuming that this is already done).
 
 Install GitHub CLI tools (I'm providing example installation just for reference):
-```
+
+```bash
 type -p curl >/dev/null || sudo apt install curl -y
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
 sudo apt update
@@ -17,23 +23,39 @@ gh --version
 gh auth login
 ```
 
-You need to authenticate via browser for Copilot plugin usage and if you're inside an SSH session - then you need to do it on another computer with browser support.
+You need to authenticate via browser for Copilot plugin usage and if you're inside an SSH session,
+then you need to do it on another computer with browser support.
 
-Then copy `~/.config/gh` and `~/.config/github-copilot` directories from that machine to remote one via `sftp`. Remember to set correct permissions: `chown -R username ~username/.config`.
+Then copy `~/.config/gh` and `~/.config/github-copilot` directories from that machine to remote one via `sftp`.
+
+Remember to set correct permissions: `chown -R username ~username/.config`.
 
 Install Copilot extension inside `gh` command line tool: `` gh extension install github/gh-copilot ``.
 
 Verify that Copilot is installed and working:
-- `` gh extensions list && gh copilot explain 'git rebase -i HEAD~3' && gh copilot suggest "convert all .mov files to .mp4 using ffmpeg" ``.
+
+```bash
+gh extensions list && \
+    gh copilot explain 'git rebase -i HEAD~3' && \
+    gh copilot suggest "convert all .mov files to .mp4 using ffmpeg"
+```
 
 Install lazy plugins support in neovim:
-- `` git clone https://github.com/folke/lazy.nvim.git ~/.local/share/nvim/lazy/lazy.nvim ``.
+
+```bash
+git clone https://github.com/folke/lazy.nvim.git ~/.local/share/nvim/lazy/lazy.nvim
+```
 
 Install Copilot plugin in neovim:
-- `` mkdir -p ~/.config/nvim/lua/plugins && vim ~/.config/nvim/init.lua ``.
+
+```bash
+mkdir -p ~/.config/nvim/lua/plugins && \
+    vim ~/.config/nvim/init.lua
+```
 
 Put the following content in `~/.config/nvim/init.lua`:
-```
+
+```lua
 -- to disable mouse
 -- vim.o.mouse = ""
 -- To import your favorite vim settings
@@ -43,7 +65,8 @@ require("lazy").setup("plugins")
 ```
 
 Put the following content in `~/.config/nvim/lua/plugins/copilot.lua`:
-```
+
+```lua
 return {
   "github/copilot.vim",
   lazy = false,
@@ -70,13 +93,14 @@ Then it should return `Ready`.
 Now test that Copilot works in `nvim`: `` nvim test.py ``.
 
 Start writing some function, for example start typing: `def add(a, b):` and it will suggest something like:
-```
+
+```python
     """Returns the sum of a and b."""
     return a + b
 ```
-In grayed/shadowed text - you can accept via: CTRL+J, reject by CTRL+H, prev/next suggestions via CTRL+L/K, refresh copilot via CTRL+space, see: `~/.config/nvim/lua/plugins/copilot.lua` for bindings.
 
+In grayed/shadowed text - you can accept via: CTRL+J, reject by CTRL+H, prev/next suggestions via CTRL+L/K,
+refresh copilot via CTRL+space, see: `~/.config/nvim/lua/plugins/copilot.lua` for bindings.
 
-More info can be found in [official documentation](https://github.com/github/copilot.vim) and via `:Copilot help`/`:help copilot` inside `nvim`.
-
-
+More info can be found in the [official documentation](https://github.com/github/copilot.vim)
+and via `:Copilot help`/`:help copilot` inside `nvim`.
