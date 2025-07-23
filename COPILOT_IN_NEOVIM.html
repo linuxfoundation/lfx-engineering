@@ -13,7 +13,7 @@ SPDX-License-Identifier: MIT
 
   <h2>1. Install Neovim</h2>
   <p>Go to the <a href="https://github.com/neovim/neovim/releases" target="_blank">Neovim GitHub releases</a> page, choose the latest version, and install it. Replace <code>&lt;latest-version&gt;</code> in the command below with the version number of the latest release:</p>
-  <pre><code>wget https://github.com/neovim/neovim/releases/download/<latest-version>/nvim-linux-x86_64.appimage \
+  <pre><code>wget https://github.com/neovim/neovim/releases/download/<latest_version>/nvim-linux-x86_64.appimage \
 && chmod +x nvim-linux-x86_64.appimage \
 && sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim</code></pre>
   <p>Verify installation:</p>
@@ -32,7 +32,7 @@ gh auth login</code></pre>
   <pre><code>~/.config/gh
 ~/.config/github-copilot</code></pre>
   <p>Transfer them via <code>sftp</code> and fix permissions:</p>
-  <pre><code>chown -R username ~username/.config</code></pre>
+  <pre><code>chown -R $USER ~$USER/.config</code></pre>
 
   <h2>3. Install Copilot CLI Extension</h2>
   <pre><code>gh extension install github/gh-copilot</code></pre>

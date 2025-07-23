@@ -30,7 +30,8 @@ then you need to do it on another computer with browser support.
 
 Then copy `~/.config/gh` and `~/.config/github-copilot` directories from that machine to remote one via `sftp`.
 
-Remember to set correct permissions: `chown -R username ~username/.config`.
+Remember to set correct permissions: `chown -R $USER ~$USER/.config`.
+# Here, $USER is an environment variable that automatically refers to your current system username.
 
 Install Copilot extension inside `gh` command line tool: `gh extension install github/gh-copilot`.
 
@@ -52,7 +53,8 @@ Install Copilot plugin in neovim:
 
 ```bash
 mkdir -p ~/.config/nvim/lua/plugins && \
-    vim ~/.config/nvim/init.lua
+    nvim ~/.config/nvim/init.lua
+# Alternatively, you can use any text editor to edit the file, such as nano, vim, or code.
 ```
 
 Put the following content in `~/.config/nvim/init.lua`:
