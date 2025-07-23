@@ -30,8 +30,8 @@ then you need to do it on another computer with browser support.
 
 Then copy `~/.config/gh` and `~/.config/github-copilot` directories from that machine to remote one via `sftp`.
 
-Remember to set correct permissions: `chown -R $USER ~$USER/.config`.
-# Here, $USER is an environment variable that automatically refers to your current system username.
+Remember to set correct permissions: `chown -R $USER ~$USER/.config`. Here, `$USER` is an environment variable
+that automatically refers to your current system username.
 
 Install Copilot extension inside `gh` command line tool: `gh extension install github/gh-copilot`.
 
