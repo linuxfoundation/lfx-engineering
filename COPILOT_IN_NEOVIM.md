@@ -1,9 +1,10 @@
 # Adding Copilot support in NeoVim
 
-Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), choose the latest release and download it:
+Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), find the latest version number, and replace `<latest_version>` in the command below:
 
 ```bash
-wget https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage && \
+# Replace <latest_version> with the latest version number from the NeoVim GitHub releases page.
+wget https://github.com/neovim/neovim/releases/download/<latest_version>/nvim-linux-x86_64.appimage && \
     chmod +x nvim-linux-x86_64.appimage && \
     sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim
 ```
@@ -30,7 +31,7 @@ Then copy `~/.config/gh` and `~/.config/github-copilot` directories from that ma
 
 Remember to set correct permissions: `chown -R username ~username/.config`.
 
-Install Copilot extension inside `gh` command line tool: `` gh extension install github/gh-copilot ``.
+Install Copilot extension inside `gh` command line tool: `gh extension install github/gh-copilot`.
 
 Verify that Copilot is installed and working:
 
@@ -90,7 +91,7 @@ Run `:Copilot status`. It can say `Error: You are not signed into GitHub`, then 
 
 Then it should return `Ready`.
 
-Now test that Copilot works in `nvim`: `` nvim test.py ``.
+Now test that Copilot works in `nvim`: `nvim test.py`.
 
 Start writing some function, for example start typing: `def add(a, b):` and it will suggest something like:
 
