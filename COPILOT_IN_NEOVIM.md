@@ -1,10 +1,10 @@
-# Adding Copilot support in NeoVim
+# Adding Copilot support in Neovim
 
 Go to [Neovim GitHub releases](https://github.com/neovim/neovim/releases), find the latest version number,
 and replace `<latest_version>` in the command below:
 
 ```bash
-# Replace <latest_version> with the latest version number from the NeoVim GitHub releases page.
+# Replace <latest_version> with the latest version number from the Neovim GitHub releases page.
 wget https://github.com/neovim/neovim/releases/download/<latest_version>/nvim-linux-x86_64.appimage && \
     chmod +x nvim-linux-x86_64.appimage && \
     sudo cp -iv ./nvim-linux-x86_64.appimage /usr/bin/nvim
@@ -78,10 +78,10 @@ return {
     }
     vim.g.copilot_no_tab_map = true
     vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
-    vim.api.nvim_set_keymap("i", "<C-H>", 'copilot#Dismiss()',      { silent = true, expr = true })
+    vim.api.nvim_set_keymap("i", "<C-H>", 'copilot#Dismiss()', { silent = true, expr = true })
     vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Next()', { silent = true, expr = true })
     vim.api.nvim_set_keymap("i", "<C-K>", 'copilot#Previous()', { silent = true, expr = true })
-    vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Refresh()',  { silent = true, expr = true })
+    vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Refresh()', { silent = true, expr = true })
   end,
 }
 ```
