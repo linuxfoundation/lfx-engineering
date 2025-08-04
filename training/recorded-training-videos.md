@@ -24,3 +24,7 @@ interested](https://zoom.us/rec/share/r6UvEKR8fPHEg2VLviXkhY0fxsORr2jM_xK-vFAiEs
 More information on Playwright can be found [on their product
 website](https://playwright.dev/) or [their general documentation
 page](https://playwright.dev/docs/intro).
+
+A quick start guide for the Playwright MCP is [documented
+here](../mcp/playwright.md) or a complete guide is available [on their GitHub
+page](https://github.com/microsoft/playwright-mcp).
