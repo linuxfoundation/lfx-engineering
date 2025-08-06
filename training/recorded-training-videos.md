@@ -28,3 +28,12 @@ page](https://playwright.dev/docs/intro).
 A quick start guide for the Playwright MCP is [documented
 here](../mcp/playwright.md) or a complete guide is available [on their GitHub
 page](https://github.com/microsoft/playwright-mcp).
+
+## Claude Code Training
+
+On Monday, 6 August 2025, Michal Lehotsky facilitated a Claude Code 
+training session for the EasyCLA and Mentorship teams. 
+The video is available [via this Zoom
+recording](https://zoom.us/rec/share/iOf-vwR6YS3MMO8JvSk9--n-9nQzumckSiwZiU7kz3RicTZPOStffSd4gibbbwED.ZcXf6mkoH0sFWxwc?startTime=1754501710000).
+
+More information on Claude Code can be found [on their product website](https://www.anthropic.com/claude-code).
