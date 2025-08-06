@@ -31,8 +31,8 @@ page](https://github.com/microsoft/playwright-mcp).
 
 ## Claude Code Training
 
-On Monday, August 6, 2025, Michal Lehotsky facilitated a Claude Code 
-training session for the EasyCLA and Mentorship teams. 
+On Wednesday, August 6, 2025, Michal Lehotsky facilitated a Claude Code
+training session for the EasyCLA and Mentorship teams.
 The video is available [via this Zoom
 recording](https://zoom.us/rec/share/iOf-vwR6YS3MMO8JvSk9--n-9nQzumckSiwZiU7kz3RicTZPOStffSd4gibbbwED.ZcXf6mkoH0sFWxwc?startTime=1754501710000).
 
