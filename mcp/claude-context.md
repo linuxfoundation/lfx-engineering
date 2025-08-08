@@ -210,7 +210,7 @@ export MILVUS_TOKEN=your-zilliz-api-key  # Cloud Milvus
 ### Embedding Model Dimensions
 
 **Critical**: Claude Context expects specific embedding dimensions. Mismatched
-dimensions cause silent failures, this is applicable if you venture to use different
+dimensions cause silent failures. This is applicable if you venture to use different
 embedding models with something like LM studio and OpenAI Like API. You'll need to
 ensure the dimensions match the hardcoded dimensions in the codebase.
 
