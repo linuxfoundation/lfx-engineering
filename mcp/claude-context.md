@@ -144,6 +144,7 @@ Alternatively, add to `~/.claude.json`:
 After restarting your MCP client
 
 1. Verify MCP connection:
+
    ```text
    /mcp
    ```
@@ -232,7 +233,8 @@ ensure the dimensions match the hardcoded dimensions in the codebase.
 
     Tool use
 
-      claude-context - index_codebase(path: "/Users/jld/Repositories/LF/linuxfoundation/lfx-engineering", splitter: "ast") (MCP)
+      claude-context - index_codebase(path:
+        "/Users/jld/Repositories/LF/linuxfoundation/lfx-engineering", splitter: "ast") (MCP)
 
       Index a codebase directory to enable semantic search using a configurable code splitter.
 
