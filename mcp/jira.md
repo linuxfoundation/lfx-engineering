@@ -68,6 +68,35 @@ Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
 }
 ```
 
+## Kiro Setup
+
+Kiro is a VSCode fork published by Amazon. To install MCP servers, type
+<SHIFT> + <CMD> + P to open the command pallet. From the pop-up window,
+type 'MCP' and select 'Kira: Open CMP Config'. Once selected, a JSON text
+file is opened. Add the following Atlassian configuration to the open
+file.
+
+```jsonc
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/sse"
+      ]
+    },
+    // other mcp servers
+  }
+```
+
+Once the MCP is configured, it will prompt the user for authorization.
+
+### Kiro Jira MCP Validation
+
+See the common [validation section below](#validation) for sending a
+prompt to test the MCP setup.
+
 ## Google Gemini Jira MCP Setup
 
 To setup a Jira MCP for Gemini CLI, a MCP configuration entry should be added to
@@ -209,3 +238,8 @@ What is the current status of the Jira ticket: ME-36?
   members complete Schedule A forms. The work was completed on June 18, 2025, with the
   solution deployed to production.
 ```
+
+## References
+
+For additional notes and examples, see [the latest Atlassian CMP settings
+page on setting up IDEs](https://support.atlassian.com/rovo/docs/setting-up-ides/).
