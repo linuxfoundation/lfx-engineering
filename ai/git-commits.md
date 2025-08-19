@@ -28,6 +28,8 @@ line in your commit message. Use the following format:
 
 <commit description>
 
+<[Resolves | Jira Ticket]: <jira_ticket_link> >
+
 Generated with [AI Tool Name](URL)
 
 Signed-off-by: Your Name <your.email@company.com>
@@ -137,6 +139,8 @@ First, create a template file `.gitmessage` in your repository root:
 #
 # If AI tools were used, add attribution above the Signed-off-by line:
 # Generated with [AI Tool Name](URL)
+# 
+# Resolves: https://linuxfoundation.atlassian.net/browse/SWS-111
 #
 # Signed-off-by: Your Name <your.email@company.com>
 ```
