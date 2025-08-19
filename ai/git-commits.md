@@ -199,9 +199,9 @@ commit_msg_file="$1"
 commit_msg=$(cat "$commit_msg_file")
 
 # Check for AI attribution format
-if echo "$commit_msg" | grep -q "Generated with\|Assisted by"; then
+if echo "$commit_msg" | grep -qE '^(Generated with|Assisted by) '; then
     # Validate format: should have proper markdown links
-    if ! echo "$commit_msg" | grep -E "(Generated with|Assisted by) \[.+\]\(.+\)"; then
+    if ! echo "$commit_msg" | grep -qE '^(Generated with|Assisted by) \[.+\]\(.+\)$'; then
         echo "Error: AI attribution must use format:"
         echo "Generated with [Tool Name](URL)"
         echo "or"
@@ -209,9 +209,17 @@ if echo "$commit_msg" | grep -q "Generated with\|Assisted by"; then
         exit 1
     fi
 
-    # Check that attribution is above Signed-off-by
-    if echo "$commit_msg" | grep -B 10 "Signed-off-by" | grep -q "Generated with\|Assisted by"; then
-        echo "Error: AI attribution must be placed ABOVE Signed-off-by line"
+    # Require DCO Signed-off-by when attribution is present
+    if ! echo "$commit_msg" | grep -qE '^Signed-off-by:'; then
+        echo "Error: Missing DCO Signed-off-by line."
+        exit 1
+    fi
+
+    # Ensure attribution appears above Signed-off-by
+    attrib_line=$(awk '/^(Generated with|Assisted by) /{print NR; exit}' "$commit_msg_file")
+    sob_line=$(awk '/^Signed-off-by:/{print NR; exit}' "$commit_msg_file")
+    if [ -n "$attrib_line" ] && [ -n "$sob_line" ] && [ "$attrib_line" -gt "$sob_line" ]; then
+        echo "Error: AI attribution must be placed ABOVE the Signed-off-by line"
         exit 1
     fi
 fi
