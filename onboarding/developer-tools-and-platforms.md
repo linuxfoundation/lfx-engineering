@@ -182,7 +182,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Purpose**: Personal profile and contribution tracking for Linux Foundation projects
 - **URL**: [https://openprofile.dev/](https://openprofile.dev/)
 
-###  Calamari
+### Calamari
 
 - **Purpose**: Internal Linux Foundation tool for time off tracking
 - **URL**: [http://lfx.calamari.io/](http://lfx.calamari.io/)
