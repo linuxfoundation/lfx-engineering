@@ -32,8 +32,9 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 - **Main Organization**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
 - **Key Repositories**:
-  - **PCC Repository**: [https://github.com/linuxfoundation/lfx-pcc](https://github.com/linuxfoundation/lfx-pcc)
-  - **ITX Repository**: [https://github.com/linuxfoundation-it](https://github.com/linuxfoundation-it)
+  - **PCC (Project Control Center)**: [https://github.com/linuxfoundation/lfx-pcc](https://github.com/linuxfoundation/lfx-pcc)
+  - **ITX**: [https://github.com/linuxfoundation-it](https://github.com/linuxfoundation-it)
+  - **LFX V2 PCC UI**: [https://github.com/linuxfoundation/lfx-v2-pcc-ui](https://github.com/linuxfoundation/lfx-v2-pcc-ui)
   - **Engineering Artifact and Notes Repository**: [https://github.com/linuxfoundation/lfx-engineering](https://github.com/linuxfoundation/lfx-engineering)
 - **Purpose**: Source code management and collaboration
 - **Account Setup**: Ensure your personal GitHub account is added to the organization
@@ -85,28 +86,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ---
 
-## 🏗️ Platform Environments
-
-### Development Environment
-
-- **Purpose**: Development environment for testing new features and changes
-- **URL**: [https://pcc.dev.platform.linuxfoundation.org/](https://pcc.dev.platform.linuxfoundation.org/)
-- **Access**: All developers should have access
-
-### Staging Environment
-
-- **Purpose**: Pre-production environment for final testing before deployment
-- **URL**: [https://pcc.staging.platform.linuxfoundation.org/](https://pcc.staging.platform.linuxfoundation.org/)
-- **Access**: All developers should have access
-
-### Production Environment
-
-- **Purpose**: Live production environment serving end users
-- **URL**: [https://projectadmin.lfx.linuxfoundation.org/](https://projectadmin.lfx.linuxfoundation.org/)
-- **Access**: View-only for most developers, deployment access restricted
-
----
-
 ## 🗃️ API Documentation
 
 ### API Gateway
@@ -117,7 +96,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Centralized API endpoint management
   - API documentation
   - Authentication and authorization
-- **Account Setup**: Request invitation from your manager or tech lead
 
 ---
 
@@ -141,7 +119,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 - **Purpose**: Application performance monitoring, logging, and infrastructure metrics
 - **URL**: [https://datadog.linuxfoundation.org/](https://datadog.linuxfoundation.org/)
-- **What it does**: 
+- **What it does**:
   - Monitor application performance and uptime
   - View logs and traces for debugging
   - Track infrastructure metrics and alerts
@@ -234,11 +212,13 @@ If you need access to any of these tools or have questions about their usage:
 ## 🔄 Keeping This File Updated
 
 This document should be updated whenever:
+
 - New tools are adopted by the team
 - URLs or access procedures change
 - Tools are deprecated or replaced
 
 ---
 
-*For questions about this documentation or updates to this document, please submit a pull request or contact the development team.*
+*For questions about this documentation or updates to this document, please submit a pull request
+or contact the development team.*
 

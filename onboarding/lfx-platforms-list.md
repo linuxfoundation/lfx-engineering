@@ -1,6 +1,7 @@
 # Linux Foundation Platforms - Developer Setup Guide
 
-This guide provides setup instructions and getting started resources for key Linux Foundation platforms that developers work with directly.
+This guide provides setup instructions and getting started resources for key Linux Foundation
+platforms that developers work with directly.
 
 ## 🚀 Getting Started
 
@@ -28,4 +29,5 @@ This guide provides setup instructions and getting started resources for key Lin
 
 ---
 
-*This guide focuses on LFX platforms and their `Getting Started` wiki, where developers can build their local environment and actively contribute code!
+*This guide focuses on LFX platforms and their `Getting Started` wiki, where developers can build
+their local environment and actively contribute code!
