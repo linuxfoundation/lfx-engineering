@@ -14,6 +14,7 @@ This guide provides setup instructions and getting started resources for key Lin
 ## 🏗️ Development Platforms
 
 ### LFX-PCC (Project Control Center)
+
 - **Purpose**: Platform for managing Linux Foundation projects, meetings, and committees
 - **Key Repository**: [https://github.com/linuxfoundation/lfx-pcc](https://github.com/linuxfoundation/lfx-pcc)
 - **Getting Started Guide**: [https://github.com/linuxfoundation/lfx-pcc/wiki](https://github.com/linuxfoundation/lfx-pcc/wiki)
