@@ -22,22 +22,27 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Generate strong passwords
   - Secure notes and documents
   - Two-factor authentication backup
-- **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
+
+---
+
+## GitHub Repositories
+
+### Linux Foundation
+
+- **Purpose**: Non-profit consortium dedicated to fostering the growth of Linux
+- **URL**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
+- **Account Setup**: Ensure your personal GitHub account is added to the organization
+
+### Engineering Artifact and Notes
+
+- **Purpose**: Collection of artifacts and notes for engineers
+- **URL**: [https://github.com/linuxfoundation/lfx-engineering](https://github.com/linuxfoundation/lfx-engineering)
+- **Account Setup**: Ensure your personal GitHub account is added to the organization
 
 ---
 
 ## 🔧 Development Tools
-
-### Version Control - GitHub
-
-- **Main Organization**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
-- **Key Repositories**:
-  - **PCC (Project Control Center)**: [https://github.com/linuxfoundation/lfx-pcc](https://github.com/linuxfoundation/lfx-pcc)
-  - **ITX**: [https://github.com/linuxfoundation-it](https://github.com/linuxfoundation-it)
-  - **LFX V2 PCC UI**: [https://github.com/linuxfoundation/lfx-v2-pcc-ui](https://github.com/linuxfoundation/lfx-v2-pcc-ui)
-  - **Engineering Artifact and Notes Repository**: [https://github.com/linuxfoundation/lfx-engineering](https://github.com/linuxfoundation/lfx-engineering)
-- **Purpose**: Source code management and collaboration
-- **Account Setup**: Ensure your personal GitHub account is added to the organization
 
 ### Integrated Development Environments (IDEs)
 
@@ -50,7 +55,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Intelligent code refactoring and debugging
   - Natural language to code translation
   - Integration with popular extensions and themes
-- **Account Setup**: Request team access from your director or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 #### Zed
 
@@ -73,16 +78,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Extensive plugin ecosystem
   - Lua scripting for configuration
 - **Account Setup**: Install via package manager or from website, configuration is local
-
----
-
-## 📈 LFX Platforms
-
-### LFX-Engineering Onboarding Platforms List
-
-- **Purpose**: List of LFX-related platforms along with their `Getting Started` wiki
-- **URL**: [https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list)
-- **What to do**: Review the list and follow the guide of the platforms you need to work with
 
 ---
 
@@ -109,7 +104,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Track bugs, features, and technical debt
   - Sprint planning and agile workflows
   - Project roadmap and release planning
-- **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
@@ -123,7 +118,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Monitor application performance and uptime
   - View logs and traces for debugging
   - Track infrastructure metrics and alerts
-- **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 ### Snowflake
 
@@ -133,7 +128,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Data storage and processing
   - Business intelligence queries
   - Analytics and reporting
-- **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
@@ -150,7 +145,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Document processes and workflows
   - Collaborate on designs and architecture
   - Mind mapping and brainstorming
-- **Account Setup**: Request invitation from your manager or tech lead
+- **Account Setup**: Access with your Linux Foundation email account
 
 ### Lucidchart
 
@@ -163,7 +158,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Create flowcharts and system diagrams
   - Document processes and workflows
   - Collaborative diagram creation
-- **Account Setup**: Request invitation from your director or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
@@ -187,7 +182,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 - **Calamari**: [http://lfx.calamari.io/](http://lfx.calamari.io/)
   - **Purpose**: Internal Linux Foundation tool for time off tracking
-- **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
+- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
