@@ -76,7 +76,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ### LFX-Engineering Onboarding Platforms List
 - **Purpose**: List of LFX-related platforms along with their `Getting Started` wiki
-- **URL**: [https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lf-platforms-list](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lf-platforms-list)
+- **URL**: [https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list)
 - **What to do**: Review the list and follow the guide of the platforms you need to work with
 
 ---
