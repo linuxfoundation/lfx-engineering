@@ -14,6 +14,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 🔐 Security and Access Management
 
 ### 1Password
+
 - **Purpose**: Password management and secure credential storage
 - **URL**: [https://1password.com/](https://1password.com/)
 - **What it does**:
@@ -28,6 +29,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 🔧 Development Tools
 
 ### Version Control - GitHub
+
 - **Main Organization**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
 - **Key Repositories**:
   - **PCC Repository**: [https://github.com/linuxfoundation/lfx-pcc](https://github.com/linuxfoundation/lfx-pcc)
@@ -37,6 +39,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Account Setup**: Ensure your personal GitHub account is added to the organization
 
 ### Integrated Development Environments (IDEs)
+
 #### Cursor
 
 - **Purpose**: AI-powered code editor with built-in AI assistance
@@ -75,6 +78,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 📈 LFX Platforms
 
 ### LFX-Engineering Onboarding Platforms List
+
 - **Purpose**: List of LFX-related platforms along with their `Getting Started` wiki
 - **URL**: [https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/lfx-platforms-list)
 - **What to do**: Review the list and follow the guide of the platforms you need to work with
@@ -84,16 +88,19 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 🏗️ Platform Environments
 
 ### Development Environment
+
 - **Purpose**: Development environment for testing new features and changes
 - **URL**: [https://pcc.dev.platform.linuxfoundation.org/](https://pcc.dev.platform.linuxfoundation.org/)
 - **Access**: All developers should have access
 
 ### Staging Environment
+
 - **Purpose**: Pre-production environment for final testing before deployment
 - **URL**: [https://pcc.staging.platform.linuxfoundation.org/](https://pcc.staging.platform.linuxfoundation.org/)
 - **Access**: All developers should have access
 
 ### Production Environment
+
 - **Purpose**: Live production environment serving end users
 - **URL**: [https://projectadmin.lfx.linuxfoundation.org/](https://projectadmin.lfx.linuxfoundation.org/)
 - **Access**: View-only for most developers, deployment access restricted
@@ -103,6 +110,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 🗃️ API Documentation
 
 ### API Gateway
+
 - **Purpose**: Central API gateway for routing and managing API requests
 - **URL**: [https://api-gw.dev.platform.linuxfoundation.org/](https://api-gw.dev.platform.linuxfoundation.org/)
 - **What it does**:
@@ -116,6 +124,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 📋 Project Management & Collaboration
 
 ### Jira
+
 - **Purpose**: Issue tracking, project management, and agile development workflows
 - **URL**: [https://linuxfoundation.atlassian.net/jira/](https://linuxfoundation.atlassian.net/jira/)
 - **What it does**:
@@ -129,6 +138,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 📊 Monitoring and Analytics
 
 ### DataDog
+
 - **Purpose**: Application performance monitoring, logging, and infrastructure metrics
 - **URL**: [https://datadog.linuxfoundation.org/](https://datadog.linuxfoundation.org/)
 - **What it does**: 
@@ -138,6 +148,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Account Setup**: Request invitation from your manager or tech lead and access with your Linux Foundation email account
 
 ### Snowflake
+
 - **Purpose**: Cloud data platform for data warehousing and analytics
 - **URL**: [https://www.snowflake.com/en/](https://www.snowflake.com/en/)
 - **What it does**:
@@ -151,6 +162,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## Design & Planning
 
 ### Whimsical
+
 - **Purpose**: Visual collaboration platform for wireframes, flowcharts, and mind maps
 - **URL**: [https://whimsical.com/](https://whimsical.com/)
 - **Key Workspaces**:
@@ -163,6 +175,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Account Setup**: Request invitation from your manager or tech lead
 
 ### Lucidchart
+
 - **Organization Structure**: [https://lucid.app/](https://lucid.app/)
 - **Purpose**: Visual diagramming and organizational charts
 - **Key Workspaces**:
@@ -179,6 +192,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ## 📁 Documents & Internal Tools
 
 ### Google Workspace
+
 - **Google Drive**: [https://drive.google.com/](https://drive.google.com/)
   - **Purpose**: File storage, sharing, and collaboration
 - **Account Setup**: Access with your Linux Foundation email account
@@ -188,6 +202,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Account Setup**: Access with your Linux Foundation email account
 
 ### LFX Tools
+
 - **Individual Dashboard**: [https://openprofile.dev/](https://openprofile.dev/)
   - **Purpose**: Personal profile and contribution tracking for Linux Foundation projects
 - **Account Setup**: Access with your Linux Foundation email account
