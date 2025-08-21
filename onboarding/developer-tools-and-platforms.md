@@ -32,7 +32,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 - **Purpose**: Non-profit consortium dedicated to fostering the growth of Linux
 - **URL**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
-- **Account Setup**: Ensure your personal GitHub account is added to the organization
+- **Account Access**: Ensure your personal GitHub account is added to the organization
 
 ### Engineering Artifact and Notes
 
@@ -55,6 +55,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Intelligent code refactoring and debugging
   - Natural language to code translation
   - Integration with popular extensions and themes
+- **Account Access**: Request access to our team plan.
 
 #### Zed
 
@@ -65,6 +66,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Real-time collaborative editing
   - Built-in terminal and Git integration
   - Minimalist design with powerful features
+- **Account Access**: Requesting access not required. Download and install.
 
 #### Neovim
 
@@ -75,6 +77,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Powerful keyboard-driven editing
   - Extensive plugin ecosystem
   - Lua scripting for configuration
+- **Account Access**: Requesting access required. Download and install.
 
 ---
 
@@ -179,7 +182,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ### Individual Dashboard
 
-- **Purpose**: Personal profile and contribution tracking for Linux Foundation projects
+- **Purpose**: Personal profile, view your events and meetings and technical contribution and training enrollment tracking
 - **URL**: [https://openprofile.dev/](https://openprofile.dev/)
 
 ### Calamari
