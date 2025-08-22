@@ -18,7 +18,7 @@ For detailed information about the LFX v2 platform architecture and components:
   \- Complete platform documentation
 - **[Component Diagram](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#component-diagram)**
   \- Visual overview of platform architecture
-- **[Component List](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#component-diagram)**
+- **[Component List](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#components)**
   \- Detailed list of all platform components
 
 ## Getting Started
