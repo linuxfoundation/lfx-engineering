@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document outlines the release strategy for LFX v2 applications using ArgoCD for deployment management and Helm for package management.
+This document outlines the release strategy for LFX v2 applications using ArgoCD for deployment management
+and Helm for package management.
 
 ## Key Repositories
 
@@ -16,6 +17,7 @@ This document outlines the release strategy for LFX v2 applications using ArgoCD
 For continuous development and testing:
 
 #### Process
+
 1. **Automatic Development Builds**
    - Merges to `main` branch automatically build a `development` tag of the application
    - No formal release process required for development deployments
@@ -30,9 +32,11 @@ For continuous development and testing:
 For services that already exist in the deployment pipeline:
 
 #### Prerequisites
+
 - Helm configuration uses `latest` tags for all components
 
-#### Process
+#### Existing Service Process
+
 1. **Release Service Version**
    - Release your service with version tag (e.g., `v0.1.2`)
 
@@ -48,7 +52,8 @@ For services that already exist in the deployment pipeline:
 
 For new services being added to the deployment pipeline:
 
-#### Process
+#### New Component Process
+
 1. **Release Service Version**
    - Release your service with version tag (e.g., `v0.1.2`)
 

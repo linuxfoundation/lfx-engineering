@@ -21,17 +21,20 @@ This guide walks you through setting up a local development environment for LFX 
 ### Install LFX Platform
 
 1. **Clone the Helm Repository**
+
    ```bash
    git clone https://github.com/linuxfoundation/lfx-v2-helm
    cd lfx-v2-helm
    ```
 
 2. **Navigate to Charts Directory**
+
    ```bash
    cd charts/lfx-v2-helm
    ```
 
 3. **Install the Platform**
+
    ```bash
    helm install -n lfx lfx-platform . -f values.yaml
    ```
@@ -46,12 +49,14 @@ This guide walks you through setting up a local development environment for LFX 
 Once the platform is successfully installed, you'll have access to:
 
 ### API Documentation
-- **URL**: http://lfx-api.k8s.orb.local/docs/
+
+- **URL**: <http://lfx-api.k8s.orb.local/docs/>
 - Provides interactive API documentation for all LFX v2 services
 - Includes endpoint specifications, request/response schemas, and testing capabilities
 
 ### Authentication (Authelia)
-- **URL**: https://auth.k8s.orb.local/
+
+- **URL**: <https://auth.k8s.orb.local/>
 - Central authentication service for the local development environment
 - Manages user authentication and authorization
 
@@ -60,6 +65,7 @@ Once the platform is successfully installed, you'll have access to:
 ### Adding Users
 
 Users are configured through the Helm values file:
+
 - Edit the `values.yaml` file in the helm chart
 - Add user configurations in the appropriate section
 - Update the deployment: `helm upgrade -n lfx lfx-platform . -f values.yaml`
@@ -74,6 +80,7 @@ kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.project_super_admin
 ```
 
 **General pattern for any user:**
+
 ```bash
 kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.USERNAME}' | base64 -D
 ```
@@ -101,8 +108,8 @@ For development, staging, and production environments, use the Auth0 token gener
 1. **Platform Setup**: Complete the installation steps above
 2. **Service Development**: Develop your individual services locally
 3. **Integration Testing**: Use the local platform to test service integration
-4. **API Testing**: Utilize the API docs at http://lfx-api.k8s.orb.local/docs/
-5. **Authentication Testing**: Test authentication flows via https://auth.k8s.orb.local/
+4. **API Testing**: Utilize the API docs at <http://lfx-api.k8s.orb.local/docs/>
+5. **Authentication Testing**: Test authentication flows via <https://auth.k8s.orb.local/>
 
 ## Troubleshooting
 
