@@ -36,11 +36,11 @@ This guide walks you through setting up a local development environment for LFX 
 3. **Install the Platform**
 
    ```bash
-   helm install -n lfx lfx-platform . -f values.yaml
+   helm install -n lfx --create-namespace lfx-platform . -f values.yaml
    ```
 
    This command will:
-   - Create the `lfx` namespace if it doesn't exist
+   - Create the `lfx` namespace if it doesn't exist (`--create-namespace`)
    - Install all required platform components
    - Configure services according to the values.yaml file
 
@@ -76,13 +76,13 @@ Passwords are stored in Kubernetes secrets and can be retrieved using kubectl:
 
 ```bash
 # Get password for project_super_admin user
-kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.project_super_admin}' | base64 -D
+kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.project_super_admin}' | base64 --decode
 ```
 
 **General pattern for any user:**
 
 ```bash
-kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.USERNAME}' | base64 -D
+kubectl get secret/authelia-users -n lfx -o jsonpath='{.data.USERNAME}' | base64 --decode
 ```
 
 Replace `USERNAME` with the actual username configured in your values file.
@@ -102,6 +102,15 @@ For development, staging, and production environments, use the Auth0 token gener
 
 - **Script**: [get_auth0_token.py](https://github.com/linuxfoundation-it/itx-misc/blob/main/libs/get_auth0_token.py)
 - Supports token generation for all remote environments
+
+This is typically used as follows:
+
+```bash
+export TOKEN=$(get_auth0_token.py --api=lfxv2 --stage=dev)
+```
+
+Which will open a browser window for authentication and set the `TOKEN` environment variable
+to the generated token when complete.
 
 ## Development Workflow
 
