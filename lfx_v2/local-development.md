@@ -30,7 +30,7 @@ This guide walks you through setting up a local development environment for LFX 
 2. **Navigate to Charts Directory**
 
    ```bash
-   cd charts/lfx-v2-helm
+   cd charts/lfx-platform
    ```
 
 3. **Install the Platform**
