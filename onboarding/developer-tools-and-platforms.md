@@ -4,10 +4,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ## 🚀 Getting Started
 
-1. **Review this entire document** to understand our tech stack
+1. **Review this entire document** to understand our tech tools and platforms
 2. **Request access** to all relevant platforms (see each section for account setup instructions)
-3. **Contact your manager or IT team** if you need help with access to any platform
-4. **Bookmark this page** for quick reference 😀
+3. **Access platforms** with your Linux Foundation email account, unless otherwise noted
+4. **Contact your manager or IT team** if you need help with access to any platform
+5. **Bookmark this page** for quick reference 😀
 
 ---
 
@@ -22,7 +23,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Generate strong passwords
   - Secure notes and documents
   - Two-factor authentication backup
-- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
@@ -32,13 +32,17 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 - **Purpose**: Non-profit consortium dedicated to fostering the growth of Linux
 - **URL**: [https://github.com/linuxfoundation](https://github.com/linuxfoundation)
-- **Account Setup**: Ensure your personal GitHub account is added to the organization
+- **Account Access**: You must have your personal GitHub account added to the
+  Linux Foundation organization. To request access, ask your manager to submit a
+  support ticket on your behalf. Access is managed through single sign-on (SSO).
 
 ### Engineering Artifact and Notes
 
 - **Purpose**: Collection of artifacts and notes for engineers
 - **URL**: [https://github.com/linuxfoundation/lfx-engineering](https://github.com/linuxfoundation/lfx-engineering)
-- **Account Setup**: Ensure your personal GitHub account is added to the organization
+- **Account Access**: You must have your personal GitHub account added to the
+  Linux Foundation organization. To request access, ask your manager to submit a
+  support ticket on your behalf. Access is managed through single sign-on (SSO).
 
 ---
 
@@ -55,7 +59,10 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Intelligent code refactoring and debugging
   - Natural language to code translation
   - Integration with popular extensions and themes
-- **Account Setup**: Access with your Linux Foundation email account
+- **Account Access**: Ask your manager to submit a support ticket on your behalf
+  or send a message in the `#lfx-ai` Slack channel.
+- **Extensions**: Consider installing the Jira and GitHub Model Context Protocol
+  servers.
 
 #### Zed
 
@@ -66,7 +73,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Real-time collaborative editing
   - Built-in terminal and Git integration
   - Minimalist design with powerful features
-- **Account Setup**: Download and install from website, account required for collaboration features
+- **Account Access**: Requesting access not required. Follow the online
+  documentation to download and install. Most users connect to The Linux
+  Foundation GitHub account to access the CoPilot AI models.
+- **Extensions**: Consider installing the Jira and GitHub Model Context Protocol
+  servers.
 
 #### Neovim
 
@@ -77,7 +88,9 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Powerful keyboard-driven editing
   - Extensive plugin ecosystem
   - Lua scripting for configuration
-- **Account Setup**: Install via package manager or from website, configuration is local
+- **Account Access**: Requesting access required. Download and install.  Most
+  users connect to The Linux Foundation GitHub account to access the CoPilot AI
+  models.
 
 ---
 
@@ -90,7 +103,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **What it does**:
   - Centralized API endpoint management
   - API documentation
-  - Authentication and authorization
 
 ---
 
@@ -104,7 +116,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Track bugs, features, and technical debt
   - Sprint planning and agile workflows
   - Project roadmap and release planning
-- **Account Setup**: Access with your Linux Foundation email account
 
 ---
 
@@ -115,10 +126,10 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - **Purpose**: Application performance monitoring, logging, and infrastructure metrics
 - **URL**: [https://datadog.linuxfoundation.org/](https://datadog.linuxfoundation.org/)
 - **What it does**:
-  - Monitor application performance and uptime
-  - View logs and traces for debugging
+  - Monitor application performance and uptime, including many LFX products and services
+  - View logs and screen recorded sessions for debugging
   - Track infrastructure metrics and alerts
-- **Account Setup**: Access with your Linux Foundation email account
+  - Review Real User Monitoring (RUM) data for user experience insights
 
 ### Snowflake
 
@@ -128,61 +139,96 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   - Data storage and processing
   - Business intelligence queries
   - Analytics and reporting
-- **Account Setup**: Access with your Linux Foundation email account
+- **Account Access**:
+  - Step 1: Datalake Team: IT/Ops Team Account Setup
+    1. Determine which roles should be added to the new user(s).
+    2. Create a pull request to add the users and roles to the GitHub Snowflake
+       Terraform repository. Here’s a link [to the GitHub
+       repository](https://github.com/linuxfoundation/lfx-snowflake-terraform) and
+       the user configuration file. Anyone can create a pull request.
+    3. Request an IT/Ops team member review the pull request in the #lfx-devops
+       Slack channel. They will review and merge the pull request changes wich
+       will trigger a deployment to the Snowflake production environment.
+  - Step 2: Developer: User Account Setup
+    1. Once Step 1 above is complete, users can now log into Snowflake.
+    2. [Direct Link to The Linux
+       Foundation](https://app.snowflake.com/jnmhvwd/xpb85243/) Snowflake account.
+    3. Users should log in using their LF email (e.g.,
+       [your_lf_email@linuxfoundation.org](your_lf_email@linuxfoundation.org)) via
+       the Google SSO option.
+    4. Once logged in, the user should be redirected back to the Snowflake
+       landing page.
+    5. Users should then notify the Datalake Team. The Datalake Team will share
+       any relevant dashboards or interactive views/applications
+       (sharing is done after the user has logged in the first time).
+    6. Once the Datalake Team has granted access from the Snowflake console,
+       navigate to: Menu -> Projects -> Dashboards -> “Shared with me"
 
 ---
 
-## Design & Planning
+## Organization Diagram
 
-### Whimsical
+### LFX-Datalake
 
-- **Purpose**: Visual collaboration platform for wireframes, flowcharts, and mind maps
-- **URL**: [https://whimsical.com/](https://whimsical.com/)
-- **Key Workspaces**:
-  - **LFX-Datalake**: [https://whimsical.com/lfx-datalake-Qgy1wT6KC4RtrhCbfVQ37X](https://whimsical.com/lfx-datalake-Qgy1wT6KC4RtrhCbfVQ37X)
-- **What it does**:
-  - Create mockups and wireframes
-  - Document processes and workflows
-  - Collaborate on designs and architecture
-  - Mind mapping and brainstorming
-- **Account Setup**: Access with your Linux Foundation email account
-
-### Lucidchart
-
-- **Organization Structure**: [https://lucid.app/](https://lucid.app/)
-- **Purpose**: Visual diagramming and organizational charts
-- **Key Workspaces**:
-  - **Linux P&E organization**: [https://lucid.app/lucidchart/a39693e8-9f93-4f6e-9f31-77cb28de4f81/edit?page=0_0#](https://lucid.app/lucidchart/a39693e8-9f93-4f6e-9f31-77cb28de4f81/edit?page=0_0#)
-- **What it does**:
-  - View company structure and team organization
-  - Create flowcharts and system diagrams
-  - Document processes and workflows
-  - Collaborative diagram creation
-- **Account Setup**: Access with your Linux Foundation email account
+- **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
+- **URL**:
+  [https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md](https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md)
 
 ---
 
-## 📁 Documents & Internal Tools
+## 📁 Documents
 
 ### Google Workspace
 
-- **Google Drive**: [https://drive.google.com/](https://drive.google.com/)
-  - **Purpose**: File storage, sharing, and collaboration
-- **Account Setup**: Access with your Linux Foundation email account
+#### Google Docs
 
-- **Google Docs**: [https://docs.google.com/](https://docs.google.com/)
-  - **Purpose**: Document creation and collaborative editing
-- **Account Setup**: Access with your Linux Foundation email account
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://drive.google.com/](https://drive.google.com/)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
 
-### LFX Tools
+#### Google Spreadsheets
 
-- **Individual Dashboard**: [https://openprofile.dev/](https://openprofile.dev/)
-  - **Purpose**: Personal profile and contribution tracking for Linux Foundation projects
-- **Account Setup**: Access with your Linux Foundation email account
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://docs.google.com/spreadsheets/](https://docs.google.com/spreadsheets/)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
 
-- **Calamari**: [http://lfx.calamari.io/](http://lfx.calamari.io/)
-  - **Purpose**: Internal Linux Foundation tool for time off tracking
-- **Account Setup**: Access with your Linux Foundation email account
+#### Google Slides
+
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://docs.google.com/presentation/](https://docs.google.com/presentation/)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
+
+#### Google Videos
+
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://docs.google.com/videos](https://docs.google.com/video)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
+
+#### Google Forms
+
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://docs.google.com/forms](https://docs.google.com/forms)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
+
+#### Google Drive
+
+- **Purpose**: Linux Foundation storage of files shared with you
+- **URL**: [https://drive.google.com/](https://drive.google.com/)
+- **Account Access**: Google Workspace is managed through single sign-on (SSO).
+
+---
+
+## 🔦 Internal Tools
+
+### Individual Dashboard
+
+- **Purpose**: Personal profile, view your events and meetings and technical contribution and training enrollment tracking
+- **URL**: [https://openprofile.dev/](https://openprofile.dev/)
+
+### Calamari
+
+- **Purpose**: Internal Linux Foundation tool for contractor time off tracking
+- **URL**: [http://lfx.calamari.io/](http://lfx.calamari.io/)
 
 ---
 
