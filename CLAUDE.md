@@ -33,6 +33,7 @@ lfx-engineering/
   - MIT License for software components
   - Creative Commons Attribution 4.0 for documentation
 - **Version Control**: Git with main branch as primary
+- **Documentation Standards**: All markdown files must pass markdownlint validation
 
 ## Key Components
 
@@ -108,6 +109,8 @@ lfx-engineering/
 2. Use Markdown for all documentation
 3. Follow existing structure and formatting patterns
 4. Consider both software and documentation licensing requirements
+5. Ensure all markdown passes markdownlint validation
+6. Run `markdownlint` to verify compliance before committing changes
 
 ## Security Considerations
 
@@ -130,6 +133,7 @@ Based on the directory structure, planned expansions likely include:
 3. **Team Coordination**: Centralized communication through dedicated Slack channels
 4. **Tool Integration**: Standardized MCP patterns across different AI platforms
 5. **Version Control**: Proper gitignore patterns for sensitive local configurations
+6. **Markdown Quality**: All markdown documentation must pass markdownlint validation
 
 ## Contact and Support
 
