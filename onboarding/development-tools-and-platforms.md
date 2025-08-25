@@ -399,7 +399,7 @@ TODO: Leaving for David Deal to update
 ### Calamari
 
 - **Purpose**: Internal Linux Foundation tool for time off tracking
-- **URL**: [https://lfx.calamari.io/](http://lfx.calamari.io/)
+- **URL**: [https://lfx.calamari.io/](https://lfx.calamari.io/)
 
 **What you'll use Calamari for:**
 
