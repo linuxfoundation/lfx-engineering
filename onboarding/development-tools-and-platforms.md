@@ -20,17 +20,16 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use 1Password for:**
 
-  - Store and share team passwords, API keys, and sensitive information securely
-  - Generate strong passwords for all development accounts
-  - Access shared team vaults for common credentials
-  - Store secure notes and documents related to projects
-  - Backup codes for two-factor authentication across all platforms
+- Store and share team passwords, API keys, and sensitive information securely
+- Generate strong passwords for all development accounts
+- Access shared team vaults for common credentials
+- Store secure notes and documents related to projects
+- Backup codes for two-factor authentication across all platforms
 
 **How to get access:**
 
   1. Access is typically granted
   2. If you cannot access, contact your team lead
-
 
 **Setup Steps:**
 
@@ -49,17 +48,17 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use GitHub for:**
 
-  - Clone and contribute to LFX platform repositories
-  - Create feature branches
-  - Submit pull requests
-  - Participate in code reviews and provide feedback to team members
-  - Track issues and collaborate on technical discussions
-  - Access documentation, coding standards, and architecture decisions
+- Clone and contribute to LFX platform repositories
+- Create feature branches
+- Submit pull requests
+- Participate in code reviews and provide feedback to team members
+- Track issues and collaborate on technical discussions
+- Access documentation, coding standards, and architecture decisions
 
 **How to get access:**
 
-  1. You must have your personal GitHub account added to the Linux Foundation organization. 
-  2. To request access, ask your manager to submit a support ticket on your behalf. 
+  1. You must have your personal GitHub account added to the Linux Foundation organization.
+  2. To request access, ask your manager to submit a support ticket on your behalf.
   3. Access is managed through single sign-on (SSO).
 
 **Setup Steps:**
@@ -77,15 +76,15 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use lfx-engineering for:**
 
-  - Access onboarding materials and training resources
-  - Review architecture documentation and technical specifications
-  - Learn AI integrations and mcp clients
-  - Contribute to internal documentation and knowledge sharing
+- Access onboarding materials and training resources
+- Review architecture documentation and technical specifications
+- Learn AI integrations and mcp clients
+- Contribute to internal documentation and knowledge sharing
 
 **How to get access:**
 
-  1. You must have your personal GitHub account added to the Linux Foundation organization. 
-  2. To request access, ask your manager to submit a support ticket on your behalf. 
+  1. You must have your personal GitHub account added to the Linux Foundation organization.
+  2. To request access, ask your manager to submit a support ticket on your behalf.
   3. Access is managed through single sign-on (SSO).
 
 ---
@@ -101,11 +100,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use Cursor for:**
 
-  - AI-powered code completion and generation for faster development
-  - Intelligent code refactoring and debugging assistance
-  - Natural language to code translation for complex logic
-  - Integration with our team's extensions and coding standards
-  - Collaborative debugging sessions with AI assistance
+- AI-powered code completion and generation for faster development
+- Intelligent code refactoring and debugging assistance
+- Natural language to code translation for complex logic
+- Integration with our team's extensions and coding standards
+- Collaborative debugging sessions with AI assistance
 
 **How to get access:**
 
@@ -126,11 +125,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use Zed for:**
 
-  - Lightning-fast performance for large codebases
-  - Real-time collaborative editing during pair programming sessions
-  - Built-in terminal integration for development workflows
-  - Git integration for seamless version control
-  - Minimalist interface that reduces cognitive load during coding
+- Lightning-fast performance for large codebases
+- Real-time collaborative editing during pair programming sessions
+- Built-in terminal integration for development workflows
+- Git integration for seamless version control
+- Minimalist interface that reduces cognitive load during coding
 
 **How to get access:**
 
@@ -150,11 +149,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use Neovim for:**
 
-  - Highly efficient keyboard-driven editing for experienced developers
-  - Customizable development environment tailored to your workflow
-  - Powerful plugin ecosystem for language-specific development
-  - Terminal-based editing for remote development and server work
-  - Lua scripting for advanced configuration and automation
+- Highly efficient keyboard-driven editing for experienced developers
+- Customizable development environment tailored to your workflow
+- Powerful plugin ecosystem for language-specific development
+- Terminal-based editing for remote development and server work
+- Lua scripting for advanced configuration and automation
 
 **How to get access:**
 
@@ -177,9 +176,9 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use API Gateway for:**
 
-  - Access comprehensive API documentation for all LFX services
-  - Test API endpoints during development and debugging
-  - Understand request/response formats and authentication requirements
+- Access comprehensive API documentation for all LFX services
+- Test API endpoints during development and debugging
+- Understand request/response formats and authentication requirements
 
 **How to get access:**
 
@@ -197,11 +196,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use Jira for:**
 
-  - Track and update progress on assigned bugs, features, and technical debt
-  - Create detailed bug reports with reproduction steps and severity levels
-  - Manage feature requests through our workflow: Backlog → In Progress → Code Review → Testing → Done
-  - Estimate story points and track velocity metrics
-  - Generate reports for stakeholders and project planning
+- Track and update progress on assigned bugs, features, and technical debt
+- Create detailed bug reports with reproduction steps and severity levels
+- Manage feature requests through our workflow: Backlog → In Progress → Code Review → Testing → Done
+- Estimate story points and track velocity metrics
+- Generate reports for stakeholders and project planning
 
 **How to get access:**
 
@@ -211,7 +210,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **Setup Steps:**
 
   1. Sign in to Jira using your Linux Foundation credentials
-  2. Set up email notifications to your preference 
+  2. Set up email notifications to your preference
   3. View your team's project boards and understand the workflow stages
   4. Install Jira mobile app for updates on the go
 
@@ -226,10 +225,10 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use DataDog for:**
 
-  - Monitor application performance and uptime, including many LFX products and services
-  - View logs and screen recorded sessions for debugging
-  - Review Real User Monitoring (RUM) data for user experience insights
-  - View infrastructure metrics to understand system resource usage
+- Monitor application performance and uptime, including many LFX products and services
+- View logs and screen recorded sessions for debugging
+- Review Real User Monitoring (RUM) data for user experience insights
+- View infrastructure metrics to understand system resource usage
 
 **How to get access:**
 
@@ -243,15 +242,15 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use Snowflake for:**
 
-  - Query large datasets for business intelligence and reporting needs
-  - Analyze user behavior and application metrics for product decisions
-  - Extract data for machine learning models and analytics projects
-  - Generate custom reports for stakeholders and project planning
-  - Collaborate with data team on complex analytical queries
+- Query large datasets for business intelligence and reporting needs
+- Analyze user behavior and application metrics for product decisions
+- Extract data for machine learning models and analytics projects
+- Generate custom reports for stakeholders and project planning
+- Collaborate with data team on complex analytical queries
 
 **How to get access:**
 
-  - Step 1: Datalake Team: IT/Ops Team Account Setup
+- Step 1: Datalake Team: IT/Ops Team Account Setup
     1. Determine which roles should be added to the new user(s).
     2. Create a pull request to add the users and roles to the GitHub Snowflake
        Terraform repository. Here’s a link [to the GitHub
@@ -260,7 +259,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
     3. Request an IT/Ops team member review the pull request in the #lfx-devops
        Slack channel. They will review and merge the pull request changes wich
        will trigger a deployment to the Snowflake production environment.
-  - Step 2: Developer: User Account Setup
+- Step 2: Developer: User Account Setup
     1. Once Step 1 above is complete, users can now log into Snowflake.
     2. [Direct Link to The Linux
        Foundation](https://app.snowflake.com/jnmhvwd/xpb85243/) Snowflake account.
@@ -286,7 +285,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use LFX-Datalake diagram for:**
 
-  - Understand overall organization architecture and platform relationships
+- Understand overall organization architecture and platform relationships
 
 **How to get access:**
 
@@ -299,12 +298,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **What you'll use the organization chart for:**
 
-  - Understand team structure, roles, and reporting relationships
+- Understand team structure, roles, and reporting relationships
 
 **How to get access:**
 
   1. Request access to the specific diagram from your director or team lead
-
 
 TODO: Leaving for David Deal to update
 
@@ -326,19 +324,18 @@ TODO: Leaving for David Deal to update
 
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
-  - If you cannot access specific documents, request sharing permissions from document owner
+- Google Workspace is managed through single sign-on (SSO)
+- If you cannot access specific documents, request sharing permissions from document owner
 
 #### Google Spreadsheets
 
 - **Purpose**: Linux Foundation storage of files shared with you
 - **URL**: [https://docs.google.com/spreadsheets/](https://docs.google.com/spreadsheets/)
 
-
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
-  - If you cannot access specific documents, request sharing permissions from spreadsheet owner
+- Google Workspace is managed through single sign-on (SSO)
+- If you cannot access specific documents, request sharing permissions from spreadsheet owner
 
 #### Google Slides
 
@@ -347,8 +344,8 @@ TODO: Leaving for David Deal to update
 
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
-  - If you cannot access specific documents, request sharing permissions from presentation owner
+- Google Workspace is managed through single sign-on (SSO)
+- If you cannot access specific documents, request sharing permissions from presentation owner
 
 #### Google Vids
 
@@ -357,8 +354,8 @@ TODO: Leaving for David Deal to update
 
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
-  - If you cannot access specific documents, request sharing permissions from video owner
+- Google Workspace is managed through single sign-on (SSO)
+- If you cannot access specific documents, request sharing permissions from video owner
 
 #### Google Forms
 
@@ -367,8 +364,8 @@ TODO: Leaving for David Deal to update
 
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
-  - If you cannot access specific documents, request sharing permissions from form owner
+- Google Workspace is managed through single sign-on (SSO)
+- If you cannot access specific documents, request sharing permissions from form owner
 
 #### Google Drive
 
@@ -377,7 +374,7 @@ TODO: Leaving for David Deal to update
 
 **How to get access:**
 
-  - Google Workspace is managed through single sign-on (SSO)
+- Google Workspace is managed through single sign-on (SSO)
 
 ---
 
@@ -390,10 +387,10 @@ TODO: Leaving for David Deal to update
 
 **What you'll use Individual Dashboard for:**
 
-  - Track your technical contributions across projects and repositories
-  - Monitor your training progress and certifications 
-  - View upcoming meetings and events relevant to your role
-  - Access performance metrics and goal tracking information
+- Track your technical contributions across projects and repositories
+- Monitor your training progress and certifications
+- View upcoming meetings and events relevant to your role
+- Access performance metrics and goal tracking information
 
 **Setup Steps:**
 
@@ -406,11 +403,11 @@ TODO: Leaving for David Deal to update
 
 **What you'll use Calamari for:**
 
-  - Request vacation time, sick leave, and other time off
-  - View your time off balance and accrual rates
-  - Submit time off requests for manager approval
-  - View team calendar to coordinate time off with colleagues
-  - Track public holidays and company-wide time off policies
+- Request vacation time, sick leave, and other time off
+- View your time off balance and accrual rates
+- Submit time off requests for manager approval
+- View team calendar to coordinate time off with colleagues
+- Track public holidays and company-wide time off policies
 
 **How to get access:**
 
