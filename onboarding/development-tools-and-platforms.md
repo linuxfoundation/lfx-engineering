@@ -257,7 +257,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
        repository](https://github.com/linuxfoundation/lfx-snowflake-terraform) and
        the user configuration file. Anyone can create a pull request.
     3. Request an IT/Ops team member review the pull request in the #lfx-devops
-       Slack channel. They will review and merge the pull request changes wich
+       Slack channel. They will review and merge the pull request changes which
        will trigger a deployment to the Snowflake production environment.
 - Step 2: Developer: User Account Setup
     1. Once Step 1 above is complete, users can now log into Snowflake.
@@ -306,7 +306,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 TODO: Leaving for David Deal to update
 
-### LFX-Datalake
+### LFX-Datalake2
 
 - **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
 - **URL**: [https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md](https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md)
@@ -399,7 +399,7 @@ TODO: Leaving for David Deal to update
 ### Calamari
 
 - **Purpose**: Internal Linux Foundation tool for time off tracking
-- **URL**: [http://lfx.calamari.io/](http://lfx.calamari.io/)
+- **URL**: [https://lfx.calamari.io/](http://lfx.calamari.io/)
 
 **What you'll use Calamari for:**
 

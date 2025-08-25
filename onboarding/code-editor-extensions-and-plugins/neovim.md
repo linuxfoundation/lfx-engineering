@@ -162,4 +162,3 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 ---
 
 You can find a list of more plugins at [https://github.com/rockerBOO/awesome-neovim](https://github.com/rockerBOO/awesome-neovim)
----
