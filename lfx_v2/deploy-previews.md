@@ -17,10 +17,12 @@ different versions of the API and it's components.
 ### Repository Configurations
 
 #### lfx-v2-argocd
+
 **Purpose:** Manages ArgoCD configurations and ApplicationSets for
   automated PR deployments
 
 **Key Features:**
+
 - **ExternalSecrets Annotation:** Annotates base UI application external
     secrets with kubernetes-replicator `replicate-to` labels to
     automatically create secrets in `ui-pr-{number}` namespaces
@@ -29,9 +31,11 @@ different versions of the API and it's components.
     namespaces (`ui-pr-{number}`)
 
 #### lfx-v2-ui
+
 **Purpose:** Main UI repository with CI/CD pipeline for deploy previews
 
 **Key Features:**
+
 - **CI/CD Pipeline:** Automated container builds triggered by the
   `deploy-preview` label on pull requests
 - **ArgoCD Webhook Integration:** Sends notifications to ArgoCD
@@ -39,19 +43,23 @@ different versions of the API and it's components.
   30-minute delay from polling interval)
 
 #### lfx-v2-opentofu
+
 **Purpose:** Infrastructure as Code for Kubernetes operators and
 supporting services
 
 **Key Features:**
+
 - **Kubernetes Replicator Deployment:** Helm-based deployment of the
   kubernetes-replicator operator
 - **Secret Replication:** Enables automatic replication of secrets from
   the PCC namespace to dynamically created `ui-pr-*` namespaces
 
 #### auth0_terraform
+
 **Purpose:** Auth0 identity provider configuration for deploy previews
 
 **Key Features:**
+
 - **Dynamic Callback URLs:** PCC application configured with wildcard
   callback and audience URLs supporting
   `ui-pr-*.dev.v2.cluster.linuxfound.info`
