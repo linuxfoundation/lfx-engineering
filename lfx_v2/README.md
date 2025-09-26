@@ -7,6 +7,7 @@ release strategies, and deployment workflows.
 
 - **[Local Development Setup](./local-development.md)** - Guide for setting up a local development
   environment using OrbStack and Helm
+- **[Ko Build](./ko-build.md)** - Using ko build to build container images for Go-based services
 - **[Release Strategy](./release-strategy.md)** - Comprehensive release workflows for development,
   staging, and production environments
 - **[Secrets Management](./secrets-management.md)** - Complete guide for managing secrets using

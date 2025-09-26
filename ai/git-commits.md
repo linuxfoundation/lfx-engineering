@@ -59,6 +59,7 @@ Generated with [Amazon CodeWhisperer](https://aws.amazon.com/codewhisperer/)
 Generated with [Tabnine](https://www.tabnine.com/)
 Generated with [Grok](https://grok.com/)
 Generated with [Kiro](https://kiro.dev/)
+Generated with [Figma](https://figma.com)
 ```
 
 ### Multiple AI Tools
@@ -78,6 +79,7 @@ For commits where AI provides partial assistance, consider using more specific l
 
 ```text
 Assisted by [Claude Code](https://claude.ai/code)
+Assisted by [Cursor](https://cursor.com/)
 Reviewed with [GitHub Copilot](https://github.com/features/copilot)
 ```
 
