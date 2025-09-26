@@ -10,7 +10,7 @@ Kubernetes for hosting the preview environments.
 
 **NOTE:** All deployment previews use the same LFX backend API.
 Additional changes are needed in the future to support deploying
-different versions of the API and it's components.
+different versions of the API and its components.
 
 ## Key Components
 
