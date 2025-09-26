@@ -14,17 +14,44 @@ This guide provides instructions for setting up a Linux Foundation Snowflake acc
    - Your LF staff or contractor email address
    - Whether you need command line access for building Snowflake/DBT models
 
-2. **Account provisioning**: The Datalake or IT/Ops team will create a pull request in the
+2. **Account provisioning**: A Datalake or IT/Ops team member will create a pull request in the
   [LFX Snowflake terraform repository](https://github.com/linuxfoundation/lfx-snowflake-terraform), modifying the
   [users.tf file](https://github.com/linuxfoundation/lfx-snowflake-terraform/blob/main/users.tf).
 
 3. **Account activation**: After the pull request is approved, merged, and deployed, your account will be active for
    console login.
 
-4. **Command line setup** (if requested): The Ops team will generate a KeyPair and add it to your Snowflake account.
-   KeyPair details will be shared via 1Password. Follow the setup instructions in the
-   [lf-dbt repository](https://github.com/LF-Engineering/lf-dbt/?tab=readme-ov-file#important-files) to complete command
-   line configuration.
+4. **Command line setup** (if requested)
+   1. The user needing command line access will need to generate a key pair to
+     securely authenticate. Instructions for creating a key pair are outlined in
+     the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/key-pair-auth).
+   2. Once generated, the user should share the _public_ key with the Ops team.
+   3. The Ops team will add the _public_ key to the user's Snowflake account.
+   4. Once the _public_ key is registered in Snowflake, the user should
+     follow the setup instructions in the
+     [lf-dbt repository](https://github.com/LF-Engineering/lf-dbt/?tab=readme-ov-file#important-files)
+     to complete command line configuration.
+
+Here is a diagram illustrating the process:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant O as Ops Team
+  participant S as Snowflake
+  participant D as lf-dbt Docs
+
+  rect rgba(200,220,255,0.25)
+  note over U: Command-line provisioning (new multi-step)
+  U->>U: Generate key pair (public/private)
+  U->>O: Securely share public key
+  O->>S: Add user's public key to Snowflake account
+  S-->>O: Public key associated with user
+  U->>D: Follow lf-dbt setup instructions
+  end
+
+```
 
 ## Console Login
 
