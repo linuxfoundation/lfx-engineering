@@ -22,7 +22,7 @@ database, ensuring complete isolation of development work.
 
 Local development uses the following configuration:
 
-- **Snowflake Account**: `xmb01974.prod3.us-west-2.aws`
+- **Snowflake Account**: `XPB85243`, `JNMHVWD-XPB85243` or `xmb01974.prod3.us-west-2.aws` (legacy)
 - **Warehouse**: `DBT_DEV`
 - **Role**: `DBT_TRANSFORM_DEV`
 - **Database**: `ANALYTICS_DEV`
@@ -36,7 +36,7 @@ database.
 
 Examples are:
 
-```code
+```text
 ANALYTICS_DEV
  |
  - DEV_DDEAL_BRONZE_FIVETRAN_SALESFORCE
@@ -60,15 +60,18 @@ ANALYTICS_DEV
 The LFX App requires the following environment variables:
 
 ```bash
-SNOWFLAKE_ACCOUNT=xmb01974.prod3.us-west-2.aws
-DBT_ENV_WAREHOUSE=DBT_DEV
-DBT_ENV_ROLE=DBT_TRANSFORM_DEV
-DBT_ENV_DATABASE=ANALYTICS_DEV
-DBT_DEFAULT_SCHEMA=DEV_{{YOUR_DEV_USER}}
-DBT_ENV_SECRET_USER=DEV_{{YOUR_DEV_USER}}
-PRIVATE_KEY_PATH={{path to your private key}}
-PRIVATE_KEY_PASSPHRASE={{OPTIONAL_KEY_PASSPHRASE}}
+SNOWFLAKE_ACCOUNT='JNMHVWD-XPB85243'
+SNOWFLAKE_WAREHOUSE='DBT_DEV'
+SNOWFLAKE_DATABASE='ANALYTICS_DEV'
+SNOWFLAKE_ROLE='DBT_TRANSFORM_DEV'
+SNOWFLAKE_USER='DEV_{{YOUR_DEV_USER}}'
+SNOWFLAKE_PRIVATE_KEY_PATH='{{path to your private key}}' # example: ${HOME}/.ssh/rsa_key_snowflake.p8
+SNOWFLAKE_PASSWORD='{{private key password}}' # when using a private key, this will be the key password
 ```
+
+For more information, see [the complete list of Snowflake environment variables](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-environment-variables-for-snowflake-credentials).
+
+Additional LFX One developer documentation is also available [in the LFX One UX repository](https://github.com/linuxfoundation/lfx-v2-ui/blob/main/docs/architecture/backend/snowflake-integration.md#environment-variables).
 
 Users may choose to leverage other developer models instead of building their
 own. In this case, developers should have access to read any models within the
@@ -84,7 +87,7 @@ the dedicated `LFX_ONE` service account for authentication and access control.
 
 These environments use the following configuration:
 
-- **Snowflake Account**: `xmb01974.prod3.us-west-2.aws`
+- **Snowflake Account**: `XPB85243`, `JNMHVWD-XPB85243` or `xmb01974.prod3.us-west-2.aws` (legacy)
 - **Service Account**: `LFX_ONE`
 - **Warehouse**: `LFX_ONE`
 - **Role**: `LFX_ONE`
@@ -126,19 +129,20 @@ graph TB
         WH_LFX[LFX_ONE Warehouse<br/>With Usage Quotas]
     end
 
-    DEV1 -->|DBT_TRANSFORM_DEV role<br/>Developer credentials| SCHEMA1
-    DEV2 -->|DBT_TRANSFORM_DEV role<br/>Developer credentials| SCHEMA2
-    DEV3 -->|DBT_TRANSFORM_DEV role<br/>Developer credentials| SCHEMA3
+    DEV1 -->|DBT_TRANSFORM_DEV role<br/>User 1 developer credentials| SCHEMA1
+    DEV2 -->|DBT_TRANSFORM_DEV role<br/>User 2 developer credentials| SCHEMA2
+    DEV3 -->|DBT_TRANSFORM_DEV role<br/>User N developer credentials| SCHEMA3
+    DEV1 -.->|DBT_TRANSFORM_DEV role<br/>User 1 developer credentials<br/>Use Other Dev Schema| SCHEMA2
 
-    SCHEMA1 -.-> WH_DEV
-    SCHEMA2 -.-> WH_DEV
-    SCHEMA3 -.-> WH_DEV
+    SCHEMA1 --> WH_DEV
+    SCHEMA2 --> WH_DEV
+    SCHEMA3 --> WH_DEV
 
     K8S_DEV -->|LFX_ONE role<br/>Service account<br/>IP Restricted| LFX_SCHEMA
     K8S_STAGE -->|LFX_ONE role<br/>Service account<br/>IP Restricted| LFX_SCHEMA
     K8S_PROD -->|LFX_ONE role<br/>Service account<br/>IP Restricted| LFX_SCHEMA
 
-    LFX_SCHEMA -.-> WH_LFX
+    LFX_SCHEMA --> WH_LFX
 
     classDef localStyle fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
     classDef k8sStyle fill:#fff4e6,stroke:#ff9900,stroke-width:2px
