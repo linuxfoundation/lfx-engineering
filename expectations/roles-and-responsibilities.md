@@ -77,6 +77,7 @@
 CI/CD pipelines, production environment changes, deployment configurations, scaling policies, security group rules, and access management changes require Platform Engineering review and approval before production implementation.
 
 ### Architectural Team Review Required
-Significant architecture changes, new technology additions, API design patterns, cross-service integrations, and security architecture decisions must be presented at the weekly architectural review call for team alignment and approval.
-
+Significant architecture changes, new technology additions, API design patterns,
+cross-service integrations, and security architecture decisions must be presented at the
+weekly architectural review call for team alignment and approval.
 See the Operations Handbook for detailed approval workflows and procedures.
