@@ -87,6 +87,7 @@ For commits where AI provides partial assistance, consider using more specific l
 Assisted by [Claude Code](https://claude.ai/code)
 Assisted by [Cursor](https://cursor.com)
 Reviewed with [GitHub Copilot](https://github.com/features/copilot)
+Reviewed with [CodeRabbit AI](https://www.coderabbit.ai)
 ```
 
 ## Example Commit Messages
@@ -281,6 +282,15 @@ echo "AI attribution will now be validated in commits"
 - Ensure AI-generated code follows team coding standards
 - Verify that tests are included for AI-generated functionality
 - Check that AI-generated documentation is accurate and complete
+
+> **Note:**  
+> Developers are strongly encouraged to install and use available AI-powered
+> review tools, such as [GitHub Copilot
+> Review](https://docs.github.com/en/copilot/copilot-review/about-github-copilot-review)
+> and [CodeRabbit AI Review](https://coderabbit.ai/), before submitting pull
+> requests. Running these tools locally provides early automated feedback on code
+> quality, security, and style—enabling you to address issues proactively prior to
+> sharing your changes with the team for review.
 
 ### Repository Management
 
