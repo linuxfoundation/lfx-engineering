@@ -1,6 +1,8 @@
 # Roles and Responsibilities Framework
 
-## Responsibility Matrix
+## Hand Off Matrix
+
+Internal point of contact for application issues
 
 | Application | Product Owner | Application Engineer | Platform Engineer | Jira Project |
 | ----------- | ------------- | -------------------- | ----------------- | ------------ |
