@@ -1,22 +1,24 @@
 # Roles and Responsibilities Framework
 
-## Hand Off Matrix
+## Responsibility Matrix
 
-Internal point of contact for application issues
+The following table shows the assigned roles for each application. Each role serves as a key point of contact for their respective domain - Product Owners for business requirements and stakeholder needs, Application Engineers for technical development, and Platform Engineers for infrastructure and deployment concerns.
 
-| Application | Product Owner | Application Engineer | Platform Engineer | Jira Project |
-| ----------- | ------------- | -------------------- | ----------------- | ------------ |
-| LFX One | | Jordan Evans | Alan Sherman | [LFXV2](https://linuxfoundation.atlassian.net/jira/software/c/projects/LFXV2/boards/479) |
-| Insights | | Joana | Antonia | [IN](https://linuxfoundation.atlassian.net/jira/software/c/projects/IN/boards/546) |
-| CDP | | Joana | Alan Sherman | [CDP](https://linuxfoundation.atlassian.net/jira/software/c/projects/CM/boards/545) |
-| EasyCLA | | ? | Robert Detjens | |
-| Individual Dashboard | | Luis | Robert Detjens | |
-| Auth0 | | Andres | Robert | |
-| Mentorship | | Michal | Robert | [MENV2](https://linuxfoundation.atlassian.net/jira/software/c/projects/MENV2/boards/4) |
-| Crowdfunding | | ? | Antonia | |
-| LFX Security | | ? | Antonia | |
-| ITX | | Trevor Bramwell | Alan Sherman | |
-| Project Control Center | | Jordan Evans | Alan Sherman | [PCC](https://linuxfoundation.atlassian.net/jira/software/c/projects/PCC/boards/50) |
+The individuals listed in this matrix serve as the **initial point of contact** for their respective applications and domains. This means they are the go-to person for questions, coordination, and initial triage - but not necessarily the person who will resolve every issue or implement every feature.
+
+| Application              | Product Owner    | Application Engineer | Platform Engineer | Jira Project                                                                                                           |
+|--------------------------|------------------|----------------------|-------------------|------------------------------------------------------------------------------------------------------------------------|
+| LFX One                  |                  | Jordan Evans         | Antonia           | [LFXV2](https://linuxfoundation.atlassian.net/jira/software/c/projects/LFXV2/boards/479)                             |
+| Insights                 |                  | Joana                | Antonia           | [IN](https://linuxfoundation.atlassian.net/jira/software/c/projects/IN/boards/546)                                    |
+| CDP                      |                  | Joana                | Robert Detjens    | [CDP](https://linuxfoundation.atlassian.net/jira/software/c/projects/CM/boards/545)                                   |
+| EasyCLA                  |                  | ?                    | Alan Sherman      |                                                                                                                        |
+| Individual Dashboard     |                  | Luis                 | Alan Sherman      |                                                                                                                        |
+| Auth0                    |                  | Andres               | Robert Detjens    |                                                                                                                        |
+| Mentorship               |                  | Michal               | Alan Sherman      | [MENV2](https://linuxfoundation.atlassian.net/jira/software/c/projects/MENV2/boards/4)                                |
+| Crowdfunding             |                  | ?                    | Alan Sherman      |                                                                                                                        |
+| LFX Security             |                  | ?                    | Alan Sherman      |                                                                                                                        |
+| ITX                      |                  | Trevor Bramwell      | Alan Sherman      |                                                                                                                        |
+| Project Control Center   |                  | Jordan Evans         | Alan Sherman      | [PCC](https://linuxfoundation.atlassian.net/jira/software/c/projects/PCC/boards/50)                                   |
 
 ## Product Owners
 
