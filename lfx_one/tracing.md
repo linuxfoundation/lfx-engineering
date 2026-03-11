@@ -77,15 +77,15 @@ env:
 
 ### Variable Reference
 
-| Variable | Description | Example |
-|---|---|---|
-| `OTEL_SERVICE_NAME` | Identifies the service in Datadog | `query-service` |
-| `OTEL_SERVICE_VERSION` | Service version shown in traces | `1.2.0` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Datadog Agent OTLP endpoint | `http://$(HOST_IP):4317` |
-| `OTEL_EXPORTER_OTLP_PROTOCOL` | Transport protocol | `grpc` |
-| `OTEL_PROPAGATORS` | Context propagation formats | `tracecontext,baggage,jaeger` |
-| `OTEL_TRACES_SAMPLER` | Sampling strategy | `parentbased_traceidratio` |
-| `OTEL_TRACES_SAMPLER_ARG` | Sampling ratio (0.0 - 1.0) | `0.5` |
+| Variable                      | Description                        | Example                       |
+| ----------------------------- | ---------------------------------- | ----------------------------- |
+| `OTEL_SERVICE_NAME`           | Identifies the service in Datadog  | `query-service`               |
+| `OTEL_SERVICE_VERSION`        | Service version shown in traces    | `1.2.0`                       |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Datadog Agent OTLP endpoint        | `http://$(HOST_IP):4317`      |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | Transport protocol                 | `grpc`                        |
+| `OTEL_PROPAGATORS`            | Context propagation formats        | `tracecontext,baggage,jaeger` |
+| `OTEL_TRACES_SAMPLER`         | Sampling strategy                  | `parentbased_traceidratio`    |
+| `OTEL_TRACES_SAMPLER_ARG`     | Sampling ratio (0.0 - 1.0)         | `0.5`                         |
 
 ### Context Propagation
 
@@ -120,11 +120,11 @@ graph LR
     style prod fill:#a94,stroke:#333,color:#fff
 ```
 
-| Environment | `OTEL_TRACES_SAMPLER_ARG` | Rationale |
-|---|---|---|
-| Development | `0.5` | High visibility for debugging |
-| Staging | `0.5` | Match dev for pre-release validation |
-| Production | `0.2` | Balance observability with cost and overhead |
+| Environment | `OTEL_TRACES_SAMPLER_ARG` | Rationale                                    |
+| ----------- | ------------------------- | -------------------------------------------- |
+| Development | `0.5`                     | High visibility for debugging                |
+| Staging     | `0.5`                     | Match dev for pre-release validation         |
+| Production  | `0.2`                     | Balance observability with cost and overhead |
 
 Set the `OTEL_TRACES_SAMPLER_ARG` value per environment in your Helm values
 or Kustomize overlays.
@@ -155,6 +155,8 @@ func initTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
         return nil, err
     }
 
+    // Service name, version, and environment are read from OTEL_SERVICE_NAME,
+    // OTEL_SERVICE_VERSION, and OTEL_RESOURCE_ATTRIBUTES env vars automatically.
     res, err := resource.New(ctx,
         resource.WithFromEnv(),
         resource.WithTelemetrySDK(),
@@ -390,12 +392,12 @@ Consistent naming makes traces easy to find and understand across services.
 Span names should describe the operation, not the implementation. Use the
 format `{verb}.{noun}` in lower snake_case:
 
-| Context | Good | Avoid |
-|---|---|---|
-| HTTP handler | `http.get_user` | `GET /users/{id}` |
-| Database query | `db.query_users` | `SELECT * FROM users` |
-| Outbound HTTP | `http.post_notification` | `http.post` |
-| Business logic | `membership.calculate_fee` | `calculateFee` |
+| Context        | Good                        | Avoid                 |
+| -------------- | --------------------------- | --------------------- |
+| HTTP handler   | `http.get_user`             | `GET /users/{id}`     |
+| Database query | `db.query_users`            | `SELECT * FROM users` |
+| Outbound HTTP  | `http.post_notification`    | `http.post`           |
+| Business logic | `membership.calculate_fee`  | `calculateFee`        |
 
 For HTTP servers, `otelhttp` sets the span name to the route pattern
 automatically (e.g. `GET /api/users/{id}`). Override with
@@ -403,30 +405,63 @@ automatically (e.g. `GET /api/users/{id}`). Override with
 
 ### Span Attributes
 
-Add attributes to spans to make them queryable. Use
+Add attributes to spans to make them queryable. Always prefer
 [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/)
-where they apply, and `lfx.` prefix for LFX-specific attributes:
+over raw string keys when a matching convention exists. Use the `lfx.` prefix
+only for LFX-specific attributes that have no semconv equivalent.
+
+The `semconv` package provides typed constructors and key constants for all
+standard attributes. Using them ensures correct attribute names and avoids
+typos:
 
 ```go
-span.SetAttributes(
-    // Standard semantic convention attributes
-    semconv.HTTPRequestMethodKey.String("GET"),
-    semconv.UserAgentOriginal(r.Header.Get("User-Agent")),
+import (
+    "go.opentelemetry.io/otel/attribute"
+    semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
+)
 
-    // LFX-specific attributes
+span.SetAttributes(
+    // Use semconv constructors where available
+    semconv.HTTPRequestMethodKey.String(r.Method),
+    semconv.URLFull(r.URL.String()),
+    semconv.UserAgentOriginal(r.Header.Get("User-Agent")),
+    semconv.ServerAddress(host),
+    semconv.ServerPort(port),
+
+    // Use semconv key constants when a typed constructor is not available
+    attribute.String(string(semconv.PeerServiceKey), "downstream-service"),
+
+    // Use lfx. prefix only when no semconv equivalent exists
     attribute.String("lfx.project_id", projectID),
     attribute.String("lfx.org_id", orgID),
     attribute.String("lfx.user_id", userID),
 )
 ```
 
+Common semconv attributes by domain:
+
+| Domain      | Semconv Key / Constructor               | Example value              |
+| ----------- | --------------------------------------- | -------------------------- |
+| HTTP        | `semconv.HTTPRequestMethodKey`          | `GET`                      |
+| HTTP        | `semconv.URLFull()`                     | `https://api.lfx.dev/v1/`  |
+| HTTP        | `semconv.HTTPResponseStatusCodeKey`     | `200`                      |
+| RPC         | `semconv.RPCSystemKey`                  | `grpc`                     |
+| RPC         | `semconv.RPCServiceKey`                 | `ProjectService`           |
+| RPC         | `semconv.RPCMethodKey`                  | `GetProject`               |
+| Database    | `semconv.DBSystemKey`                   | `postgresql`               |
+| Database    | `semconv.DBNameKey`                     | `lfx`                      |
+| Database    | `semconv.DBOperationNameKey`            | `SELECT`                   |
+| Messaging   | `semconv.MessagingSystemKey`            | `aws_sqs`                  |
+| Peer        | `semconv.PeerServiceKey`                | `downstream-service`       |
+| Network     | `semconv.ServerAddress()`               | `db.internal`              |
+
 Required attributes for all root spans:
 
-| Attribute | Source | Example |
-|---|---|---|
-| `service.name` | `OTEL_SERVICE_NAME` env var | `query-service` |
-| `service.version` | `OTEL_SERVICE_VERSION` env var | `1.2.0` |
-| `deployment.environment` | Set via `OTEL_RESOURCE_ATTRIBUTES` | `production` |
+| Attribute                 | Source                      | Example         |
+| ------------------------- | --------------------------- | --------------- |
+| `service.name`            | `OTEL_SERVICE_NAME`         | `query-service` |
+| `service.version`         | `OTEL_SERVICE_VERSION`      | `1.2.0`         |
+| `deployment.environment`  | `OTEL_RESOURCE_ATTRIBUTES`  | `production`    |
 
 ### Tracer Names
 
@@ -485,23 +520,23 @@ To jump from a log entry to its trace:
 
 ### Jaeger
 
-| Goal | Query |
-|---|---|
-| All traces for a service | Service: `query-service`, Operation: `all` |
-| Slow requests | Service: `query-service`, Min Duration: `500ms` |
-| Failed traces | Tags: `error=true` |
-| Traces for a user | Tags: `lfx.user_id=<id>` |
-| Traces for a project | Tags: `lfx.project_id=<id>` |
+| Goal                     | Query                                           |
+| ------------------------ | ----------------------------------------------- |
+| All traces for a service | Service: `query-service`, Operation: `all`      |
+| Slow requests            | Service: `query-service`, Min Duration: `500ms` |
+| Failed traces            | Tags: `error=true`                              |
+| Traces for a user        | Tags: `lfx.user_id=<id>`                        |
+| Traces for a project     | Tags: `lfx.project_id=<id>`                     |
 
 ### Datadog APM
 
-| Goal | Query |
-|---|---|
-| All errors for a service | `service:query-service status:error` |
-| Slow database spans | `service:query-service span.type:sql @duration:>1s` |
-| Traces by user | `service:query-service @lfx.user_id:<id>` |
-| Traces by project | `service:query-service @lfx.project_id:<id>` |
-| High latency endpoints | `service:query-service @http.method:GET @duration:>2s` |
+| Goal                     | Query                                                  |
+| ------------------------ | ------------------------------------------------------ |
+| All errors for a service | `service:query-service status:error`                   |
+| Slow database spans      | `service:query-service span.type:sql @duration:>1s`    |
+| Traces by user           | `service:query-service @lfx.user_id:<id>`              |
+| Traces by project        | `service:query-service @lfx.project_id:<id>`           |
+| High latency endpoints   | `service:query-service @http.method:GET @duration:>2s` |
 
 Datadog query syntax uses `@` to prefix span attributes. Saved queries can
 be stored as **Monitors** or **Dashboards** for ongoing visibility.
@@ -583,15 +618,15 @@ Replace `<container-name>` with the name of the container in the pod spec,
 and `my-service` with the value of `OTEL_SERVICE_NAME`. Without this
 annotation, Datadog may not match log entries to the correct service in APM.
 
-## Trace Flow Summary
+## References
 
 - [OpenTelemetry Go SDK](https://opentelemetry.io/docs/languages/go/)
 - [OTEL Environment Variable Spec](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/)
+- [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/) - standard span attribute names
 - [Datadog OTLP Ingestion](https://docs.datadoghq.com/opentelemetry/interoperability/otlp_ingest_in_the_agent/)
+- [Datadog Cluster Agent](https://docs.datadoghq.com/containers/cluster_agent/) - cluster-level Datadog component
+- [Datadog APM](https://app.datadoghq.com/apm/traces) - cloud trace explorer
 - [W3C Trace Context](https://www.w3.org/TR/trace-context/)
 - [slog-otel](https://github.com/remychantenay/slog-otel) - slog handler for OTEL trace/log correlation
 - [otelhttp](https://pkg.go.dev/go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp) - HTTP client/server instrumentation
 - [otelsql](https://pkg.go.dev/github.com/XSAM/otelsql) - database/sql instrumentation
-- [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/) - standard span attribute names
-- [Datadog APM](https://app.datadoghq.com/apm/traces) - cloud trace explorer
-- [Datadog Cluster Agent](https://docs.datadoghq.com/containers/cluster_agent/) - cluster-level Datadog component
