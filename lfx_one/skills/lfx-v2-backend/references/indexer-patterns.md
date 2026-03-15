@@ -8,7 +8,7 @@ needs via the message payload.
 
 Publish to `lfx.index.{resource_type}`:
 
-```
+```text
 lfx.index.committee
 lfx.index.committee_member
 lfx.index.vote
@@ -29,11 +29,13 @@ type IndexerMessageEnvelope struct {
 }
 ```
 
-- `Headers` carries `Authorization` and `X-On-Behalf-Of` extracted from the request context — these become the audit principal in the OpenSearch document
+- `Headers` carries `Authorization` and `X-On-Behalf-Of` from the request context —
+  these become the audit principal in the OpenSearch document
 - `Data` is stored as-is in the `data` field of the OpenSearch document (schema-free `flat_object`)
 - For deletes: set `action = "deleted"` and `data` = the plain UID string
 
 Always use action constants — never hardcode strings:
+
 ```go
 constants.ActionCreated  // "created"
 constants.ActionUpdated  // "updated"

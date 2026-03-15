@@ -6,7 +6,7 @@ authentication, authorization, and storage.
 
 ## Chart Structure
 
-```
+```text
 charts/{service-name}/
 ├── Chart.yaml
 ├── values.yaml
@@ -42,6 +42,7 @@ Runs the container and injects runtime config as environment variables.
 | `LOG_LEVEL` | `app.logLevel` |
 
 **Adding a new env var** — for a plain value, add directly in `deployment.yaml`:
+
 ```yaml
 - name: MY_SETTING
   value: {{ .Values.app.mySetting | quote }}
@@ -49,6 +50,7 @@ Runs the container and injects runtime config as environment variables.
 
 Or use `app.extraEnv` in `values.yaml` for ad-hoc injection without touching the
 template:
+
 ```yaml
 app:
   extraEnv:
@@ -58,6 +60,7 @@ app:
 
 For secrets sourced from AWS, reference the Kubernetes Secret created by
 ExternalSecret (see below):
+
 ```yaml
 - name: ITX_CLIENT_SECRET
   valueFrom:
@@ -106,6 +109,7 @@ spec:
 new `path` entry under `matches`.
 
 **Two middleware variants:**
+
 - `heimdall-forward-body` — forwards the request body to Heimdall. Use this when
   any ruleset rule reads from the request body (e.g. `project_uid` on a POST).
 - `heimdall` — no body forwarding. Use for routes where body inspection is not
@@ -168,11 +172,13 @@ spec:
 ### Sourcing the FGA object
 
 **From a URL path param** (most common):
+
 ```yaml
 object: "committee:{{ "{{- .Request.URL.Captures.uid -}}" }}"
 ```
 
 **From the request body** (e.g. POST where the parent UID is in the payload):
+
 ```yaml
 - authorizer: json_content_type   # must come before openfga_check when reading body
 - authorizer: openfga_check
@@ -188,6 +194,7 @@ the object from the body.
 ### Public / anonymous endpoints
 
 For endpoints that require no FGA check (e.g. OpenAPI spec endpoints):
+
 ```yaml
 execute:
   - authenticator: oidc
@@ -243,6 +250,7 @@ templates work together to pull them from AWS Secrets Manager:
 
 **`serviceaccount.yaml`** — ServiceAccount with an IRSA annotation granting AWS
 access:
+
 ```yaml
 annotations:
   eks.amazonaws.com/role-arn: arn:aws:iam::...
@@ -252,6 +260,7 @@ annotations:
 Manager with IRSA auth.
 
 **`externalsecret.yaml`** — maps remote secret keys to a Kubernetes Secret:
+
 ```yaml
 data:
   - secretKey: ITX_CLIENT_SECRET        # key in the Kubernetes Secret

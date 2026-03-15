@@ -8,10 +8,11 @@ There are two categories of repos to know about:
 
 | Repo | Purpose |
 | --- | --- |
-| `lfx-v2-helm` | Umbrella Helm chart for the entire platform — infrastructure (NATS, OpenSearch, OpenFGA, Traefik, Heimdall) + all service subcharts |
-| `lfx-v2-argocd` | GitOps deployment — ArgoCD ApplicationSet that pulls charts from each service repo and applies environment-specific values |
+| `lfx-v2-helm` | Umbrella Helm chart — platform infra (NATS, OpenSearch, OpenFGA, Traefik, Heimdall) + subcharts |
+| `lfx-v2-argocd` | GitOps deployment — ArgoCD ApplicationSet with per-environment values for each service |
 
 These two repos control **what runs and where**. You touch them when:
+
 - Adding a new service to the platform (both repos)
 - Updating the OpenFGA authorization model (`lfx-v2-helm`)
 - Changing environment config (NATS URLs, secrets, replicas) (`lfx-v2-argocd`)
@@ -45,7 +46,7 @@ Own a specific resource type and expose a REST API:
 
 ## How Deployment Works
 
-```
+```text
 Service repo (e.g. lfx-v2-committee-service)
     contains: Helm chart at charts/
     CI builds image → pushes to GHCR
@@ -67,6 +68,7 @@ edit `charts/lfx-platform/templates/openfga/model.yaml` in `lfx-v2-helm`
 and bump the version in the model spec.
 
 **To add a new service to the platform**:
+
 1. Add it to the ApplicationSet list in `lfx-v2-argocd/apps/dev/lfx-v2-applications.yaml`
 2. Create `values/global/{service}.yaml` in `lfx-v2-argocd`
 
@@ -116,5 +118,5 @@ pre-created secrets.
 | Build a new resource service | Clone `lfx-v2-committee-service` (native) or `lfx-v2-voting-service` (wrapper) |
 | Change who can access a resource type | `lfx-v2-helm` — update OpenFGA model |
 | Make a resource searchable by a new field | Resource service repo — update `IndexingConfig` in the NATS publisher |
-| Debug why a user can't see a resource | See debugging sections in [fga-patterns.md](fga-patterns.md) and [query-service.md](query-service.md) |
+| Debug why a user can't see a resource | See debugging sections in `fga-patterns.md` and `query-service.md` |
 | Change a deployed environment config | `lfx-v2-argocd` — edit `values/{env}/{service}.yaml` |

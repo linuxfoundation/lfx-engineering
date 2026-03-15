@@ -7,7 +7,7 @@ published by resource services.
 
 ## How the Three Services Connect
 
-```
+```text
 Resource Service
     → publishes lfx.index.{type}       → indexer-service → OpenSearch (resources index)
     → publishes lfx.fga-sync.*         → fga-sync → OpenFGA
@@ -46,6 +46,7 @@ document is silently dropped from results.
 | `page_token` | string | Opaque pagination token (keyset-based) |
 
 **Response**:
+
 ```json
 {
   "resources": [
@@ -62,6 +63,7 @@ migration needed for new fields.
 ### GET /query/resources/count
 
 Same parameters as above (minus `cel_filter`, `sort`, pagination). Returns:
+
 ```json
 { "count": 42, "has_more": false }
 ```
@@ -83,19 +85,23 @@ For authenticated requests, the query-service:
 
 1. Runs the OpenSearch query — gets back all matching documents regardless of permissions
 2. Builds a batch access check message — one line per non-public resource:
-   ```
+
+   ```text
    committee:abc-123#viewer@user:alice
    project:xyz-789#viewer@user:alice
    ```
+
    (format: `{access_check_object}#{access_check_relation}@user:{principal}`)
 3. Sends to fga-sync via NATS request/reply:
    - Subject: `lfx.access_check.request`
    - Timeout: 15 seconds
 4. Parses the tab-separated response:
-   ```
+
+   ```text
    committee:abc-123#viewer@user:alice\ttrue
    project:xyz-789#viewer@user:alice\tfalse
    ```
+
 5. Drops any resource where the response is `false` or missing
 
 The query-service deduplicates by `object_ref` so each FGA object is checked at most once
@@ -122,6 +128,7 @@ resource to be discoverable and accessible:
 **The most common debugging gotcha**: if a user can't see a resource they should have
 access to, check that `access_check_object` and `access_check_relation` are populated
 in the OpenSearch document. Query OpenSearch directly:
+
 ```bash
 curl "$OPENSEARCH_URL/lfx-resources/_search" -H 'Content-Type: application/json' -d '{
   "query": {"bool": {"must": [
@@ -138,7 +145,7 @@ curl "$OPENSEARCH_URL/lfx-resources/_search" -H 'Content-Type: application/json'
 | --- | --- | --- |
 | `tags` / `tags_all` | Values in the `tags` field (exact match) | OpenSearch `term` query |
 | `filters` | Values inside the `data` object (format: `field:value`) | OpenSearch `term` on `data.{field}` |
-| `cel_filter` | Complex expressions not expressible via tags/filters | Applied in-process after OpenSearch, before FGA check |
+| `cel_filter` | Complex expressions not expressible via tags/filters | Applied in-process after OpenSearch |
 
 Resource services control what appears in `tags` via the `Tags()` method on their
 domain model — see [indexer-patterns.md](indexer-patterns.md).

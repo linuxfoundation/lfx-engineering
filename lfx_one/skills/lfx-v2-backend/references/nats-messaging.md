@@ -36,7 +36,7 @@ Not every write requires both an index message and an access message:
 | Message | When to send |
 |---|---|
 | **Index message** (`lfx.index.*`) | Always — on every create, update, delete |
-| **Access message** (`lfx.update_access.*` / `lfx.delete_all_access.*`) | Only when the resource type has its own type in the OpenFGA authorization model |
+| **Access message** (`lfx.update_access.*` / `lfx.delete_all_access.*`) | Only when the resource has its own FGA type |
 
 For example, `committee` has its own FGA type so it needs both messages. But
 `meeting_rsvp` has no FGA type — it only gets an index message, and access is

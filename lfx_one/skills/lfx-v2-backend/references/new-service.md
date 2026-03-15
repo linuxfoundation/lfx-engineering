@@ -50,7 +50,7 @@ Never edit files in `gen/` — they are overwritten on every `make apigen` run.
 
 Connect the Goa-generated API handler to your domain service layer:
 
-```
+```text
 Handler (gen/) → converts payload → Service (internal/service/) → Storage / Proxy client
 ```
 
@@ -97,7 +97,7 @@ Both messages are published concurrently — see `committee_writer.go` in
 If the resource needs its own FGA type, update the authorization model in
 `lfx-v2-helm/charts/lfx-platform/templates/openfga/model.yaml`:
 
-```
+```text
 type sponsorship
   relations
     define project: [project]

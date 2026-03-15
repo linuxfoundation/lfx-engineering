@@ -16,6 +16,7 @@ make apigen   # re-generates gen/ from design/
 
 Goa version is pinned in the Makefile (`GOA_VERSION := v3.22.6`). The command it
 runs:
+
 ```bash
 goa gen github.com/linuxfoundation/lfx-v2-{service}/cmd/{service}-api/design
 ```
@@ -24,7 +25,7 @@ goa gen github.com/linuxfoundation/lfx-v2-{service}/cmd/{service}-api/design
 
 ## Design File Structure
 
-```
+```text
 cmd/{service}-api/design/
 ├── {service}.go    ← API, Service, and all Method definitions
 └── type.go         ← Type definitions and reusable attribute functions
@@ -264,7 +265,7 @@ the storage layer as the expected revision. If the revision doesn't match, retur
 
 After `make apigen`, `gen/` contains:
 
-```
+```text
 gen/
 ├── {service}/
 │   ├── service.go         ← Service interface + all payload/result types

@@ -70,7 +70,8 @@ Every write operation (create, update, delete) **must** publish an index message
 If the resource type has its own OpenFGA type, it must also publish an access message:
 
 1. **Index message** (`lfx.index.{type}`) → indexer-service → updates OpenSearch
-2. **Access message** (`lfx.fga-sync.update_access`) → fga-sync → updates OpenFGA permissions (only if the resource has an FGA type)
+2. **Access message** (`lfx.fga-sync.update_access`) → fga-sync → updates OpenFGA permissions
+   (only if the resource has an FGA type)
 
 See [references/nats-messaging.md](references/nats-messaging.md) for subject naming and
 [references/fga-patterns.md](references/fga-patterns.md) for the access message format.

@@ -5,11 +5,12 @@ stored as tuples and checked at query time by the query-service via fga-sync.
 
 ## Tuple Format
 
-```
+```text
 {user_type}:{user_id}#{relation}@{object_type}:{object_id}
 ```
 
 Examples:
+
 - `user:alice#writer@project:proj-123` — alice is a writer on this project
 - `user:*#viewer@project:proj-123` — anyone (public) can view this project
 - `project:parent-123#parent@project:child-456` — parent–child hierarchy link
@@ -43,7 +44,7 @@ inheritance from the parent project.
 Publish to `lfx.delete_all_access.{resource_type}` with the plain UID as the message body
 (not JSON — just the string):
 
-```
+```text
 "abc-123-uuid"
 ```
 
@@ -53,7 +54,7 @@ fga-sync will purge all OpenFGA tuples for that object.
 
 The OpenFGA model defines cascading relations. Permissions flow down the hierarchy:
 
-```
+```text
 type project
   relations
     define parent: [project]
@@ -70,6 +71,7 @@ type committee
 ```
 
 This means:
+
 - A `writer` on a parent project is automatically a `writer` on all child projects
 - A `writer` on a project is automatically a `writer` on all its committees
 - Public resources use `user:*` (wildcard) — the query-service bypasses the FGA check entirely
@@ -77,6 +79,7 @@ This means:
 ## How the Query Service Uses FGA
 
 For authenticated users, query-service:
+
 1. Queries OpenSearch for matching resources
 2. Reads `access_check_object` and `access_check_relation` from each document
 3. Sends a batch check request to fga-sync: `{object}#{relation}@user:{principal}`
@@ -183,7 +186,7 @@ generic message format cannot express the required logic. Prefer the generic sub
 When adding a new FGA type, update the authorization model in
 `lfx-v2-helm/charts/lfx-platform/templates/openfga/model.yaml`:
 
-```
+```text
 type sponsorship
   relations
     define project: [project]
@@ -202,6 +205,7 @@ When a user can't see a resource they should have access to, there are two root 
 ### 1. Indexing problem — document missing or stale in OpenSearch
 
 Query OpenSearch directly:
+
 ```bash
 curl "$OPENSEARCH_URL/lfx-resources/_search" -H 'Content-Type: application/json' -d '{
   "query": {"bool": {"must": [
@@ -220,11 +224,13 @@ curl "$OPENSEARCH_URL/lfx-resources/_search" -H 'Content-Type: application/json'
 ### 2. Permissions problem — FGA tuple missing or wrong
 
 Check existing tuples:
+
 ```bash
 fga tuple read --object committee:<uid>
 ```
 
 Common causes:
+
 - `update_access` NATS message never published (check resource service logs for publish errors)
 - Wrong `references` in the access message (wrong parent project UID)
 - User's LFID in the JWT doesn't match the username stored in the tuple

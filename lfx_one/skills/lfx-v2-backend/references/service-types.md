@@ -22,7 +22,7 @@ Examples: `lfx-v2-project-service`, `lfx-v2-committee-service`
 
 ### Key structures
 
-```
+```text
 internal/
 ├── domain/model/         ← domain structs with Tags() method
 ├── domain/port/          ← reader/writer/publisher interfaces
@@ -69,7 +69,7 @@ Examples: `lfx-v2-meeting-service`, `lfx-v2-voting-service`, `lfx-v2-survey-serv
 Translates between the LFX Self-Service API and an external HTTP API, then publishes
 NATS messages on writes:
 
-```
+```text
 HTTP Write Request
     → VotingAPI handler
         → VoteService.Create(ctx, vote)
