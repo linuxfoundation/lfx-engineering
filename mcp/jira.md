@@ -3,6 +3,10 @@
 The following guide illustrates how to set up and configure the Jira Model
 Context Protocol (MCP) for various AI tools.
 
+> **Important:** The legacy SSE endpoint (`https://mcp.atlassian.com/v1/sse`)
+> is deprecated and will be discontinued after **June 30, 2026**. All
+> configurations below use the new endpoint: `https://mcp.atlassian.com/v1/mcp`.
+
 ## Claude Code Jira MCP Setup
 
 To setup a Jira MCP for Claude Code (or commonly called Claude CLI), a MCP
@@ -18,9 +22,9 @@ would look like:
 {
   // ...
   "mcpServers": {
-    "mcp-atlassian": {
-      "type": "sse",
-      "url": "https://mcp.atlassian.com/v1/sse"
+    "atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp"
     }
   }
 }
@@ -31,9 +35,43 @@ would look like:
 Once the configuration is complete, relaunch Claude Code by running `claude` in
 a terminal window. When the MCP initializes for the first time, it will prompt
 you to click on a link to authorize the configuration. This will take you to an
-Atlassian configuration page. Ensure the ‘linuxfoundation’ instance is selected,
+Atlassian configuration page. Ensure the 'linuxfoundation' instance is selected,
 review the permissions, and approve it. Once approved, the MCP should be
 accessible.
+
+#### API Token Authentication (Alternative)
+
+As an alternative to the OAuth browser flow, you can authenticate using a
+personal Atlassian API token with HTTP Basic auth. This is useful for headless
+or automated environments.
+
+1. Create a personal API token at
+   [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Base64-encode your credentials:
+
+   ```bash
+   echo -n "your.email@linuxfoundation.org:YOUR_API_TOKEN" | base64
+   ```
+
+3. Add the encoded value to your `~/.claude.json`:
+
+   ```jsonc
+   {
+     // ...
+     "mcpServers": {
+       "atlassian": {
+         "type": "http",
+         "url": "https://mcp.atlassian.com/v1/mcp",
+         "headers": {
+           "Authorization": "Basic BASE64_ENCODED_EMAIL_AND_TOKEN"
+         }
+       }
+     }
+   }
+   ```
+
+> **Note:** With API token auth, tools must explicitly pass a `cloudId`. Use
+> `linuxfoundation` as the cloud identifier when prompted.
 
 ### Claude Code Validation
 
@@ -60,9 +98,9 @@ Edit the `~/.cursor/mcp.json` file to add the Jira MCP server.
 {
   //...
   "mcpServers": {
-    "mcp-atlassian": {
+    "atlassian": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/mcp"]
     }
   }
 }
@@ -78,12 +116,12 @@ file.
 
 ```jsonc
   "mcpServers": {
-    "mcp-atlassian": {
+    "atlassian": {
       "command": "npx",
       "args": [
         "-y",
         "mcp-remote",
-        "https://mcp.atlassian.com/v1/sse"
+        "https://mcp.atlassian.com/v1/mcp"
       ]
     },
     // other mcp servers
@@ -111,9 +149,9 @@ instance would look like:
 {
   // ...
   "mcpServers": {
-    "mcp-atlassian": {
+    "atlassian": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/mcp"]
     }
   }
 }
@@ -128,7 +166,7 @@ documentation.
 Once the configuration is complete, relaunch Gemini CLI by running `gemini` in a
 terminal window. When the MCP initializes for the first time, it will prompt you
 to click on a link to authorize the configuration (if not already done). This
-will take you to an Atlassian configuration page.  Ensure the ‘linuxfoundation’
+will take you to an Atlassian configuration page.  Ensure the 'linuxfoundation'
 instance is selected, review the permissions, and approve it.  Once approved,
 the MCP should be accessible.
 
@@ -147,18 +185,18 @@ See the Validation section below for an example.
 ## Zed
 
 Zed supports agentic editing including tools. Like Cursor, it does not support
-SSE MCP servers natively, and needs a `stdio->sse` proxy. Use `Cmd-,` to bring
-up the configuration, and add the following:
+the new HTTP MCP endpoint natively, and needs a `stdio->http` proxy. Use
+`Cmd-,` to bring up the configuration, and add the following:
 
 ```jsonc
 {
   // ...
   "context_servers": {
     // ...
-    "mcp-atlassian": {
+    "atlassian": {
       "source": "custom",
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/mcp"]
     }
   }
 }
@@ -184,11 +222,11 @@ Then, modify the Zed MCP command and args to use the globally-installed
 `mcp-remote`:
 
 ```jsonc
-    "mcp-atlassian": {
+    "atlassian": {
       "enabled": true,
       "source": "custom",
       "command": "mcp-remote",
-      "args": ["https://mcp.atlassian.com/v1/sse"]
+      "args": ["https://mcp.atlassian.com/v1/mcp"]
     }
 ```
 
@@ -216,7 +254,7 @@ What is the current status of the Jira ticket: ME-36?
 
 ⏺ I'll help you check the status of Jira ticket ME-36. First, let me get your Atlassian
    cloud information and then look up the ticket.
-  ⎿  [
+  ⎿  [
        {
          "id": "c497ae62-1596-4157-81fb-96205956683e",
      … +26 lines (ctrl+r to expand)
@@ -241,5 +279,5 @@ What is the current status of the Jira ticket: ME-36?
 
 ## References
 
-For additional notes and examples, see [the latest Atlassian CMP settings
-page on setting up IDEs](https://support.atlassian.com/rovo/docs/setting-up-ides/).
+- [Atlassian MCP Server: Configuring Authentication via API Token](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/configuring-authentication-via-api-token/)
+- [Setting up IDEs with Atlassian MCP](https://support.atlassian.com/rovo/docs/setting-up-ides/)
