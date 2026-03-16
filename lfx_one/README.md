@@ -12,6 +12,8 @@ release strategies, and deployment workflows.
   staging, and production environments
 - **[Secrets Management](./secrets-management.md)** - Complete guide for managing secrets using
   1Password and AWS Secrets Manager across environments
+- **[Distributed Tracing](./tracing.md)** - OpenTelemetry tracing setup with
+  Datadog for Go services
 
 ## Architecture Reference
 
