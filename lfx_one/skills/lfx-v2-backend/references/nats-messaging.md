@@ -10,7 +10,7 @@ subject naming conventions and how services communicate with each other.
 The general patterns:
 
 | Pattern | Purpose | Example |
-|---|---|---|
+| --- | --- | --- |
 | `lfx.index.{resource_type}` | Publish to indexer-service | `lfx.index.committee` |
 | `lfx.update_access.{resource_type}` | Publish access update to fga-sync | `lfx.update_access.committee` |
 | `lfx.delete_all_access.{resource_type}` | Publish access delete to fga-sync | `lfx.delete_all_access.committee` |
@@ -34,7 +34,7 @@ publishing and subscribing service — never hardcode strings.
 Not every write requires both an index message and an access message:
 
 | Message | When to send |
-|---|---|
+| --- | --- |
 | **Index message** (`lfx.index.*`) | Always — on every create, update, delete |
 | **Access message** (`lfx.update_access.*` / `lfx.delete_all_access.*`) | Only when the resource has its own FGA type |
 

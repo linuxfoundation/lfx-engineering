@@ -73,7 +73,7 @@ type IndexingConfig struct {
 ### Choosing search fields
 
 | Field | When to populate |
-|---|---|
+| --- | --- |
 | `NameAndAliases` | Primary name/title users search for (typeahead) |
 | `Tags` | Values used for exact filtering (e.g. `project_uid:abc`, `status:active`) |
 | `Fulltext` | Any text content users might search within |
@@ -122,7 +122,7 @@ gives a full audit history at no extra cost.
 Key fields in every indexed document:
 
 | Field | Populated from | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `object_ref` | `{type}:{id}` | Primary identifier (e.g. `committee:abc-123`) |
 | `object_type` | NATS subject suffix | Filtering queries by resource type |
 | `object_id` | `IndexingConfig.ObjectID` | UUID lookup |

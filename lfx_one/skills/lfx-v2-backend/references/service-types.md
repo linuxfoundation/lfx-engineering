@@ -10,7 +10,7 @@ follow and what the service is responsible for.
 Examples: `lfx-v2-project-service`, `lfx-v2-committee-service`
 
 | Aspect | Detail |
-|---|---|
+| --- | --- |
 | Data storage | NATS JetStream KV (one or more buckets) |
 | API | Full CRUD |
 | External dependencies | None for data; may call other LFX services via NATS request/reply |
@@ -58,7 +58,7 @@ This is what the `If-Match` HTTP header maps to in the API design.
 Examples: `lfx-v2-meeting-service`, `lfx-v2-voting-service`, `lfx-v2-survey-service`
 
 | Aspect | Detail |
-|---|---|
+| --- | --- |
 | Data storage | None — external system owns it |
 | API | Translates LFX Self-Service API ↔ external system API |
 | NATS publishing | Index + access messages on writes (same rule as native) |
@@ -103,7 +103,7 @@ v1ID, err := idMapper.V2ToV1(ctx, v2UID)
 ## Choosing a Template
 
 | Scenario | Use as template |
-|---|---|
+| --- | --- |
 | New service, stores its own data | `lfx-v2-committee-service` |
 | New service, wraps external system (reads + writes) | `lfx-v2-voting-service` |
 
