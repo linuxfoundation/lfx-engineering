@@ -12,6 +12,8 @@ release strategies, and deployment workflows.
   staging, and production environments
 - **[Secrets Management](./secrets-management.md)** - Complete guide for managing secrets using
   1Password and AWS Secrets Manager across environments
+- **[Distributed Tracing](./tracing.md)** - OpenTelemetry tracing setup with
+  Datadog for Go services
 
 ## Architecture Reference
 
@@ -24,6 +26,19 @@ For detailed information about the LFX v2 platform architecture and components:
 - **[Component List](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#components)**
   \- Detailed list of all platform components
 
+## AI Skills
+
+The [`skills/`](./skills/) directory contains Claude Code skills for LFX backend engineers.
+
+- **[lfx-v2-backend](./skills/lfx-v2-backend/SKILL.md)** — Reference knowledge for building and maintaining
+  LFX Self-Service resource services (NATS messaging, OpenFGA, Goa API design, Helm charts, and more)
+
+To install locally, copy the skill directory to `~/.claude/skills/`:
+
+```bash
+cp -r lfx_one/skills/lfx-v2-backend ~/.claude/skills/
+```
+
 ## Getting Started
 
 1. Start with [Local Development Setup](./local-development.md) to configure your development environment
@@ -32,3 +47,5 @@ For detailed information about the LFX v2 platform architecture and components:
 4. Reference the [Component Diagram](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#component-diagram)
    to understand the platform architecture
 5. Follow the established patterns for developing and deploying LFX v2 applications
+6. Install the [lfx-v2-backend](./skills/lfx-v2-backend/SKILL.md) Claude Code skill for AI-assisted
+   guidance on developing LFX v2 backend services
