@@ -2,7 +2,7 @@
 
 ## Overview
 
-The GitHub MCP Server provides a MCP interface for the GitHub API. Users can
+The GitHub MCP Server provides an MCP interface for the GitHub API. Users can
 use this server to interact with GitHub repositories, issues, pull requests, and
 more through AI-powered tools like Claude Code and Cursor AI.
 
@@ -47,11 +47,11 @@ Docker installation.
 
 ### Option 1: Remote Server (Recommended, Claude Code 2.1.1+)
 
-Run the following command, replacing `YOUR_GITHUB_PAT` with your personal
+Run the following command, replacing `GITHUB_PERSONAL_ACCESS_TOKEN` with your personal
 access token:
 
 ```bash
-claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer YOUR_GITHUB_PAT"}}'
+claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer $GITHUB_PERSONAL_ACCESS_TOKEN"}}'
 ```
 
 Use the `--scope` flag to control where the configuration is stored:
@@ -59,6 +59,15 @@ Use the `--scope` flag to control where the configuration is stored:
 - `--scope local` — current project only (default)
 - `--scope project` — shared with the team via `.mcp.json`
 - `--scope user` — all projects on this machine
+
+> **Security warning:** Do **not** store personal access tokens or secrets in
+> `--scope project` configs (`.mcp.json`). Project-scoped files are typically
+> committed to version control and will expose your token to everyone with
+> repository access. Prefer `--scope user` or `--scope local` for tokens.
+> Use environment variables or a secret manager rather than embedding
+> `Authorization` headers with real tokens in JSON. If a project-scoped config
+> is unavoidable, add `.mcp.json` to `.gitignore` and use a placeholder (e.g.,
+> `YOUR_GITHUB_PAT`) in any committed examples.
 
 Example with user scope:
 
@@ -71,13 +80,29 @@ claude mcp add-json --scope user github '{"type":"http","url":"https://api.githu
 
 ### Option 2: Local Docker Deployment
 
-If you prefer to run the server locally, ensure Docker is installed and running,
-then execute:
+If you prefer to run the server locally, ensure Docker is installed and running.
+There are two ways to supply your token:
+
+**Option A — inline value** (replace `YOUR_GITHUB_PAT` with your actual token):
 
 ```bash
 claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_GITHUB_PAT -- \
   docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server
 ```
+
+**Option B — inherit from shell** (export the variable first, then omit the
+value so Docker inherits it from the parent environment):
+
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_GITHUB_PAT
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN -- \
+  docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server
+```
+
+In Option A, `-e GITHUB_PERSONAL_ACCESS_TOKEN=VALUE` passes the token directly
+in the `claude mcp` command. In Option B, `-e GITHUB_PERSONAL_ACCESS_TOKEN`
+(without `=VALUE`) tells Docker to inherit the variable from your shell
+environment, keeping the token out of your shell history and command line.
 
 ### Option 3: Binary (No Docker)
 
@@ -130,13 +155,13 @@ official Docker image:
         "--rm",
         "-e",
         "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
+        "ghcr.io/github/github-mcp-server",
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_PERSONAL_ACCESS_TOKEN"
-      }
-    }
-  }
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_PAT",
+      },
+    },
+  },
 }
 ```
 
@@ -184,7 +209,7 @@ repository.
 
 - Confirm Docker Desktop is running.
 - Pull the image manually: `docker pull ghcr.io/github/github-mcp-server`
-- Clear Docker cache: `docker logout ghcr.io`
+- Log out from GitHub Container Registry (clears stored credentials): `docker logout ghcr.io`
 
 **Server Startup Failures:**
 
