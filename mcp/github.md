@@ -47,11 +47,16 @@ Docker installation.
 
 ### Option 1: Remote Server (Recommended, Claude Code 2.1.1+)
 
-Run the following command, replacing `GITHUB_PERSONAL_ACCESS_TOKEN` with your personal
+> **Prerequisite:** The remote endpoint (`https://api.githubcopilot.com/mcp`)
+> requires an active **GitHub Copilot** subscription (Individual, Business, or
+> Enterprise). If your account does not have Copilot access, authentication will
+> fail with a 401 or 403 error. Use Option 2 or Option 3 instead.
+
+Run the following command, replacing `YOUR_GITHUB_PAT` with your personal
 access token:
 
 ```bash
-claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer $GITHUB_PERSONAL_ACCESS_TOKEN"}}'
+claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer YOUR_GITHUB_PAT"}}'
 ```
 
 Use the `--scope` flag to control where the configuration is stored:
@@ -103,6 +108,11 @@ In Option A, `-e GITHUB_PERSONAL_ACCESS_TOKEN=VALUE` passes the token directly
 in the `claude mcp` command. In Option B, `-e GITHUB_PERSONAL_ACCESS_TOKEN`
 (without `=VALUE`) tells Docker to inherit the variable from your shell
 environment, keeping the token out of your shell history and command line.
+
+> **Note:** For Option B, `GITHUB_PERSONAL_ACCESS_TOKEN` must be exported (not
+> just set) in your shell so Docker can inherit it as an environment variable.
+> A variable set with `VAR=value` (without `export`) is only available to the
+> current shell and will not be passed to child processes like Docker.
 
 ### Option 3: Binary (No Docker)
 
