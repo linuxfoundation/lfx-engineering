@@ -1,0 +1,23 @@
+{
+  "skill_name": "lfx-v2-backend",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to add a `bio` field to the committee member model so it shows up in the UI. I'm not super technical but I know my way around the codebase a bit. What do I need to change?",
+      "expected_output": "Step-by-step guide covering: (1) update the domain model in committee-service, (2) update the API handler, (3) include the new field in the NATS IndexerMessageEnvelope data payload, (4) consider whether IndexingConfig needs updating for search. Should mention that no OpenSearch schema migration is needed.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a new service called sponsorship-service for managing sponsorships. It will store its own data (no external system). How should I structure it and what do I need to wire up to integrate it with the rest of the LFX Self-Service platform?",
+      "expected_output": "Guide covering: (1) this is a native resource service, model after committee-service, (2) clean/hexagonal architecture layers, (3) Goa for API design, (4) NATS JetStream KV for storage, (5) two-message NATS pattern (index + access), (6) IndexingConfig format with example, (7) fga-sync handler needed, (8) health endpoints, queue groups, graceful shutdown, OTEL.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A user is saying they can't see a committee in the UI even though they should have access to it. How do I debug this? I'm not sure if it's a permissions issue or an indexing issue.",
+      "expected_output": "Debugging guide covering: (1) two possible root causes - OpenFGA permission tuple missing OR OpenSearch document missing/wrong, (2) how to check FGA tuples (what subject/relation to look for), (3) how to check the OpenSearch document (latest flag, access_check_query field), (4) how the query-service does access filtering (batch check via fga-sync), (5) common mistake: update_access NATS message not published or published with wrong data.",
+      "files": []
+    }
+  ]
+}

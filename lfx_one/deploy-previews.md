@@ -169,6 +169,61 @@ graph TB
 8. **Deployment:** ArgoCD deploys the application with the PR-specific container image
 9. **Access:** Preview available at `ui-pr-{number}.dev.v2.cluster.linuxfound.info`
 
+## Values Override Mechanism
+
+Deploy previews use ArgoCD's multi-source feature to layer Helm values
+from multiple sources. The ApplicationSet
+(`apps/dev/lfx-v2-ui-branch.yaml`) defines two sources that work
+together to configure each `ui-pr-{number}` deployment.
+
+### Values Hierarchy (lowest to highest priority)
+
+1. **Chart defaults** (`charts/lfx-v2-ui/values.yaml` in the PR branch)
+   — The Helm chart's built-in defaults from the `lfx-v2-ui` repository.
+   Since the chart source is `pull/{number}/head`, developers can modify
+   chart defaults in their PR branch.
+
+2. **Branch deployment values**
+   (`values/dev/lfx-v2-ui-branch.yaml` in `lfx-v2-argocd`) — Shared
+   configuration for all deploy previews including resource limits,
+   environment variables, and ingress settings. This file is referenced
+   via the `$values` multi-source reference.
+
+3. **ApplicationSet parameters** (inline in
+   `apps/dev/lfx-v2-ui-branch.yaml`) — PR-specific overrides injected
+   by the ApplicationSet template using `{{.number}}` templating:
+   - `ingress.hosts[0].host` and `ingress.tls[0].hosts[0]` — sets the
+     preview domain to `ui-pr-{number}.dev.v2.cluster.linuxfound.info`
+   - `environment.PCC_BASE_URL.value` — sets the base URL for
+     authentication callbacks
+   - `image.tag` — pins the container image to `ui-pr-{number}`
+
+### Branch Deployment Values
+
+The `values/dev/lfx-v2-ui-branch.yaml` file in `lfx-v2-argocd`
+configures deploy previews with reduced resources compared to the main
+development environment:
+
+- **Resources:** 100m/128Mi requests, 500m/512Mi limits
+- **Scaling:** Single replica, autoscaling disabled
+- **Environment:** Shared backend API endpoints, Auth0 dev tenant,
+  Snowflake analytics, LaunchDarkly feature flags, and Datadog RUM
+- **Secrets:** Referenced from `pcc-secrets` (replicated from PCC
+  namespace via kubernetes-replicator)
+- **Ingress:** Traefik with TLS via cert-manager and external-dns
+
+### Modifying Deploy Preview Configuration
+
+To change the shared configuration for **all** deploy previews, update
+`values/dev/lfx-v2-ui-branch.yaml` in the `lfx-v2-argocd` repository.
+Common modifications include adding new environment variables, adjusting
+resource limits, or updating service endpoints.
+
+To change configuration for a **single** deploy preview, modify the
+chart's `values.yaml` in the PR branch of `lfx-v2-ui`. Note that values
+from `lfx-v2-ui-branch.yaml` and ApplicationSet parameters take
+precedence over chart defaults.
+
 ## Security Considerations
 
 - All deploy previews use the same Auth0 tenant with wildcard configurations

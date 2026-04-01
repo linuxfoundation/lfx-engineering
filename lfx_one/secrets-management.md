@@ -252,7 +252,7 @@ For the complete technical details of this integration, refer to the
 Secrets must first be stored in the appropriate 1Password vault:
 
 | Environment | 1Password Vault |
-|-------------|-----------------|
+| ----------- | --------------- |
 | Development | `LFX V2 - Development` |
 | Staging | `LFX V2 - Staging` |
 | Production | `LFX V2 - Production` |
@@ -265,7 +265,7 @@ The name of the secret item should be the same in all vaults it is configured fo
 Secrets are deployed to these AWS accounts by environment:
 
 | Environment | AWS Account |
-|-------------|-------------|
+| ----------- | ----------- |
 | Development | `lfx-development` |
 | Staging | `lfx-staging` |
 | Production | `lfx-production` |
