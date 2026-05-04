@@ -28,9 +28,9 @@ For detailed information about the LFX v2 platform architecture and components:
 
 ## AI Skills
 
-Claude Code skills for LFX v2 backend development are maintained in the
-**[lfx-skills](https://github.com/linuxfoundation/lfx-skills)** repository. See that repo for the
-`lfx-v2-backend` skill and installation instructions.
+Claude Code skills for LFX development are maintained in the
+**[lfx-skills](https://github.com/linuxfoundation/lfx-skills)** repository. Follow the installation
+instructions there to get started.
 
 ## Getting Started
 
@@ -40,5 +40,5 @@ Claude Code skills for LFX v2 backend development are maintained in the
 4. Reference the [Component Diagram](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#component-diagram)
    to understand the platform architecture
 5. Follow the established patterns for developing and deploying LFX v2 applications
-6. Install the relevant Claude Code skills from the [lfx-skills](https://github.com/linuxfoundation/lfx-skills)
-   repository for AI-assisted guidance on LFX v2 backend development
+6. Install Claude Code skills from the [lfx-skills](https://github.com/linuxfoundation/lfx-skills)
+   repository for AI-assisted guidance on LFX development
