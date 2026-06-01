@@ -116,7 +116,7 @@ edit `secrets/lfx/cloud.yml` and add an entry for each secret:
 ```yaml
 LFX V2 <Service> <Secret Label>:
   tags: [lfx_v2, <service_tag>, <type_tag>]
-  envs: [development, staging, production]
+  environments: [development, staging, production]
   source:
     onepassword:
       vaults:
@@ -124,7 +124,8 @@ LFX V2 <Service> <Secret Label>:
         staging: LFX V2 - Staging
         production: LFX V2 - Production
       item: "LFX V2 <Service> - <Secret Label>"
-      fields: <field_name>
+      json_fields:
+        - <field_name>
   destinations:
     - aws_secretsmanager:
         regions: us-west-2
@@ -136,7 +137,7 @@ Example for invite service JWT secret:
 ```yaml
 LFX V2 Invite Service JWT Secret:
   tags: [lfx_v2, invite, jwt]
-  envs: [development, staging, production]
+  environments: [development, staging, production]
   source:
     onepassword:
       vaults:
@@ -144,7 +145,8 @@ LFX V2 Invite Service JWT Secret:
         staging: LFX V2 - Staging
         production: LFX V2 - Production
       item: "LFX V2 Invite Service - JWT Secret"
-      fields: secret_key
+      json_fields:
+        - secret_key
   destinations:
     - aws_secretsmanager:
         regions: us-west-2
@@ -155,7 +157,7 @@ LFX V2 Invite Service JWT Secret:
 >
 > - Each secret in the lfx-secrets-management source becomes a separate AWS SM path entry
 > - The `path` convention is `cloud/<service-short-name>/<secret-group>`
-> - Use the `envs` list to sync to all three environments in parallel
+> - Use the `environments` list to sync to all three environments in parallel
 > - The `source.onepassword.item` should match exactly the name in 1Password vaults
 
 ### Step 4: Create Helm Chart Files in the Service Repo
@@ -319,10 +321,12 @@ externalSecretsOperator:
   externalSecret:
     refreshInterval: "10m"
     data:
-      - key: secret_key
-        path: "cloud/<service-short-name>/jwt"
-      - key: database_password
-        path: "cloud/<service-short-name>/database"
+      - secretKey: secret_key
+        remoteRef:
+          key: "cloud/<service-short-name>/jwt"
+      - secretKey: database_password
+        remoteRef:
+          key: "cloud/<service-short-name>/database"
 
 app:
   jwtSecretName: "lfx-v2-<service>"
@@ -412,7 +416,7 @@ edit `secrets/lfx/cloud.yml` and add a new entry for the new secret (same patter
 ```yaml
 LFX V2 <Service> <New Secret Label>:
   tags: [lfx_v2, <service_tag>, <type_tag>]
-  envs: [development, staging, production]
+  environments: [development, staging, production]
   source:
     onepassword:
       vaults:
@@ -420,7 +424,8 @@ LFX V2 <Service> <New Secret Label>:
         staging: LFX V2 - Staging
         production: LFX V2 - Production
       item: "LFX V2 <Service> - <New Secret Label>"
-      fields: <field_name>
+      json_fields:
+        - <field_name>
   destinations:
     - aws_secretsmanager:
         regions: us-west-2
@@ -435,10 +440,12 @@ In `values/global/lfx-v2-<service>.yaml`, add to the `externalSecretsOperator.ex
 externalSecretsOperator:
   externalSecret:
     data:
-      - key: secret_key
-        path: "cloud/<service-short-name>/jwt"
-      - key: new_secret_key           # add this
-        path: "cloud/<service-short-name>/<new-secret-group>"
+      - secretKey: secret_key
+        remoteRef:
+          key: "cloud/<service-short-name>/jwt"
+      - secretKey: new_secret_key           # add this
+        remoteRef:
+          key: "cloud/<service-short-name>/<new-secret-group>"
 ```
 
 > **Note**: Only update per-environment values files if the AWS SM path differs
@@ -453,7 +460,7 @@ add a new environment variable referencing the same K8s Secret (just a different
 - name: NEW_SECRET_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ .Chart.Name }}
+      name: {{ .Values.app.jwtSecretName | default .Chart.Name }}
       key: new_secret_key
 ```
 

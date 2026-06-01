@@ -532,12 +532,13 @@ externalSecretsOperator:
     #       property: my_field
 ```
 
-Three values gate the ESO resources — all default to off so local development does not attempt
-to reach AWS:
+Three values gate the ESO resources. `global.awsRegion` and `externalSecretsOperator.enabled`
+both default to off, preventing the SecretStore and ExternalSecret from rendering in local
+development. `serviceAccount.create` defaults to `true` — the ServiceAccount is always created:
 
-- **`serviceAccount.create`** — controls `serviceaccount.yaml`
-- **`global.awsRegion`** — gates both `secretstore.yaml` and `externalsecret.yaml`
-- **`externalSecretsOperator.enabled`** — gates both `secretstore.yaml` and `externalsecret.yaml`
+- **`serviceAccount.create`** — controls `serviceaccount.yaml` (default: `true`)
+- **`global.awsRegion`** — gates both `secretstore.yaml` and `externalsecret.yaml` (default: `""`)
+- **`externalSecretsOperator.enabled`** — gates both `secretstore.yaml` and `externalsecret.yaml` (default: `false`)
 
 ### 6. Configure Per-Environment Values
 
