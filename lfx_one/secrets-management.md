@@ -32,7 +32,6 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
 - [Validation and Testing](#validation-and-testing)
   - [Verify Deployment](#verify-deployment)
   - [Test Service Access](#test-service-access)
-  - [Audit Secrets](#audit-secrets)
 - [Best Practices](#best-practices)
   - [Security Considerations](#security-considerations)
   - [Naming Conventions](#naming-conventions)
@@ -408,7 +407,7 @@ service_account_roles:
 ```
 
 The `eso_service_tag` must match the service name used in `destinations.aws_secretsmanager.tags`
-in Step 9.
+in Step 5.
 
 ### 2. Add the ServiceAccount Template
 
@@ -435,7 +434,7 @@ metadata:
 ```
 
 The `annotations` block is empty by default and is populated per environment in `lfx-v2-argocd`
-with the IRSA role ARN (Step 6).
+with the IRSA role ARN (shown below).
 
 ### Register the service account:
 
