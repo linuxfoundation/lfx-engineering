@@ -22,7 +22,13 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
   - [3. Submit Pull Request](#3-submit-pull-request)
   - [4. Deploy Secrets](#4-deploy-secrets)
   - [5. Using the Secret in Kubernetes](#5-using-the-secret-in-kubernetes)
-  - [6. Add Secrets Store, External Secrets, and Service Account](#6-add-secrets-store-external-secrets-and-service-account)
+  - [6. Register the IAM Service Account Role](#6-register-the-iam-service-account-role)
+  - [7. Add the ServiceAccount Template](#7-add-the-serviceaccount-template)
+  - [8. Add the SecretStore Template](#8-add-the-secretstore-template)
+  - [9. Add the ExternalSecret Template](#9-add-the-externalsecret-template)
+  - [10. Add the values.yaml Defaults](#10-add-the-valuesyaml-defaults)
+  - [11. Configure Per-Environment Values](#11-configure-per-environment-values)
+  - [12. Configure Local Development](#12-configure-local-development)
 - [Configuration Example](#configuration-example)
   - [Configuration Breakdown](#configuration-breakdown)
 - [Deployment Methods](#deployment-methods)
@@ -364,9 +370,294 @@ environment:
 
 The above is dependent on how the helm chart is set up.
 
-### 6. Add Secrets Store, External Secrets, and Service Account
+> **New service setup:** Steps 1–5 assume the service already has a SecretStore,
+> ExternalSecret, and ServiceAccount configured. If this is a **new** service, complete
+> Steps 6–12 first — they are a one-time setup spanning three repositories that must be
+> done in order. For the full IAM role field reference, see the
+> [Service Account Management documentation](https://github.com/linuxfoundation/lfx-v2-opentofu/blob/main/docs/service-accounts.md).
 
-TODO: Add documentation on configuring a new Secrets Store, External Secret, and Service Account.
+### 6. Register the IAM Service Account Role
+
+Each LFX V2 service needs a dedicated IAM role so Kubernetes can authenticate to AWS on its
+behalf via IRSA (IAM Roles for Service Accounts). This role also grants the External Secrets
+Operator permission to read secrets tagged with the service identifier.
+
+In the [lfx-v2-opentofu](https://github.com/linuxfoundation/lfx-v2-opentofu) repository, add an
+entry to `iam-service-accounts-definitions.yaml`:
+
+```yaml
+service_account_roles:
+  lfx-v2-myresource-service:
+    namespace: "myresource-service"
+    service_account: "lfx-v2-myresource-service"
+    eso_service_tag: "myresource"   # must match the service tag used in Step 2
+```
+
+The `eso_service_tag` must match the `service` tag value set on the AWS Secrets Manager secret
+in Step 2.
+
+When this PR is merged and applied by CI, OpenTofu creates per environment:
+
+- An IAM role `lfx-v2-myresource-service` with an OIDC trust policy bound to
+  `system:serviceaccount:myresource-service:lfx-v2-myresource-service`
+- A tag-scoped `secretsmanager:GetSecretValue` policy granting access only to secrets tagged
+  `service = myresource`
+
+The role is created in all three AWS accounts:
+
+| Environment | Account ID | Role ARN |
+| ----------- | ---------- | -------- |
+| Development | `788942260905` | `arn:aws:iam::788942260905:role/lfx-v2-myresource-service` |
+| Staging | `844790888233` | `arn:aws:iam::844790888233:role/lfx-v2-myresource-service` |
+| Production | `372256339901` | `arn:aws:iam::372256339901:role/lfx-v2-myresource-service` |
+
+Open a PR against `lfx-v2-opentofu` and have the platform team merge and apply it before
+continuing to the chart steps below.
+
+### 7. Add the ServiceAccount Template
+
+In the service's Helm chart, create
+`charts/lfx-v2-myresource-service/templates/serviceaccount.yaml`:
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+{{- if .Values.serviceAccount.create }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.serviceAccount.name | default .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+```
+
+The `annotations` block is empty by default and is populated per environment in `lfx-v2-argocd`
+with the IRSA role ARN (Step 11).
+
+### 8. Add the SecretStore Template
+
+Create `charts/lfx-v2-myresource-service/templates/secretstore.yaml`:
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
+---
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  provider:
+    aws:
+      service: "SecretsManager"
+      region: {{ .Values.global.awsRegion }}
+      auth:
+        jwt:
+          serviceAccountRef:
+            name: {{ .Values.serviceAccount.name | default .Chart.Name }}
+{{- end }}
+```
+
+The `serviceAccountRef` instructs ESO to present the ServiceAccount's OIDC token when calling
+AWS. Kubernetes projects this token with the OIDC subject that satisfies the IRSA trust policy
+created in Step 6, allowing ESO to assume the role and read tagged secrets.
+
+### 9. Add the ExternalSecret Template
+
+Create `charts/lfx-v2-myresource-service/templates/externalsecret.yaml` using one of two
+patterns.
+
+#### Tag discovery (recommended)
+
+Use this pattern when secrets are managed through `lfx-secrets-management`. ESO automatically
+discovers every secret tagged `service: myresource` (or `service-myresource: enabled`) and
+merges their fields into a single Kubernetes Secret. Adding future secrets in Steps 1–4 requires
+no further chart changes — the tag that controls IAM access (Step 6) and the tag that drives
+discovery are the same value.
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  refreshInterval: "{{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}"
+  secretStoreRef:
+    name: {{ .Chart.Name }}
+    kind: SecretStore
+  target:
+    name: {{ .Chart.Name }}
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  dataFrom:
+    - find:
+        tags:
+          service: {{ .Values.externalSecretsOperator.externalSecret.serviceTag }}
+      rewrite:
+        - merge: {}
+    - find:
+        tags:
+          service-{{ .Values.externalSecretsOperator.externalSecret.serviceTag }}: "enabled"
+      rewrite:
+        - merge: {}
+{{- end }}
+```
+
+Both `find` blocks are required to support the two tagging conventions used across the
+infrastructure (the tag-scoped IAM policy created in Step 6 accepts both).
+
+#### Explicit data (alternative)
+
+Use this pattern when secrets come from cloudops-managed paths that do not carry the service tag,
+when you need custom Kubernetes key names, or when you want to sync only specific fields from a
+secret. Adding a new secret requires extending the `data` list in `lfx-v2-argocd`.
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  refreshInterval: "{{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}"
+  secretStoreRef:
+    name: {{ .Chart.Name }}
+    kind: SecretStore
+  target:
+    name: {{ .Chart.Name }}
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  {{- if .Values.externalSecretsOperator.externalSecret.data }}
+  data:
+    {{- range .Values.externalSecretsOperator.externalSecret.data }}
+    - secretKey: {{ .secretKey }}
+      remoteRef:
+        key: {{ .remoteRef.key }}
+        {{- if .remoteRef.property }}
+        property: {{ .remoteRef.property }}
+        {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+```
+
+Each entry maps a Kubernetes Secret key (`secretKey`) to a specific AWS Secrets Manager path
+(`remoteRef.key`) and field (`remoteRef.property`).
+
+### 10. Add the values.yaml Defaults
+
+Add these blocks to `charts/lfx-v2-myresource-service/values.yaml`:
+
+```yaml
+serviceAccount:
+  create: true
+  name: "lfx-v2-myresource-service"
+  annotations: {}
+
+global:
+  awsRegion: ""
+
+externalSecretsOperator:
+  enabled: false
+  externalSecret:
+    refreshInterval: "10m"
+    # For tag discovery (recommended):
+    serviceTag: "myresource"
+    # For explicit data (alternative), define a data list instead:
+    # data:
+    #   - secretKey: my-key
+    #     remoteRef:
+    #       key: /cloudops/managed-secrets/cloud/myresource/my-group
+    #       property: my_field
+```
+
+Three values gate the ESO resources — all default to off so local development does not attempt
+to reach AWS:
+
+- **`serviceAccount.create`** — controls `serviceaccount.yaml`
+- **`global.awsRegion`** — gates both `secretstore.yaml` and `externalsecret.yaml`
+- **`externalSecretsOperator.enabled`** — gates both `secretstore.yaml` and `externalsecret.yaml`
+
+### 11. Configure Per-Environment Values
+
+In the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository, create
+values files for the service.
+
+**`values/global/lfx-v2-myresource-service.yaml`** — enable ESO for all deployed environments:
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+---
+
+externalSecretsOperator:
+  enabled: true
+```
+
+**`values/dev/lfx-v2-myresource-service.yaml`** (repeat for staging and prod with the
+matching account ID) — set the AWS region and the IRSA role ARN:
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+---
+
+global:
+  awsRegion: "us-west-2"
+
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::788942260905:role/lfx-v2-myresource-service
+```
+
+Account IDs and files per environment:
+
+| Environment | Account ID | `values/` path |
+| ----------- | ---------- | -------------- |
+| Development | `788942260905` | `values/dev/lfx-v2-myresource-service.yaml` |
+| Staging | `844790888233` | `values/staging/lfx-v2-myresource-service.yaml` |
+| Production | `372256339901` | `values/prod/lfx-v2-myresource-service.yaml` |
+
+### 12. Configure Local Development
+
+The External Secrets Operator cannot reach AWS from a local development cluster. Add a block to
+`lfx-v2-helm/charts/lfx-platform/values.yaml` to keep ESO disabled locally:
+
+```yaml
+lfx-v2-myresource-service:
+  # External Secrets Operator is disabled because we can't get secrets from
+  # AWS Secrets Manager in local development.
+  # Instead, create the Kubernetes secret manually. See the chart README.
+  externalSecretsOperator:
+    enabled: false
+```
+
+Create the Kubernetes Secret manually in your local cluster to supply values during development.
+See the service chart `README.md` for the exact `kubectl create secret` command.
+
+**PR order:** Merge changes in this sequence — (1) `lfx-v2-opentofu` to create the IAM role,
+(2) the service chart to add the templates, (3) `lfx-v2-argocd` to activate ESO per environment.
+
+Once wired, future secrets only require Steps 1–4 (tag discovery) or Steps 1–4 plus extending
+the `externalSecretsOperator.externalSecret.data` list in the argocd values (explicit data).
 
 ## Configuration Example
 
