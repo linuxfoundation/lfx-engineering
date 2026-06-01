@@ -19,16 +19,12 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
 - [Step-by-Step Process](#step-by-step-process)
   - [1. Register the IAM Service Account Role](#1-register-the-iam-service-account-role)
   - [2. Add the ServiceAccount Template](#2-add-the-serviceaccount-template)
-  - [3. Add the SecretStore Template](#3-add-the-secretstore-template)
-  - [4. Add the ExternalSecret Template](#4-add-the-externalsecret-template)
-  - [5. Add the values.yaml Defaults](#5-add-the-valuesyaml-defaults)
-  - [6. Configure Per-Environment Values](#6-configure-per-environment-values)
-  - [7. Configure Local Development](#7-configure-local-development)
-  - [8. Add Secret to 1Password](#8-add-secret-to-1password)
-  - [9. Create YAML Configuration](#9-create-yaml-configuration)
-  - [10. Submit Pull Request](#10-submit-pull-request)
-  - [11. Deploy Secrets](#11-deploy-secrets)
-  - [12. Use the Secret in Kubernetes](#12-use-the-secret-in-kubernetes)
+  - [3. Create the External Secret Object and Secret Store Custom Resources](#3-create-the-external-secret-object-and-secret-store-custom-resources)
+  - [4. Add Secret to 1Password](#4-add-secret-to-1password)
+  - [5. Create YAML Configuration](#5-create-yaml-configuration)
+  - [6. Submit Pull Request](#6-submit-pull-request)
+  - [7. Deploy Secrets](#7-deploy-secrets)
+  - [8. Use the Secret in Kubernetes](#8-use-the-secret-in-kubernetes)
 - [Configuration Example](#configuration-example)
   - [Configuration Breakdown](#configuration-breakdown)
 - [Deployment Methods](#deployment-methods)
@@ -53,7 +49,7 @@ AWS Secrets Manager across different environments. This approach ensures:
 
 - **Centralized Management**: All secrets are managed through a single repository
 - **Environment Isolation**: Separate vaults and AWS accounts for dev, staging, and production
-- **Automated Deployment**: Secrets are deployed using GitHub Actions or local tooling
+- **Automated Deployment**: Secrets are deployed using GitHub Actions
 - **Security**: Secrets never leave secure storage systems during transit
 
 ### Integration with Service Accounts
@@ -68,7 +64,7 @@ these secrets, see the [Service Account Management documentation](https://github
 - **Tag-Based Access**: Services only access secrets tagged with their service name
 - **External Secrets Operator**: Automatically discovers and merges secrets into Kubernetes
 - **IRSA Authentication**: Secure role assumption without storing credentials
-- **10-minute Refresh**: Secrets are automatically refreshed every 10 minutes
+- **Event-Based Refresh**: An AWS Lambda listens for tagged secret updates/creations for automatic refreshing of External Secrets Operator
 
 ### Secrets Flow Architecture
 
@@ -210,7 +206,7 @@ graph TB
 2. **Configuration**: YAML files define the secret mapping and deployment rules
 3. **Deployment**: GitHub Actions deploy secrets to AWS Secrets Manager with appropriate tags
 4. **Discovery**: External Secrets Operator uses IRSA to authenticate and discover tagged secrets
-5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed every 10 minutes
+5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed upon event
 6. **Consumption**: Applications reference the service account and secret to access environment variables
 
 ## Prerequisites
@@ -226,7 +222,7 @@ Before managing secrets for LFX V2, ensure you have:
 
 ### Tags
 
-Every secret configuration **must** include these tags:
+There are two `tags` fields with different purposes. The first tag field configures the deployment of the secret. Every secret configuration **must** include these tags:
 
 - `lfx_v2` - Identifies the secret as belonging to LFX V2
 - `<upstream_service>` - The third-party service providing the secret (e.g., `litellm`, `stripe`, `zoom`)
@@ -240,7 +236,7 @@ tags: [lfx_v2, litellm, pcc]
 
 #### Service Tag Integration
 
-The `<backend_service>` tag is critical as it determines which Kubernetes service accounts can access the
+AWS also leverages tags, and determines which Kubernetes service accounts can access the
 secret. When secrets are deployed to AWS Secrets Manager, they receive a `service-<name>` resource tag
 (e.g., `service-pcc: enabled`). The LFX V2 infrastructure then uses this tag to:
 
@@ -248,7 +244,8 @@ secret. When secrets are deployed to AWS Secrets Manager, they receive a `servic
    `lfx-v2-pcc` service account uses role `arn:aws:iam::788942260905:role/lfx-v2-pcc` in dev to only
    access secrets tagged `"aws:ResourceTag/service-pcc": "enabled"`
 2. **Auto-Discovery**: The External Secrets Operator automatically finds and merges all secrets with the
-   service tag into a single Kubernetes Secret
+   service tag into a single Kubernetes Secret. Then, the approriate Secret Store is annotated for sync.
+   New secrets will be in the Secret Store after sync within minutes.
 3. **Environment Variables**: All tagged secrets are made available as environment variables in the
    service's pods
 
@@ -261,7 +258,7 @@ For the complete technical details of this integration, refer to the
 
 ### Vault Requirements
 
-Secrets must first be stored in the appropriate 1Password vault:
+Secrets that are sourced from 1Password must first be stored in the appropriate vault:
 
 | Environment | 1Password Vault |
 | ----------- | --------------- |
@@ -271,6 +268,54 @@ Secrets must first be stored in the appropriate 1Password vault:
 
 The name of the secret item should be the same in all vaults it is configured for and match the
 `source.onepassword.item` field in the configuration.
+
+### 1Password Item Field Names
+
+The `fields` configuration when using 1Password as a source determins the name of the secret value
+within the Kubernetes Secret Store. By default, 1Password items include generic names, such as `credential`
+or `password`. **Please create a custom field name to store the secret with a more specific secret name.**
+
+Secrets also need to be placed in JSON format into AWS, or the Kubernetes secret store will fail. When placing
+multiple fields into a single secret, this is automatically handled by the list format you have defined them with:
+
+```yaml
+source:
+  onepassword:
+    vaults:
+      development: LFX V2 - Development
+      staging: LFX V2 - Staging
+      production: LFX V2 - Production
+    item: LiteLLM LFX Changelog Key
+    fields:
+      - litellm-key-id
+      - litellm-api-key
+```
+
+When placing a single field, define the field as a list, or use the `store_as_json: true` configuration:
+
+```yaml
+source:
+  onepassword:
+    vaults:
+      development: LFX V2 - Development
+      staging: LFX V2 - Staging
+      production: LFX V2 - Production
+    item: LiteLLM LFX Changelog Key
+    fields:
+      - litellm-api-key
+```
+
+```yaml
+source:
+  onepassword:
+    vaults:
+      development: LFX V2 - Development
+      staging: LFX V2 - Staging
+      production: LFX V2 - Production
+    item: LiteLLM LFX Changelog Key
+    fields: litellm-api-key
+    store_as_json: true
+```
 
 ### AWS Destination Accounts
 
@@ -282,11 +327,11 @@ Secrets are deployed to these AWS accounts by environment:
 | Staging | `lfx-staging` |
 | Production | `lfx-production` |
 
-**Note**: Secrets do **not** need to be added to `prdct-*` accounts.
+**Note**: LFX V2 secrets do **not** need to be added to `prdct-*` accounts.
 
 ### Region
 
-All secrets are stored in the **us-west-2** region.
+All secrets under the `lfx/` secrets directory are stored in the **us-west-2** region.
 
 ### Path Format
 
@@ -310,13 +355,13 @@ store a secret is pulled into.
 ## Step-by-Step Process
 
 > **Already set up?** If your service already has an IAM role, ServiceAccount, SecretStore, and
-> ExternalSecret configured, **skip to [Step 8](#8-add-secret-to-1password)** to add a new secret.
+> ExternalSecret configured, **skip to [Step 4](#4-add-secret-to-1password)** to add a new secret.
 
 The steps below are split into two phases:
 
-- **First-time setup (Steps 1–7):** One-time infrastructure wiring for a new service across three
+- **First-time setup (Steps 1–3):** One-time infrastructure wiring for a new service across three
   repositories. Do this once per service.
-- **Adding a secret (Steps 8–12):** Repeat these steps each time you need to add a new secret to
+- **Adding a secret (Steps 4–8):** Repeat these steps each time you need to add a new secret to
   the service.
 
 ### 1. Register the IAM Service Account Role
@@ -331,15 +376,11 @@ entry to `iam-service-accounts-definitions.yaml`:
 ```yaml
 service_account_roles:
   lfx-v2-myresource-service:
-    namespace: "myresource-service"
-    service_account: "lfx-v2-myresource-service"
-    eso_service_tag: "myresource"   # must match the service name used in Step 9
 ```
 
-The `eso_service_tag` must match the service name used in `destinations.aws_secretsmanager.tags`
-in Step 9.
-
-When this PR is merged and applied by CI, OpenTofu creates per environment:
+By default, the namespace, service account name, and service tag are the same as the top level
+entry of the service account role. In the case above, when this PR is merged and applied by CI,
+OpenTofu creates per environment:
 
 - An IAM role `lfx-v2-myresource-service` with an OIDC trust policy bound to
   `system:serviceaccount:myresource-service:lfx-v2-myresource-service`
@@ -356,6 +397,18 @@ The role is created in all three AWS accounts:
 
 Open a PR against `lfx-v2-opentofu` and have the platform team merge and apply it before
 continuing to the chart steps below.
+
+To define different values, place them under the service account role entry:
+
+```yaml
+service_account_roles:
+  lfx-v2-myresource-service:
+    namespace: "myresource-service"
+    eso_service_tag: "myresource"   # must match the service name used in Step 5
+```
+
+The `eso_service_tag` must match the service name used in `destinations.aws_secretsmanager.tags`
+in Step 9.
 
 ### 2. Add the ServiceAccount Template
 
@@ -384,178 +437,18 @@ metadata:
 The `annotations` block is empty by default and is populated per environment in `lfx-v2-argocd`
 with the IRSA role ARN (Step 6).
 
-### 3. Add the SecretStore Template
+### Register the service account:
 
-Create `charts/lfx-v2-myresource-service/templates/secretstore.yaml`:
-
-```yaml
-# Copyright The Linux Foundation and each contributor to LFX.
-# SPDX-License-Identifier: MIT
-{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
----
-apiVersion: external-secrets.io/v1
-kind: SecretStore
-metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  provider:
-    aws:
-      service: "SecretsManager"
-      region: {{ .Values.global.awsRegion }}
-      auth:
-        jwt:
-          serviceAccountRef:
-            name: {{ .Values.serviceAccount.name | default .Chart.Name }}
-{{- end }}
-```
-
-The `serviceAccountRef` instructs ESO to present the ServiceAccount's OIDC token when calling
-AWS. Kubernetes projects this token with the OIDC subject that satisfies the IRSA trust policy
-created in Step 1, allowing ESO to assume the role and read tagged secrets.
-
-### 4. Add the ExternalSecret Template
-
-Create `charts/lfx-v2-myresource-service/templates/externalsecret.yaml` using one of two
-patterns.
-
-#### Tag discovery (recommended)
-
-Use this pattern when secrets are managed through `lfx-secrets-management`. ESO automatically
-discovers every secret tagged `service-myresource: enabled` (or the legacy `service: myresource`)
-and merges their fields into a single Kubernetes Secret. Adding future secrets in Steps 8–11
-requires no further chart changes — the tag that controls IAM access (Step 1) and the tag that
-drives discovery are the same value.
-
-```yaml
-# Copyright The Linux Foundation and each contributor to LFX.
-# SPDX-License-Identifier: MIT
-{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
----
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  refreshInterval: "{{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}"
-  secretStoreRef:
-    name: {{ .Chart.Name }}
-    kind: SecretStore
-  target:
-    name: {{ .Chart.Name }}
-    creationPolicy: Owner
-    deletionPolicy: Retain
-  dataFrom:
-    - find:
-        tags:
-          service-{{ .Values.externalSecretsOperator.externalSecret.serviceTag }}: "enabled"
-      rewrite:
-        - merge: {}
-    - find:
-        tags:
-          service: {{ .Values.externalSecretsOperator.externalSecret.serviceTag }}
-      rewrite:
-        - merge: {}
-{{- end }}
-```
-
-Both `find` blocks are included to support both the current (`service-<name>: enabled`) and
-legacy (`service: <name>`) tagging conventions — the IAM policy created in Step 1 accepts both.
-
-#### Explicit data (alternative)
-
-Use this pattern when secrets come from cloudops-managed paths that do not carry the service tag,
-when you need custom Kubernetes key names, or when you want to sync only specific fields from a
-secret. Adding a new secret requires extending the `data` list in `lfx-v2-argocd`.
-
-```yaml
-# Copyright The Linux Foundation and each contributor to LFX.
-# SPDX-License-Identifier: MIT
-{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
----
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  refreshInterval: "{{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}"
-  secretStoreRef:
-    name: {{ .Chart.Name }}
-    kind: SecretStore
-  target:
-    name: {{ .Chart.Name }}
-    creationPolicy: Owner
-    deletionPolicy: Retain
-  {{- if .Values.externalSecretsOperator.externalSecret.data }}
-  data:
-    {{- range .Values.externalSecretsOperator.externalSecret.data }}
-    - secretKey: {{ .secretKey }}
-      remoteRef:
-        key: {{ .remoteRef.key }}
-        {{- if .remoteRef.property }}
-        property: {{ .remoteRef.property }}
-        {{- end }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-```
-
-Each entry maps a Kubernetes Secret key (`secretKey`) to a specific AWS Secrets Manager path
-(`remoteRef.key`) and field (`remoteRef.property`).
-
-### 5. Add the values.yaml Defaults
-
-Add these blocks to `charts/lfx-v2-myresource-service/values.yaml`:
+Add this block to the service's Helm chart values, `charts/lfx-v2-myresource-service/values.yaml`:
 
 ```yaml
 serviceAccount:
   create: true
   name: "lfx-v2-myresource-service"
   annotations: {}
-
-global:
-  awsRegion: ""
-
-externalSecretsOperator:
-  enabled: false
-  externalSecret:
-    refreshInterval: "10m"
-    # For tag discovery (recommended):
-    serviceTag: "myresource"
-    # For explicit data (alternative), define a data list instead:
-    # data:
-    #   - secretKey: my-key
-    #     remoteRef:
-    #       key: /cloudops/managed-secrets/cloud/myresource/my-group
-    #       property: my_field
 ```
 
-Three values gate the ESO resources. `global.awsRegion` and `externalSecretsOperator.enabled`
-both default to off, preventing the SecretStore and ExternalSecret from rendering in local
-development. `serviceAccount.create` defaults to `true` — the ServiceAccount is always created:
-
-- **`serviceAccount.create`** — controls `serviceaccount.yaml` (default: `true`)
-- **`global.awsRegion`** — gates both `secretstore.yaml` and `externalsecret.yaml` (default: `""`)
-- **`externalSecretsOperator.enabled`** — gates both `secretstore.yaml` and `externalsecret.yaml` (default: `false`)
-
-### 6. Configure Per-Environment Values
-
-In the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository, create
-values files for the service.
-
-**`values/global/lfx-v2-myresource-service.yaml`** — enable ESO for all deployed environments:
-
-```yaml
-# Copyright The Linux Foundation and each contributor to LFX.
-# SPDX-License-Identifier: MIT
----
-
-externalSecretsOperator:
-  enabled: true
-```
-
+In the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository, in
 **`values/dev/lfx-v2-myresource-service.yaml`** (repeat for staging and prod with the
 matching account ID) — set the AWS region and the IRSA role ARN:
 
@@ -564,12 +457,10 @@ matching account ID) — set the AWS region and the IRSA role ARN:
 # SPDX-License-Identifier: MIT
 ---
 
-global:
-  awsRegion: "us-west-2"
-
 serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::788942260905:role/lfx-v2-myresource-service
+  automountServiceAccountToken: true
 ```
 
 Account IDs and files per environment:
@@ -580,19 +471,110 @@ Account IDs and files per environment:
 | Staging | `844790888233` | `values/staging/lfx-v2-myresource-service.yaml` |
 | Production | `372256339901` | `values/prod/lfx-v2-myresource-service.yaml` |
 
-### 7. Configure Local Development
+### 3. Create the External Secret Object and Secret Store Custom Resources
 
-The External Secrets Operator cannot reach AWS from a local development cluster. Add a block to
-`lfx-v2-helm/charts/lfx-platform/values.yaml` to keep ESO disabled locally:
+In the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository:
+
+Create `lfx-v2-argocd/custom-resources/lfx-v2-myresource-service/ExternalSecret.yaml`:
 
 ```yaml
-lfx-v2-myresource-service:
-  # External Secrets Operator is disabled because we can't get secrets from
-  # AWS Secrets Manager in local development.
-  # Instead, create the Kubernetes secret manually. See the chart README.
-  externalSecretsOperator:
-    enabled: false
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: lfx-v2-myresource-service
+  namespace: lfx-v2-myresource-service
+spec:
+  secretStoreRef:
+    kind: SecretStore
+    name: lfx-v2-myresource-service
+  target:
+    creationPolicy: Owner
+    name: lfx-v2-myresource-service-secrets
+  refreshInterval: 10m
+  dataFrom:
+    - find:
+        conversionStrategy: Default
+        decodingStrategy: None
+        tags:
+          service-lfx-v2-myresource-service: enabled
+      rewrite:
+        - merge:
+            conflictPolicy: Error
+            into: ''
+            strategy: Extract
 ```
+
+Create `lfx-v2-argocd/custom-resources/lfx-v2-myresource-service/SecretStore.yaml`:
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+---
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: lfx-v2-myresource-service
+  namespace: lfx-v2-myresource-service
+spec:
+  provider:
+    aws:
+      auth:
+        jwt:
+          serviceAccountRef:
+            name: lfx-v2-myresource-service
+      region: us-west-2
+      service: SecretsManager
+```
+
+The `serviceAccountRef` instructs ESO to present the ServiceAccount's OIDC token when calling
+AWS. Kubernetes projects this token with the OIDC subject that satisfies the IRSA trust policy
+created in Step 1, allowing ESO to assume the role and read tagged secrets.
+
+#### Explicit data
+
+Use this pattern in addition to tag discovery, when you need custom Kubernetes key names,
+or when you want to sync only specific fields from a secret. Adding a new secret requires extending
+the `data` list.
+
+```yaml
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: lfx-v2-myresource-service
+  namespace: lfx-v2-myresource-service
+spec:
+  secretStoreRef:
+    kind: SecretStore
+    name: lfx-v2-myresource-service
+  target:
+    creationPolicy: Owner
+    name: lfx-v2-myresource-service-secrets
+  refreshInterval: 10m
+  dataFrom:
+    - find:
+        conversionStrategy: Default
+        decodingStrategy: None
+        tags:
+          service-lfx-v2-myresource-service: enabled
+      rewrite:
+        - merge:
+            conflictPolicy: Error
+            into: ''
+            strategy: Extract
+  data:
+    - secretKey: username
+      remoteRef:
+        key: /cloudops/lfx-v2/myresource-username
+        property: username
+```
+
+Each entry maps a Kubernetes Secret key (`secretKey`) to a specific AWS Secrets Manager path
+(`remoteRef.key`) and field (`remoteRef.property`).
 
 Create the Kubernetes Secret manually in your local cluster to supply values during development.
 See the service chart `README.md` for the exact `kubectl create secret` command.
@@ -600,49 +582,49 @@ See the service chart `README.md` for the exact `kubectl create secret` command.
 **PR order:** Merge changes in this sequence — (1) `lfx-v2-opentofu` to create the IAM role,
 (2) the service chart to add the templates, (3) `lfx-v2-argocd` to activate ESO per environment.
 
-Once wired, adding new secrets only requires Steps 8–11 (tag discovery) or Steps 8–11 plus
-extending the `externalSecretsOperator.externalSecret.data` list in the ArgoCD values (explicit
+Once wired, adding new secrets only requires Steps 4–7 (tag discovery) or Steps 4–7 plus
+extending the `data` list in `custom-resources/<service>/ExternalSecret.yaml` (explicit
 data).
 
-### 8. Add Secret to 1Password
+### 4. Add Secret to 1Password
 
 Add your secret to the appropriate 1Password vault:
 
 1. Open 1Password and navigate to the correct vault (see [Vault Requirements](#vault-requirements))
 2. Create a new item or update an existing one
 3. Use type `API Credentials`
-4. Include all necessary fields (API keys, tokens, etc.)
-5. The chosen field names will be used as keys in the AWS secret and ultimately in the Kubernetes
-   secret. For example, `LiteLLM LFXv2 Key` has fields `litellm-key-id` and `litellm-api-key` and
-   has `source.onepassword.json_fields` set to `['litellm-key-id', 'litellm-api-key']`.
-6. Use a descriptive name that identifies the service and purpose.
+4. Include all necessary fields (API keys, tokens, etc.) with descriptive names that identify
+   the service and purpose. The chosen field names will be used as keys in the AWS secret and
+   ultimately in the Kubernetes secret. For example, `LiteLLM LFXv2 Key` has fields
+   `litellm-key-id` and `litellm-api-key` and has `source.onepassword.fields` set to
+   `['litellm-key-id', 'litellm-api-key']`.
 
-### 9. Create YAML Configuration
+### 5. Create YAML Configuration
 
 Navigate to the [lfx-secrets-management](https://github.com/linuxfoundation/lfx-secrets-management)
 repository and create or update a YAML configuration file in the `secretsmanagement/secrets/`
 directory. See the [Configuration Example](#configuration-example) for the full schema.
 
 The key field to note is `destinations.aws_secretsmanager.tags` — use `service-<name>: enabled`
-format (e.g., `service-myresource: enabled`) to tag the secret for your service. This allows a
-single secret to be consumed by multiple services if needed.
+format (e.g., `service-myresource: enabled`) to tag the secret for each service the secret needs
+to be deployed into.
 
 Do this via a new branch and pull request against the `main` branch.
 
-### 10. Submit Pull Request
+### 6. Submit Pull Request
 
 Create a pull request with your configuration changes following the repository's contribution
 guidelines.
 
-### 11. Deploy Secrets
+### 7. Deploy Secrets
 
 Once approved and merged, the secrets will be deployed via
 [**GitHub Actions**](https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml)
 
-If the service setup (Steps 1–7) is already complete, the secret will be automatically discovered
-by ESO within the next refresh cycle (up to 10 minutes) and made available in the service's pods.
+If the service setup (Steps 1–3) is already complete, the secret will be automatically discovered
+by ESO and made available in the service's pods.
 
-### 12. Use the Secret in Kubernetes
+### 8. Use the Secret in Kubernetes
 
 The secret, once ingested, can be used by your deployments by reference. Here's an example snippet
 of a deployment manifest:
@@ -694,19 +676,13 @@ LiteLLM API key for LFXv2:
         staging: LFX V2 - Staging
         production: LFX V2 - Production
       item: LiteLLM LFXv2 Key
-      json_fields:
+      fields:
         - litellm-key-id
         - litellm-api-key
   destinations:
     - aws_secretsmanager:
         tags:
           service-pcc: enabled
-        accounts:
-          development: lfx-development
-          staging: lfx-staging
-          production: lfx-production
-        regions:
-          - us-west-2
         path: cloud/litellm/lfx-v2
 ```
 
@@ -716,16 +692,14 @@ LiteLLM API key for LFXv2:
 - **Tags**: Must include `lfx_v2`, upstream service (`litellm`), and backend service (`pcc`)
 - **Environments**: List of environments where this secret should be deployed
 - **Source**: 1Password configuration with vault mappings and item details
-- **source.onepassword.json_fields**: Specifies which fields from the 1Password item to include in the secret
+- **source.onepassword.fields**: Specifies which fields from the 1Password item to include in the secret
 - **source.onepassword.vaults**: Maps environments to their respective 1Password vaults
 - **source.onepassword.item**: Name of the 1Password item containing the secret, must match exactly in all vaults
-- **Destinations**: AWS Secrets Manager configuration with accounts, regions, and path
+- **Destinations**: AWS Secrets Manager configuration path
 - **destinations.aws_secretsmanager.tags**: Resource tags applied to the secret in AWS Secrets Manager.
   Use `service-<name>: enabled` format (e.g., `service-pcc: enabled`) to control which service's
   ExternalSecret discovers this secret. A single secret can carry multiple `service-*` tags to serve
   multiple services simultaneously.
-- **destinations.aws_secretsmanager.accounts**: Maps environments to AWS accounts, always use lfx-*
-  accounts for LFX V2
 
 ## Deployment Methods
 
@@ -758,21 +732,6 @@ Ensure your LFX V2 services can access the secret:
 3. Monitor logs for any access issues
 4. Verify the secret values are correctly retrieved
 
-### Audit Secrets
-
-Use the secrets management repository's audit functionality:
-
-```bash
-# Audit all secrets
-make audit
-
-# Audit specific environment
-make audit ENVS="development"
-
-# Audit specific AWS accounts
-make audit-aws ACCOUNTS="lfx-development"
-```
-
 ## Best Practices
 
 ### Security Considerations
@@ -791,7 +750,6 @@ make audit-aws ACCOUNTS="lfx-development"
 ### Environment Management
 
 - **Always test in development first** before deploying to staging or production
-- **Use the plan mode** (`--plan` flag) to verify changes before deployment
 - **Deploy incrementally** (dev → staging → production) to catch issues early
 
 ### Change Management
