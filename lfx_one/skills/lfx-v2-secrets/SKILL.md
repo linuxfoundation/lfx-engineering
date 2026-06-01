@@ -74,7 +74,8 @@ Ask the user to collect:
 4. **Which environments need this secret** — usually `development`, `staging`, `production`
 
 Example:
-```
+
+```text
 Service: invite-service (short: invite)
 Secrets:
   - JWT Secret (group: jwt, field: secret_key) — all envs
@@ -149,6 +150,7 @@ LFX V2 Invite Service JWT Secret:
 ```
 
 > **Tips**:
+>
 > - Each secret in the lfx-secrets-management source becomes a separate AWS SM path entry
 > - The `path` convention is `cloud/<service-short-name>/<secret-group>`
 > - Use the `envs` list to sync to all three environments in parallel
