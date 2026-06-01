@@ -105,7 +105,9 @@ service_account_roles:
     eso_service_tag: "invite"
 ```
 
-> **Note**: The `eso_service_tag` is used in lfx-secrets-management to tag all related secrets.
+> **Note**: The `eso_service_tag` value must match the `service-*` AWS tag set in
+> `destinations.aws_secretsmanager.tags` (e.g., `service-invite: enabled`). It scopes the IAM
+> role's Secrets Manager access policy — it is not read by lfx-secrets-management directly.
 > The namespace and service account names follow the LFX V2 convention.
 
 ### Step 3: Create Sync Entries in `lfx-secrets-management`
@@ -128,7 +130,14 @@ LFX V2 <Service> <Secret Label>:
         - <field_name>
   destinations:
     - aws_secretsmanager:
-        regions: us-west-2
+        tags:
+          service-<service-short-name>: enabled
+        accounts:
+          development: lfx-development
+          staging: lfx-staging
+          production: lfx-production
+        regions:
+          - us-west-2
         path: "cloud/<service-short-name>/<secret-group>"
 ```
 
@@ -149,7 +158,14 @@ LFX V2 Invite Service JWT Secret:
         - secret_key
   destinations:
     - aws_secretsmanager:
-        regions: us-west-2
+        tags:
+          service-invite: enabled
+        accounts:
+          development: lfx-development
+          staging: lfx-staging
+          production: lfx-production
+        regions:
+          - us-west-2
         path: "cloud/invite/jwt"
 ```
 
@@ -428,7 +444,14 @@ LFX V2 <Service> <New Secret Label>:
         - <field_name>
   destinations:
     - aws_secretsmanager:
-        regions: us-west-2
+        tags:
+          service-<service-short-name>: enabled
+        accounts:
+          development: lfx-development
+          staging: lfx-staging
+          production: lfx-production
+        regions:
+          - us-west-2
         path: "cloud/<service-short-name>/<new-secret-group>"
 ```
 
@@ -499,7 +522,7 @@ After completing either mode, verify the setup:
 
 - [ ] 1Password items named exactly as referenced in lfx-secrets-management sync entries
 - [ ] Items live in the correct vaults (LFX V2 - Development/Staging/Production)
-- [ ] Field names match exactly what's in lfx-secrets-management `fields:` values
+- [ ] Field names match exactly what's in lfx-secrets-management `json_fields:` values
 
 ---
 

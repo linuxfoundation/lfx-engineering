@@ -95,12 +95,12 @@ graph TB
 
     subgraph "Development Cluster"
         subgraph "Dev Service Account & IRSA"
-            SA1["pcc-sa<br/>🔑 Service Account<br/>📋 Role: k8s-secret-access-pcc"]
+            SA1["pcc-sa<br/>🔑 Service Account<br/>📋 Role: lfx-v2-pcc"]
         end
 
         subgraph "Dev External Secrets"
             SS1["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES1["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service: pcc<br/>⏱️ Refreshes every 10m"]
+            ES1["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
         end
 
         subgraph "Dev Kubernetes Secrets"
@@ -115,12 +115,12 @@ graph TB
 
     subgraph "Staging Cluster"
         subgraph "Staging Service Account & IRSA"
-            SA2["pcc-sa<br/>🔑 Service Account<br/>📋 Role: k8s-secret-access-pcc"]
+            SA2["pcc-sa<br/>🔑 Service Account<br/>📋 Role: lfx-v2-pcc"]
         end
 
         subgraph "Staging External Secrets"
             SS2["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES2["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service: pcc<br/>⏱️ Refreshes every 10m"]
+            ES2["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
         end
 
         subgraph "Staging Kubernetes Secrets"
@@ -135,12 +135,12 @@ graph TB
 
     subgraph "Production Cluster"
         subgraph "Prod Service Account & IRSA"
-            SA3["pcc-sa<br/>🔑 Service Account<br/>📋 Role: k8s-secret-access-pcc"]
+            SA3["pcc-sa<br/>🔑 Service Account<br/>📋 Role: lfx-v2-pcc"]
         end
 
         subgraph "Prod External Secrets"
             SS3["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES3["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service: pcc<br/>⏱️ Refreshes every 10m"]
+            ES3["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
         end
 
         subgraph "Prod Kubernetes Secrets"
@@ -601,7 +601,7 @@ See the service chart `README.md` for the exact `kubectl create secret` command.
 (2) the service chart to add the templates, (3) `lfx-v2-argocd` to activate ESO per environment.
 
 Once wired, adding new secrets only requires Steps 8–11 (tag discovery) or Steps 8–11 plus
-extending the `externalSecretsOperator.externalSecret.data` list in the argocd values (explicit
+extending the `externalSecretsOperator.externalSecret.data` list in the ArgoCD values (explicit
 data).
 
 ### 8. Add Secret to 1Password
