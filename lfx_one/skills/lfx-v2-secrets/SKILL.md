@@ -88,19 +88,21 @@ In the [lfx-v2-opentofu](https://github.com/linuxfoundation/lfx-v2-opentofu) rep
 edit `iam-service-accounts-definitions.yaml` and add:
 
 ```yaml
-lfx-v2-<service>:
-  namespace: "<service-short-name>-service"
-  service_account: "lfx-v2-<service>"
-  eso_service_tag: "<service-short-name>"
+service_account_roles:
+  lfx-v2-<service>:
+    namespace: "<service-short-name>-service"
+    service_account: "lfx-v2-<service>"
+    eso_service_tag: "<service-short-name>"
 ```
 
 Example for invite service:
 
 ```yaml
-lfx-v2-invite-service:
-  namespace: "invite-service"
-  service_account: "lfx-v2-invite-service"
-  eso_service_tag: "invite"
+service_account_roles:
+  lfx-v2-invite-service:
+    namespace: "invite-service"
+    service_account: "lfx-v2-invite-service"
+    eso_service_tag: "invite"
 ```
 
 > **Note**: The `eso_service_tag` is used in lfx-secrets-management to tag all related secrets.
@@ -164,76 +166,80 @@ under `charts/lfx-v2-<service>/templates/`:
 #### `serviceaccount.yaml`
 
 ```yaml
----
 # Copyright The Linux Foundation and each contributor to LFX.
 # SPDX-License-Identifier: MIT
-
+{{- if .Values.serviceAccount.create }}
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "lfx-v2-<service>.serviceAccountName" . }}
+  name: {{ .Values.serviceAccount.name | default .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "lfx-v2-<service>.labels" . | nindent 4 }}
+    app: {{ .Chart.Name }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- end }}
 ```
 
 #### `secretstore.yaml`
 
 ```yaml
----
 # Copyright The Linux Foundation and each contributor to LFX.
 # SPDX-License-Identifier: MIT
-
-{{- if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
-apiVersion: external-secrets.io/v1beta1
+{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
+---
+apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
-  name: {{ include "lfx-v2-<service>.fullname" . }}
-  labels:
-    {{- include "lfx-v2-<service>.labels" . | nindent 4 }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   provider:
     aws:
-      service: SecretsManager
+      service: "SecretsManager"
       region: {{ .Values.global.awsRegion }}
       auth:
         jwt:
           serviceAccountRef:
-            name: {{ include "lfx-v2-<service>.serviceAccountName" . }}
+            name: {{ .Values.serviceAccount.name | default .Chart.Name }}
 {{- end }}
 ```
 
 #### `externalsecret.yaml`
 
 ```yaml
----
 # Copyright The Linux Foundation and each contributor to LFX.
 # SPDX-License-Identifier: MIT
-
-{{- if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
-apiVersion: external-secrets.io/v1beta1
+{{ if and .Values.externalSecretsOperator.enabled .Values.global.awsRegion }}
+---
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: {{ include "lfx-v2-<service>.fullname" . }}
-  labels:
-    {{- include "lfx-v2-<service>.labels" . | nindent 4 }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  refreshInterval: {{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}
+  refreshInterval: "{{ .Values.externalSecretsOperator.externalSecret.refreshInterval }}"
   secretStoreRef:
-    name: {{ include "lfx-v2-<service>.fullname" . }}
+    name: {{ .Chart.Name }}
     kind: SecretStore
   target:
     name: {{ .Chart.Name }}
     creationPolicy: Owner
+    deletionPolicy: Retain
+  {{- if .Values.externalSecretsOperator.externalSecret.data }}
   data:
     {{- range .Values.externalSecretsOperator.externalSecret.data }}
-    - secretKey: {{ .key }}
+    - secretKey: {{ .secretKey }}
       remoteRef:
-        key: {{ .path }}
+        key: {{ .remoteRef.key }}
+        {{- if .remoteRef.property }}
+        property: {{ .remoteRef.property }}
+        {{- end }}
     {{- end }}
+  {{- end }}
 {{- end }}
 ```
 
@@ -254,7 +260,11 @@ externalSecretsOperator:
   enabled: false
   externalSecret:
     refreshInterval: "10m"
-    data: []
+    data:
+      - secretKey: secret_key
+        remoteRef:
+          key: "cloud/<service-short-name>/jwt"
+          property: field_name
 ```
 
 #### Wire into `deployment.yaml`
