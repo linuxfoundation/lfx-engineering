@@ -205,7 +205,7 @@ graph TB
 2. **Configuration**: YAML files define the secret mapping and deployment rules
 3. **Deployment**: GitHub Actions deploy secrets to AWS Secrets Manager with appropriate tags
 4. **Discovery**: External Secrets Operator uses IRSA to authenticate and discover tagged secrets
-5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed upon event
+5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed upon event via Lambda
 6. **Consumption**: Applications reference the service account and secret to access environment variables
 
 ## Prerequisites
@@ -243,7 +243,7 @@ secret. When secrets are deployed to AWS Secrets Manager, they receive a `servic
    `lfx-v2-pcc` service account uses role `arn:aws:iam::788942260905:role/lfx-v2-pcc` in dev to only
    access secrets tagged `"aws:ResourceTag/service-pcc": "enabled"`
 2. **Auto-Discovery**: The External Secrets Operator automatically finds and merges all secrets with the
-   service tag into a single Kubernetes Secret. Then, the approriate Secret Store is annotated for sync.
+   service tag into a single Kubernetes Secret. Then, the appropriate Secret Store is annotated for sync.
    New secrets will be in the Secret Store after sync within minutes.
 3. **Environment Variables**: All tagged secrets are made available as environment variables in the
    service's pods
@@ -270,7 +270,7 @@ The name of the secret item should be the same in all vaults it is configured fo
 
 ### 1Password Item Field Names
 
-The `fields` configuration when using 1Password as a source determins the name of the secret value
+The `fields` configuration when using 1Password as a source determines the name of the secret value
 within the Kubernetes Secret Store. By default, 1Password items include generic names, such as `credential`
 or `password`. **Please create a custom field name to store the secret with a more specific secret name.**
 
@@ -436,7 +436,7 @@ metadata:
 The `annotations` block is empty by default and is populated per environment in `lfx-v2-argocd`
 with the IRSA role ARN (shown below).
 
-### Register the service account:
+#### Register the service account
 
 Add this block to the service's Helm chart values, `charts/lfx-v2-myresource-service/values.yaml`:
 
