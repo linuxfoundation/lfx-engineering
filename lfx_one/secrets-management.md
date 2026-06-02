@@ -63,7 +63,8 @@ these secrets, see the [Service Account Management documentation](https://github
 - **Tag-Based Access**: Services only access secrets tagged with their service name
 - **External Secrets Operator**: Automatically discovers and merges secrets into Kubernetes
 - **IRSA Authentication**: Secure role assumption without storing credentials
-- **Event-Based Refresh**: An AWS Lambda listens for tagged secret updates/creations for automatic refreshing of External Secrets Operator
+- **Event-Based Refresh**: An AWS Lambda listens for tagged secret updates/creations for automatic
+  refreshing of External Secrets Operator
 
 ### Secrets Flow Architecture
 
@@ -221,7 +222,8 @@ Before managing secrets for LFX V2, ensure you have:
 
 ### Tags
 
-There are two `tags` fields with different purposes. The first tag field configures the deployment of the secret. Every secret configuration **must** include these tags:
+There are two `tags` fields with different purposes. The first tag field configures the deployment
+of the secret. Every secret configuration **must** include these tags:
 
 - `lfx_v2` - Identifies the secret as belonging to LFX V2
 - `<upstream_service>` - The third-party service providing the secret (e.g., `litellm`, `stripe`, `zoom`)
@@ -507,6 +509,7 @@ spec:
 ```
 
 Create `lfx-v2-argocd/custom-resources/lfx-v2-myresource-service/SecretStore.yaml`:
+
 ```yaml
 # Copyright The Linux Foundation and each contributor to LFX.
 # SPDX-License-Identifier: MIT
