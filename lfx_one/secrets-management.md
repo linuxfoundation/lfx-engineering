@@ -27,7 +27,7 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
   - [8. Use the Secret in Kubernetes](#8-use-the-secret-in-kubernetes)
 - [Configuration Example](#configuration-example)
   - [Configuration Breakdown](#configuration-breakdown)
-- [Deployment Methods](#deployment-methods)
+- [Deploying Secrets](#deployment)
   - [Using GitHub Actions](#using-github-actions)
 - [Validation and Testing](#validation-and-testing)
   - [Verify Deployment](#verify-deployment)
@@ -620,31 +620,28 @@ guidelines.
 
 ### 7. Deploy Secrets
 
-Once approved and merged, the secrets will be deployed via
-[**GitHub Actions**](https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml)
+Once approved and merged, the secrets will be deployed via the
+[**Deploy GitHub Actions Workflow**](https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml). **This is a manual deploy, be sure to follow up with it after merging your PR.**
 
 If the service setup (Steps 1–3) is already complete, the secret will be automatically discovered
 by ESO and made available in the service's pods.
 
 ### 8. Use the Secret in Kubernetes
 
-The secret, once ingested, can be used by your deployments by reference. Here's an example snippet
-of a deployment manifest:
+After [deploying](#deployment) the secret via GitHub Actions, the secret
+can be used by your deployments by reference to the field name.
+This is outlined in the `lfx-v2-argocd` repository, under the corresponding `values.yaml` file.
+Open a pull request in the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository
+that defines the environment variable for the service under `values/<env>/<service_name>.yaml`, using
+the following template.
 
-```yaml
-env:
-{{- range $name, $config := .Values.environment }}
-- name: {{ $name }}
-  {{- if $config.value }}
-  value: {{ $config.value | quote }}
-  {{- else if $config.valueFrom }}
-  valueFrom:
-    {{- toYaml $config.valueFrom | nindent 14 }}
-  {{- end }}
-{{- end }}
-```
+Secrets need to be outlined for each service that needs it, and for each environment within the service.
+**It is recommended to place the secret in the global `values.yaml` file for the service so that it is
+defined once per service and lives in all 3 environments.**
 
-and in the corresponding `values.yaml`:
+> [!NOTE]
+> For secrets deployed to the `lfx-self-serve` service, your pull request will also need to add the
+> secret to `values/dev/lfx-self-serve-branch.yaml`.
 
 ```yaml
 environment:
@@ -660,7 +657,9 @@ environment:
         key: litellm-key-id
 ```
 
-The above is dependent on how the Helm chart is set up.
+> [!NOTE]
+> Before updating the values chart, ensure the secret has been [deployed](#deployment)
+> via GitHub Actions. 
 
 ## Configuration Example
 
@@ -703,7 +702,7 @@ LiteLLM API key for LFXv2:
   ExternalSecret discovers this secret. A single secret can carry multiple `service-*` tags to serve
   multiple services simultaneously.
 
-## Deployment Methods
+## Deployment
 
 ### Using GitHub Actions
 
