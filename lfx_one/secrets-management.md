@@ -372,7 +372,7 @@ behalf via IRSA (IAM Roles for Service Accounts). This role also grants the Exte
 Operator permission to read secrets tagged with the service identifier.
 
 In the [lfx-v2-opentofu](https://github.com/linuxfoundation/lfx-v2-opentofu) repository, add an
-entry to `iam-service-accounts-definitions.yaml`:
+entry to `iam-service-account-definitions.yaml`:
 
 ```yaml
 service_account_roles:
@@ -384,9 +384,9 @@ entry of the service account role. In the case above, when this PR is merged and
 OpenTofu creates per environment:
 
 - An IAM role `lfx-v2-myresource-service` with an OIDC trust policy bound to
-  `system:serviceaccount:myresource-service:lfx-v2-myresource-service`
-- Tag-scoped `secretsmanager:GetSecretValue` policies granting access to secrets tagged either
-  `service-myresource = enabled` or `service = myresource`
+  `system:serviceaccount:lfx-v2-myresource-service:lfx-v2-myresource-service`
+- Tag-scoped `secretsmanager:GetSecretValue` policies granting access to secrets tagged
+  `service-lfx-v2-myresource-service: enabled` (the default — matches the role key)
 
 The role is created in all three AWS accounts:
 
@@ -432,6 +432,7 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken | default true }}
 {{- end }}
 ```
 
@@ -608,8 +609,10 @@ repository and create or update a YAML configuration file in the `secretsmanagem
 directory. See the [Configuration Example](#configuration-example) for the full schema.
 
 The key field to note is `destinations.aws_secretsmanager.tags` — use `service-<name>: enabled`
-format (e.g., `service-myresource: enabled`) to tag the secret for each service the secret needs
-to be deployed into.
+format to tag the secret for each service that needs it. The `<name>` value must match the
+service's `eso_service_tag` from `iam-service-account-definitions.yaml`, which defaults to the
+role key (e.g., `service-lfx-v2-myresource-service: enabled`). If a custom `eso_service_tag` is
+set (e.g., `eso_service_tag: "myresource"`), use that instead (e.g., `service-myresource: enabled`).
 
 Do this via a new branch and pull request against the `main` branch.
 
@@ -672,7 +675,7 @@ here's a complete configuration example:
 ```yaml
 LiteLLM API key for LFXv2:
   tags: [lfx_v2, litellm, pcc]
-  environments: [development, staging, production]
+  envs: [development, staging, production]
   source:
     onepassword:
       vaults:
@@ -769,7 +772,7 @@ Ensure your LFX V2 services can access the secret:
 
 **Secret not found in AWS:**
 
-- Verify the secret was successfully deployed using the audit commands
+- Verify the secret was successfully deployed — see [Verify Deployment](#verify-deployment)
 - Check that the path matches your service configuration exactly
 - Ensure the secret was deployed to the correct AWS account and region
 
