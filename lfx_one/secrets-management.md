@@ -621,7 +621,10 @@ guidelines.
 ### 7. Deploy Secrets
 
 Once approved and merged, the secrets will be deployed via the
-[**Deploy GitHub Actions Workflow**](https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml). **This is a manual deploy, be sure to follow up with it after merging your PR.**
+[**Deploy GitHub Actions Workflow**][deploy-workflow].
+**This is a manual deploy, be sure to follow up with it after merging your PR.**
+
+[deploy-workflow]: https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml
 
 If the service setup (Steps 1–3) is already complete, the secret will be automatically discovered
 by ESO and made available in the service's pods.
@@ -659,7 +662,7 @@ environment:
 
 > [!NOTE]
 > Before updating the values chart, ensure the secret has been [deployed](#deployment)
-> via GitHub Actions. 
+> via GitHub Actions.
 
 ## Configuration Example
 
