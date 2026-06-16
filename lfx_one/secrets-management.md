@@ -661,9 +661,8 @@ that adds or extends the `environment` block for the service:
 > The `environment` block is always named `environment`, but its nesting varies — some services
 > have it at the top level, others under `app:`. Check the existing values file and match the
 > structure already in use.
-
-> [!NOTE]
-> For `lfx-self-serve`: if `values/dev/lfx-self-serve.yaml` is modified, apply the same change
+>
+> **lfx-self-serve**: if `values/dev/lfx-self-serve.yaml` is modified, apply the same change
 > to `values/dev/lfx-self-serve-branch.yaml` as well (this file only exists in `values/dev/`).
 > Use `pcc-secrets` as `secretKeyRef.name` — the K8s Secret for `lfx-self-serve` is named
 > `pcc-secrets` for historical reasons. The `eso_service_tag` is `pcc` (AWS SM resource tag
