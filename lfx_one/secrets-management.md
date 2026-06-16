@@ -79,14 +79,14 @@ graph TB
     end
 
     subgraph "Secrets Management Repository"
-        YAML["YAML Configuration<br/>🔧 secretsmanagement/secrets/cloud.yml"]
+        YAML["YAML Configuration<br/>🔧 secrets/lfx/lfx-self-serve.yml"]
         GA["GitHub Actions<br/>🚀 Deploy Workflow"]
     end
 
     subgraph "AWS Secrets Manager"
-        ASM1["us-west-2<br/>lfx-development<br/>🔐 /cloud/litellm/lfx-v2<br/>🏷️ service-pcc: enabled"]
-        ASM2["us-west-2<br/>lfx-staging<br/>🔐 /cloud/litellm/lfx-v2<br/>🏷️ service-pcc: enabled"]
-        ASM3["us-west-2<br/>lfx-production<br/>🔐 /cloud/litellm/lfx-v2<br/>🏷️ service-pcc: enabled"]
+        ASM1["us-west-2<br/>lfx-development<br/>🔐 /litellm/lfx-self-serve<br/>🏷️ service-pcc: enabled"]
+        ASM2["us-west-2<br/>lfx-staging<br/>🔐 /litellm/lfx-self-serve<br/>🏷️ service-pcc: enabled"]
+        ASM3["us-west-2<br/>lfx-production<br/>🔐 /litellm/lfx-self-serve<br/>🏷️ service-pcc: enabled"]
     end
 
     subgraph "Development Cluster"
@@ -226,13 +226,13 @@ There are two `tags` fields with different purposes. The first tag field configu
 of the secret. Every secret configuration **must** include these tags:
 
 - `lfx_v2` - Identifies the secret as belonging to LFX V2
+- `<backend_service>` - The full LFX V2 service name that will consume the secret (e.g., `lfx-self-serve`, `lfx-v2-committee-service`)
 - `<upstream_service>` - The third-party service providing the secret (e.g., `litellm`, `stripe`, `zoom`)
-- `<backend_service>` - The LFX V2 service that will consume the secret (e.g., `pcc`)
 
 **Example tags:**
 
 ```yaml
-tags: [lfx_v2, litellm, pcc]
+tags: [lfx_v2, lfx-self-serve, litellm]
 ```
 
 #### Service Tag Integration
@@ -339,19 +339,20 @@ All secrets under the `lfx/` secrets directory are stored in the **us-west-2** r
 Secrets follow this path convention in AWS Secrets Manager:
 
 ```text
-path: cloud/<3rd_party_service>/<name_or_identifier>
+path: <3rd_party_service>/<lfx_v2_service_name>
 ```
 
 They are automatically prefixed with `/cloudops/managed-secrets/` when created.
 
-The name pattern here does not matter as much as the tags do, which determine which secret
-store a secret is pulled into.
+The path must include the LFX V2 service name so the secret is identifiable at a glance.
+The tags determine which service's ESO discovers the secret, but the path should still be
+descriptive enough that a reader knows what it is without context.
 
 **Examples:**
 
-- `cloud/LiteLLM/lfx-v2`
-- `cloud/zoom/lfx-v2-meeting-service`
-- `cloud/supabase/api_key`
+- `litellm/lfx-self-serve`
+- `zoom/lfx-v2-meeting-service`
+- `supabase/lfx-v2-committee-service`
 
 ## Step-by-Step Process
 
@@ -605,8 +606,8 @@ Add your secret to the appropriate 1Password vault:
 ### 5. Create YAML Configuration
 
 Navigate to the [lfx-secrets-management](https://github.com/linuxfoundation/lfx-secrets-management)
-repository and create or update a YAML configuration file in the `secretsmanagement/secrets/`
-directory. See the [Configuration Example](#configuration-example) for the full schema.
+repository and add an entry to `secrets/lfx/<service>.yml` — one file per LFX V2 service.
+Create the file if it doesn't exist yet. See the [Configuration Example](#configuration-example) for the full schema.
 
 The key field to note is `destinations.aws_secretsmanager.tags` — use `service-<name>: enabled`
 format to tag the secret for each service that needs it. The `<name>` value must match the
@@ -623,9 +624,20 @@ guidelines.
 
 ### 7. Deploy Secrets
 
-Once approved and merged, the secrets will be deployed via the
-[**Deploy GitHub Actions Workflow**][deploy-workflow].
-**This is a manual deploy, be sure to follow up with it after merging your PR.**
+Once approved and merged, trigger the [**Deploy GitHub Actions Workflow**][deploy-workflow] manually:
+
+1. Go to the Deploy workflow page linked above
+2. Click **Run workflow**
+3. In the tag field, enter the **most specific tag** from the `tags:` field in your YAML entry
+   (e.g. `litellm`, `atlassian`) — not `lfx_v2` or the AWS resource tag — to avoid
+   re-deploying or rotating unrelated secrets
+4. Confirm the workflow completes successfully before merging the `lfx-v2-argocd` PR
+
+If you're not comfortable triggering the workflow yourself, ask the Platform Engineering team
+to run it for you.
+
+> **Auth0 JWT secrets**: do not trigger the workflow yourself — these secrets are rotated on
+> every deploy. Ask the Platform Engineering team to deploy and coordinate the timing.
 
 [deploy-workflow]: https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml
 
@@ -638,16 +650,24 @@ After [deploying](#deployment) the secret via GitHub Actions, the secret
 can be used by your deployments by reference to the field name.
 This is outlined in the `lfx-v2-argocd` repository, under the corresponding `values.yaml` file.
 Open a pull request in the [lfx-v2-argocd](https://github.com/linuxfoundation/lfx-v2-argocd) repository
-that defines the environment variable for the service under `values/<env>/<service_name>.yaml`, using
-the following template.
+that adds or extends the `environment` block for the service:
 
-Secrets need to be outlined for each service that needs it, and for each environment within the service.
-**It is recommended to place the secret in the global `values.yaml` file for the service so that it is
-defined once per service and lives in all 3 environments.**
+- If the secret is deployed to **all environments**, add it to `values/global/<service>.yaml`
+- If the secret is deployed to **specific environments only**, add it to each relevant
+  per-environment file (`values/dev/<service>.yaml`, `values/staging/<service>.yaml`,
+  `values/prod/<service>.yaml`)
 
 > [!NOTE]
-> For secrets deployed to the `lfx-self-serve` service, your pull request will also need to add the
-> secret to `values/dev/lfx-self-serve-branch.yaml`.
+> The `environment` block is always named `environment`, but its nesting varies — some services
+> have it at the top level, others under `app:`. Check the existing values file and match the
+> structure already in use.
+
+> [!NOTE]
+> For `lfx-self-serve`: if `values/dev/lfx-self-serve.yaml` is modified, apply the same change
+> to `values/dev/lfx-self-serve-branch.yaml` as well (this file only exists in `values/dev/`).
+> Use `pcc-secrets` as `secretKeyRef.name` — the K8s Secret for `lfx-self-serve` is named
+> `pcc-secrets` for historical reasons. The `eso_service_tag` is `pcc` (AWS SM resource tag
+> `service-pcc: enabled`), but the service tag in the `tags:` list should be `lfx-self-serve`.
 
 ```yaml
 environment:
@@ -674,7 +694,7 @@ here's a complete configuration example:
 
 ```yaml
 LiteLLM API key for LFXv2:
-  tags: [lfx_v2, litellm, pcc]
+  tags: [lfx_v2, lfx-self-serve, litellm]
   envs: [development, staging, production]
   source:
     onepassword:
@@ -690,13 +710,13 @@ LiteLLM API key for LFXv2:
     - aws_secretsmanager:
         tags:
           service-pcc: enabled
-        path: cloud/litellm/lfx-v2
+        path: litellm/lfx-self-serve
 ```
 
 ### Configuration Breakdown
 
 - **Name**: Descriptive title for the secret configuration
-- **Tags**: Must include `lfx_v2`, upstream service (`litellm`), and backend service (`pcc`)
+- **Tags**: Must include `lfx_v2`, the full LFX V2 service name (`lfx-self-serve`), and upstream service (`litellm`)
 - **Environments**: List of environments where this secret should be deployed
 - **Source**: 1Password configuration with vault mappings and item details
 - **source.onepassword.fields**: Specifies which fields from the 1Password item to include in the secret
@@ -715,9 +735,9 @@ LiteLLM API key for LFXv2:
 1. Navigate to the
    [Deploy Workflow](https://github.com/linuxfoundation/lfx-secrets-management/actions/workflows/deploy.yml)
 2. Click "Run workflow"
-3. Enter space-separated values:
-   - **Tags**: Include your tags (e.g., `lfx_v2 litellm pcc`)
-   - **Environments**: Specify target environments (e.g., `development staging production`)
+3. In the tag field, enter the **most specific tag** from the `tags:` field in your YAML entry
+   (e.g. `litellm`, `atlassian`) — not `lfx_v2` or the AWS resource tag — to avoid
+   re-deploying or rotating unrelated secrets
 
 ## Validation and Testing
 
