@@ -90,26 +90,26 @@ Default NATS buckets: `committee-members,committees,committee-settings,projects,
 
 ```bash
 # Audit (dry-run, both stores) — safe to run any time
-go run . gridfm opengridfm
+go run . old-slug new-slug
 
 # Audit OpenSearch only
-OPENSEARCH_URL=http://localhost:9200 go run . gridfm opengridfm --target=opensearch
+OPENSEARCH_URL=http://localhost:9200 go run . old-slug new-slug --target=opensearch
 
 # Apply OpenSearch changes
 OPENSEARCH_URL=http://localhost:9200 \
-  go run . gridfm opengridfm --target=opensearch --dry-run=false
+  go run . old-slug new-slug --target=opensearch --dry-run=false
 
 # Apply NATS KV changes
 NATS_URL=nats://localhost:4222 \
-  go run . gridfm opengridfm --target=nats --dry-run=false --concurrency=20
+  go run . old-slug new-slug --target=nats --dry-run=false --concurrency=20
 
 # Apply both stores
 OPENSEARCH_URL=http://localhost:9200 \
 NATS_URL=nats://localhost:4222 \
-  go run . gridfm opengridfm --dry-run=false
+  go run . old-slug new-slug --dry-run=false
 
 # Restrict NATS migration to specific buckets
-go run . gridfm opengridfm \
+go run . old-slug new-slug \
   --target=nats --dry-run=false \
   --nats-buckets=committee-members,committees
 ```
