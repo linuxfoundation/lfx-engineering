@@ -445,7 +445,7 @@ func migrateBucket(ctx context.Context, js jetstream.JetStream, bucket, oldSlug,
 			}
 			statsMu.Unlock()
 
-			if n := processed.Add(1); n%100 == 0 || int(n) == stats.Total {
+			if n := processed.Add(1); n%1000 == 0 || int(n) == stats.Total {
 				statsMu.Lock()
 				u, sk, f := stats.Updated, stats.Skipped, stats.Failed
 				statsMu.Unlock()
