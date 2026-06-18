@@ -4,4 +4,4 @@
 .claude/
 .vscode/
 node_modules/
-lfx_one/scripts/*/bin/
+lfx_one/scripts/*/bin/*.test

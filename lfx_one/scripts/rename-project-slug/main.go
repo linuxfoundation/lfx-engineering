@@ -70,7 +70,7 @@ var (
 	debug         = flag.Bool("debug", false, "enable debug logging")
 	natsURL       = flag.String("nats-url", getEnvOrDefault("NATS_URL", nats.DefaultURL), "NATS server URL")
 	natsBuckets   = flag.String("nats-buckets", "committee-members,committees,committee-settings,projects,project-settings", "comma-separated NATS KV bucket names to migrate")
-	concurrency   = flag.Int("concurrency", 10, "max concurrent NATS KV record updates per bucket")
+	concurrency   = flag.Int("concurrency", 50, "max concurrent NATS KV record updates per bucket")
 	opensearchURL = flag.String("opensearch-url", getEnvOrDefault("OPENSEARCH_URL", "http://localhost:9200"), "OpenSearch base URL")
 	oldSlugFlag   = flag.String("old-slug", "", "current slug (alternative to first positional arg)")
 	newSlugFlag   = flag.String("new-slug", "", "new slug (alternative to second positional arg)")
