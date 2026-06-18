@@ -54,10 +54,6 @@ Alternatively, use `--old-slug` / `--new-slug` flags.
 | Flag / Env var | Default | Description |
 |----------------|---------|-------------|
 | `--opensearch-url` / `OPENSEARCH_URL` | `http://localhost:9200` | OpenSearch base URL |
-| `--opensearch-index` / `OPENSEARCH_INDEX` | `resources` | Index name |
-| `--opensearch-username` / `OPENSEARCH_USERNAME` | _(none)_ | Basic-auth username |
-| `--opensearch-password` / `OPENSEARCH_PASSWORD` | _(none)_ | Basic-auth password |
-| `--insecure-skip-tls-verify` | `false` | Skip TLS verification (useful for port-forwarded clusters) |
 
 #### NATS flags
 

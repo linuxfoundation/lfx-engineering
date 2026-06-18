@@ -26,7 +26,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -34,7 +33,6 @@ import (
 	"io"
 	"log"
 	"log/slog"
-	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -67,19 +65,15 @@ var bucketSlugFields = map[string][]string{
 }
 
 var (
-	targetFlag       = flag.String("target", "both", "which stores to migrate: opensearch, nats, or both")
-	dryRun           = flag.Bool("dry-run", true, "preview changes without writing (pass --dry-run=false to apply)")
-	debug            = flag.Bool("debug", false, "enable debug logging")
-	insecureSkipTLS  = flag.Bool("insecure-skip-tls-verify", false, "skip TLS certificate verification for OpenSearch")
-	natsURL          = flag.String("nats-url", getEnvOrDefault("NATS_URL", nats.DefaultURL), "NATS server URL")
-	natsBuckets      = flag.String("nats-buckets", "committee-members,committees,committee-settings,projects,project-settings", "comma-separated NATS KV bucket names to migrate")
-	concurrency      = flag.Int("concurrency", 10, "max concurrent NATS KV record updates per bucket")
-	opensearchURL    = flag.String("opensearch-url", getEnvOrDefault("OPENSEARCH_URL", "http://localhost:9200"), "OpenSearch base URL")
-	opensearchIndex  = flag.String("opensearch-index", getEnvOrDefault("OPENSEARCH_INDEX", "resources"), "OpenSearch index name")
-	opensearchUser   = flag.String("opensearch-username", os.Getenv("OPENSEARCH_USERNAME"), "OpenSearch basic-auth username (optional)")
-	opensearchPass   = flag.String("opensearch-password", os.Getenv("OPENSEARCH_PASSWORD"), "OpenSearch basic-auth password (optional)")
-	oldSlugFlag      = flag.String("old-slug", "", "current slug (alternative to first positional arg)")
-	newSlugFlag      = flag.String("new-slug", "", "new slug (alternative to second positional arg)")
+	targetFlag    = flag.String("target", "both", "which stores to migrate: opensearch, nats, or both")
+	dryRun        = flag.Bool("dry-run", true, "preview changes without writing (pass --dry-run=false to apply)")
+	debug         = flag.Bool("debug", false, "enable debug logging")
+	natsURL       = flag.String("nats-url", getEnvOrDefault("NATS_URL", nats.DefaultURL), "NATS server URL")
+	natsBuckets   = flag.String("nats-buckets", "committee-members,committees,committee-settings,projects,project-settings", "comma-separated NATS KV bucket names to migrate")
+	concurrency   = flag.Int("concurrency", 10, "max concurrent NATS KV record updates per bucket")
+	opensearchURL = flag.String("opensearch-url", getEnvOrDefault("OPENSEARCH_URL", "http://localhost:9200"), "OpenSearch base URL")
+	oldSlugFlag   = flag.String("old-slug", "", "current slug (alternative to first positional arg)")
+	newSlugFlag   = flag.String("new-slug", "", "new slug (alternative to second positional arg)")
 )
 
 type bucketStats struct {
@@ -169,16 +163,8 @@ func run(slugArgs []string) error {
 // ── OpenSearch ────────────────────────────────────────────────────────────────
 
 func runOpenSearch(ctx context.Context, oldSlug, newSlug string) error {
-	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: *insecureSkipTLS}, //nolint:gosec
-	}
 	cfg := opensearchgo.Config{
 		Addresses: []string{*opensearchURL},
-		Transport: transport,
-	}
-	if *opensearchUser != "" {
-		cfg.Username = *opensearchUser
-		cfg.Password = *opensearchPass
 	}
 
 	client, err := opensearchgo.NewClient(cfg)
@@ -188,7 +174,7 @@ func runOpenSearch(ctx context.Context, oldSlug, newSlug string) error {
 
 	slog.InfoContext(ctx, "OpenSearch migration",
 		"url", *opensearchURL,
-		"index", *opensearchIndex,
+		"index", "resources",
 		"dry_run", *dryRun,
 	)
 
@@ -231,7 +217,7 @@ func osAudit(ctx context.Context, client *opensearchgo.Client, query map[string]
 
 	res, err := client.Search(
 		client.Search.WithContext(ctx),
-		client.Search.WithIndex(*opensearchIndex),
+		client.Search.WithIndex("resources"),
 		client.Search.WithBody(body),
 	)
 	if err != nil {
@@ -259,7 +245,7 @@ func osAudit(ctx context.Context, client *opensearchgo.Client, query map[string]
 	fmt.Println("OpenSearch Audit (dry-run)")
 	fmt.Println(strings.Repeat("=", 50))
 	fmt.Printf("Slug:               %s\n", oldSlug)
-	fmt.Printf("Index:              %s\n", *opensearchIndex)
+	fmt.Printf("Index:              %s\n", "resources")
 	fmt.Printf("Records matched:    %d\n", result.Hits.Total.Value)
 	fmt.Println("(pass --dry-run=false to apply the update)")
 	fmt.Println(strings.Repeat("=", 50))
@@ -314,7 +300,7 @@ if (!changed) { ctx.op='noop'; }
 	}
 
 	res, err := client.UpdateByQuery(
-		[]string{*opensearchIndex},
+		[]string{"resources"},
 		client.UpdateByQuery.WithContext(ctx),
 		client.UpdateByQuery.WithBody(body),
 	)
@@ -341,7 +327,7 @@ if (!changed) { ctx.op='noop'; }
 	fmt.Println("\n" + strings.Repeat("=", 50))
 	fmt.Println("OpenSearch Update Complete")
 	fmt.Println(strings.Repeat("=", 50))
-	fmt.Printf("Index:              %s\n", *opensearchIndex)
+	fmt.Printf("Index:              %s\n", "resources")
 	fmt.Printf("Total examined:     %d\n", result.Total)
 	fmt.Printf("Updated:            %d\n", result.Updated)
 	fmt.Printf("Noops:              %d\n", result.Noops)
