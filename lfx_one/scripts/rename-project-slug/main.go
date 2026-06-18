@@ -278,6 +278,15 @@ if (tags instanceof List) {
     if (('project_slug:'+oldSlug).equals(tag)) { tags.set(i, 'project_slug:'+newSlug); changed=true; }
   }
 }
+String objectRef=(String) ctx._source.get('object_ref');
+if (objectRef!=null && ('project:'+oldSlug).equals(objectRef)) { ctx._source.put('object_ref', 'project:'+newSlug); changed=true; }
+def parentRefs=ctx._source.get('parent_refs');
+if (parentRefs instanceof List) {
+  for (int i=0; i<parentRefs.size(); i++) {
+    String ref=(String) parentRefs.get(i);
+    if (('project:'+oldSlug).equals(ref)) { parentRefs.set(i, 'project:'+newSlug); changed=true; }
+  }
+}
 String ft=(String) ctx._source.get('fulltext');
 if (ft!=null && ft.contains(oldSlug)) { ctx._source.put('fulltext', ft.replace(oldSlug, newSlug)); changed=true; }
 def aliases=ctx._source.get('name_and_aliases');
@@ -368,12 +377,12 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 		return fmt.Errorf("failed to create JetStream context: %w", err)
 	}
 
-	var grandTotal, grandUpdated, grandSkipped, grandFailed int
+	var grandTotal, grandUpdated, grandSkipped, grandFailed, bucketErrors int
 	for _, bucket := range buckets {
 		stats, err := migrateBucket(ctx, js, bucket, oldSlug, newSlug)
 		if err != nil {
-			// Log and continue so one missing bucket doesn't abort the rest.
 			slog.ErrorContext(ctx, "bucket migration failed", "bucket", bucket, "error", err)
+			bucketErrors++
 			continue
 		}
 		grandTotal += stats.Total
@@ -389,8 +398,12 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 	fmt.Printf("Updated:          %d\n", grandUpdated)
 	fmt.Printf("Skipped:          %d\n", grandSkipped)
 	fmt.Printf("Failed:           %d\n", grandFailed)
+	fmt.Printf("Bucket errors:    %d\n", bucketErrors)
 	fmt.Println(strings.Repeat("=", 50))
 
+	if bucketErrors > 0 {
+		return fmt.Errorf("%d bucket(s) failed to open or list — migration incomplete", bucketErrors)
+	}
 	if grandFailed > 0 {
 		return fmt.Errorf("%d records failed to update across all buckets", grandFailed)
 	}
