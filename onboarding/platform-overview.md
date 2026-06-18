@@ -62,6 +62,10 @@ graph TD
 
     Indexer -->|index / revise resources| OpenSearch
     FGASync -->|sync relations| OpenFGA
+
+    click QuerySvc href "https://github.com/linuxfoundation/lfx-v2-query-service"
+    click FGASync href "https://github.com/linuxfoundation/lfx-v2-fga-sync"
+    click Indexer href "https://github.com/linuxfoundation/lfx-v2-indexer-service"
 ```
 
 ### Architecture: ITX wrapper pattern
@@ -83,6 +87,9 @@ graph TD
     NATSDB -->|bucket change events| Wrapper
     Wrapper -->|upsert via NATS| Indexer[indexer]
     Wrapper -->|relations via NATS| FGASync[fga-sync]
+
+    click FGASync href "https://github.com/linuxfoundation/lfx-v2-fga-sync"
+    click Indexer href "https://github.com/linuxfoundation/lfx-v2-indexer-service"
 ```
 
 The `v1-sync-helper` service consumes DynamoDB Streams and replicates ITX data into NATS KV
@@ -91,17 +98,25 @@ any v2-compatible eventing to be added to ITX code.
 
 ### Key components
 
+**Infrastructure** (third-party services)
+
 | Component | Role |
 |-----------|------|
 | **Traefik** | Ingress controller; routes all inbound traffic |
 | **Heimdall** | Authorization middleware; checks every request against OpenFGA |
-| **Resource APIs** | Go/Goa services providing CRUD for projects, committees, meetings, etc. |
-| **NATS** | Messaging bus and KV store; backbone for inter-service eventing |
 | **OpenFGA** | Fine-grained authorization; stores and evaluates access relations |
+| **NATS** | Messaging bus and KV store; backbone for inter-service eventing |
 | **OpenSearch** | Full-text search and list query engine |
-| **query-svc** | Handles all list/search requests; filters results by caller access |
-| **fga-sync** | Keeps OpenFGA relations in sync with resource state |
-| **indexer** | Keeps OpenSearch indexes in sync with resource state |
+
+**Platform services** (LFX-owned, source in GitHub)
+
+| Component | Role |
+|-----------|------|
+| **Resource APIs** | Go/Goa services providing CRUD for projects, committees, meetings, etc. |
+| **[query-svc](https://github.com/linuxfoundation/lfx-v2-query-service)** | Handles all list/search requests; filters results by caller access |
+| **[fga-sync](https://github.com/linuxfoundation/lfx-v2-fga-sync)** | Keeps OpenFGA relations in sync with resource state |
+| **[indexer](https://github.com/linuxfoundation/lfx-v2-indexer-service)** | Keeps OpenSearch indexes in sync with resource state |
+| **[access-check](https://github.com/linuxfoundation/lfx-v2-access-check)** | Per-request access checks via OpenFGA |
 | **v1-sync-helper** | Replicates DynamoDB Streams into NATS KV for eventing and caching |
 
 ### LFXV2 Environment URLs
@@ -119,16 +134,14 @@ any v2-compatible eventing to be added to ITX code.
 | Repo | Purpose |
 |------|---------|
 | [`lfx-self-serve`](https://github.com/linuxfoundation/lfx-self-serve) | LFX v2 frontend UI |
-| `lfx-v2-project-service` | Project resource API |
-| `lfx-v2-committee-service` | Committee resource API |
-| `lfx-v2-meeting-service` | Meeting resource API |
-| `lfx-v2-auth-service` | Authentication service |
-| `lfx-v2-query-service` | List / search service |
-| `lfx-v2-indexer-service` | OpenSearch indexing |
-| `lfx-v2-fga-sync` | OpenFGA relation sync |
-| `lfx-v2-access-check` | Per-request access check |
-
-Local clones of the v2 service repos live under `~/lfx-v2-*` on developer workstations.
+| [`lfx-v2-project-service`](https://github.com/linuxfoundation/lfx-v2-project-service) | Project resource API |
+| [`lfx-v2-committee-service`](https://github.com/linuxfoundation/lfx-v2-committee-service) | Committee resource API |
+| [`lfx-v2-meeting-service`](https://github.com/linuxfoundation/lfx-v2-meeting-service) | Meeting resource API |
+| [`lfx-v2-auth-service`](https://github.com/linuxfoundation/lfx-v2-auth-service) | Authentication service |
+| [`lfx-v2-query-service`](https://github.com/linuxfoundation/lfx-v2-query-service) | List / search service |
+| [`lfx-v2-indexer-service`](https://github.com/linuxfoundation/lfx-v2-indexer-service) | OpenSearch indexing |
+| [`lfx-v2-fga-sync`](https://github.com/linuxfoundation/lfx-v2-fga-sync) | OpenFGA relation sync |
+| [`lfx-v2-access-check`](https://github.com/linuxfoundation/lfx-v2-access-check) | Per-request access check |
 
 ### LFXV2 AWS Accounts
 
