@@ -15,9 +15,9 @@ and contributors. It spans three layered platforms built up over time:
 
 | Layer | Name | Status |
 |-------|------|--------|
-| Foundation | [ITX (IT Automation)](#itx-it-automation) | Backend powering both v1 and v2 |
-| Current production | [PCC / LFX Platform v1](#pcc--lfx-platform-v1) | Active, serving all LFX products |
-| Next-generation | [LFXV2 (LFX on Kubernetes)](#lfxv2-lfx-on-kubernetes) | In active development, replacing v1 |
+| LFX-v2 | [LFXV2 (LFX on Kubernetes)](#lfxv2-lfx-on-kubernetes) | In active development, replacing v1 |
+| LFX-v1 | [PCC / LFX Platform v1](#pcc--lfx-platform-v1) | Active, serving all LFX products |
+| ITX | [ITX (IT Automation)](#itx-it-automation) | Backend powering both v1 and v2 |
 
 ### How the platforms relate
 
@@ -33,144 +33,6 @@ graph LR
     PIS --> ITX[ITX APIs]
     V2 --> ITX
 ```
-
----
-
-## ITX (IT Automation)
-
-ITX is the backend automation platform maintained by the LF IT team. It provides the authoritative
-data store and service layer for LF operational data: projects, committees, mailing lists, meetings,
-and more. Both PCC/LFX v1 and LFXV2 ultimately read from and write to ITX.
-
-### ITX Architecture
-
-```mermaid
-graph TD
-    PCC[Project Control Center] -->|HTTP| APIGW[API Gateway\nProduct AWS Account]
-    APIGW --> PIS[Project Infrastructure Service]
-    APIGW --> IAM[IAM / ACS]
-    PIS -->|events| EQ[Event Queue\nSES / SQS]
-    EQ --> EH[Event Handler Lambda]
-
-    ITUI[IT Interim React UI] -->|HTTP| ITGW[IT Automation REST Interface\nIT AWS API Gateway]
-    EH -->|calls| ITGW
-
-    ITGW --> MW[Middleware Lambda Services]
-    MW --> DB[(DynamoDB)]
-    MW --> GH[GitHub\nOrgs / Repos]
-    MW --> CI[Project CI]
-    MW --> GG[Google Groups]
-    MW --> DNS[DNSimple]
-```
-
-### Key services
-
-- **Middleware Lambdas** — serverless handlers for project, committee, mailing list, and user data
-- **DynamoDB** — primary data store for all ITX entities
-- **External integrations** — GitHub org/repo management, Google Groups, DNSimple DNS, Project CI
-
-### ITX Environment URLs
-
-| Environment | API / Swagger |
-|-------------|---------------|
-| Production | <https://api.prod.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
-| Staging | <https://api.stg.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
-| Development | <https://api.dev.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
-
-### ITX GitHub Repos
-
-All ITX source code lives in the
-[`linuxfoundation-it`](https://github.com/orgs/linuxfoundation-it/) GitHub organization.
-
-### ITX AWS Accounts
-
-Region: **us-west-2**
-
-| Environment | Account name |
-|-------------|--------------|
-| Development | `itx-dev` |
-| Staging | `itx-stage` |
-| Production | `itx-prod` |
-
----
-
-## PCC / LFX Platform v1
-
-PCC (Project Control Center) is the current production platform. It is the user-facing layer for
-all LFX products today, handling authentication, authorization, and routing to ITX for data
-through the Project Infrastructure Service (PIS).
-
-### PCC Architecture
-
-```mermaid
-graph TD
-    Auth0[Auth0 / LFID\nSign-up · Login · SSO · API auth] --> Products
-
-    subgraph Products[LFX Products]
-        EasyCLA
-        Mentorship
-        Crowdfunding
-        Dashboard[Individual Dashboard]
-        OrgDash[Org Dashboard]
-        PCC[Project Control Center]
-        Insights
-    end
-
-    Products --> GW[LFX API Gateway]
-
-    subgraph V1[LFX Platform v1 Services]
-        RBAC[RBAC Service]
-        ProjectSvc[Project Service]
-        OrgMem[Org / Membership Services]
-        UserSvc[User Service]
-        ITAuto[IT Automation Svcs]
-    end
-
-    GW --> V1
-    V1 -->|PCC -> PIS -> ITX| ITXAPI[ITX APIs]
-    V1 --> DB[(Platform Databases\nand Caches)]
-```
-
-Call chain: **PCC → PIS (`project-infrastructure-service`) → ITX**
-
-### Products
-
-| Product | Production URL |
-|---------|----------------|
-| Project Control Center | <https://projectadmin.lfx.linuxfoundation.org/> |
-| EasyCLA | <https://easycla.lfx.linuxfoundation.org/> |
-| Mentorship | <https://mentorship.lfx.linuxfoundation.org/> |
-| Crowdfunding | <https://crowdfunding.lfx.linuxfoundation.org/> |
-| Insights | <https://insights.linuxfoundation.org/> |
-| Org Dashboard | <https://myorg.lfx.dev/> |
-| My Profile | <https://openprofile.dev/> |
-
-### PCC Environment URLs
-
-| Environment | API / ReDoc | UI |
-|-------------|-------------|-----|
-| Production | <https://api-gw.platform.linuxfoundation.org/> | <https://projectadmin.lfx.linuxfoundation.org/> |
-| Staging | <https://api-gw.staging.platform.linuxfoundation.org/> | <https://pcc.staging.platform.linuxfoundation.org/> |
-| Development | <https://api-gw.dev.platform.linuxfoundation.org/> | <https://pcc.dev.platform.linuxfoundation.org/> |
-
-### PCC GitHub Repos
-
-| Repo | Purpose |
-|------|---------|
-| [`lfx-pcc`](https://github.com/linuxfoundation/lfx-pcc) | PCC frontend UI |
-| [`project-infrastructure-service`](https://github.com/linuxfoundation/project-infrastructure-service) | PIS — bridges PCC calls to ITX |
-| [`project-management`](https://github.com/linuxfoundation/project-management) | Project service |
-| [`lfx-gateway`](https://github.com/linuxfoundation/lfx-gateway) | LFX API gateway |
-
-### PCC AWS Accounts
-
-Region: **us-east-2** · Hosting: **Lambda & ECS**
-
-| Environment | Account name |
-|-------------|--------------|
-| Development | `prdct-dev` |
-| Staging | `prdct-stg` |
-| Production | `prdct-prod` |
 
 ---
 
@@ -277,6 +139,144 @@ Region: **us-west-2** · Hosting: **EKS (Kubernetes)**
 | Development | `lfx-dev` |
 | Staging | `lfx-stg` |
 | Production | `lfx-prod` |
+
+---
+
+## PCC / LFX Platform v1
+
+PCC (Project Control Center) is the current production platform. It is the user-facing layer for
+all LFX products today, handling authentication, authorization, and routing to ITX for data
+through the Project Infrastructure Service (PIS).
+
+### PCC Architecture
+
+```mermaid
+graph TD
+    Auth0[Auth0 / LFID\nSign-up · Login · SSO · API auth] --> Products
+
+    subgraph Products[LFX Products]
+        EasyCLA
+        Mentorship
+        Crowdfunding
+        Dashboard[Individual Dashboard]
+        OrgDash[Org Dashboard]
+        PCC[Project Control Center]
+        Insights
+    end
+
+    Products --> GW[LFX API Gateway]
+
+    subgraph V1[LFX Platform v1 Services]
+        RBAC[RBAC Service]
+        ProjectSvc[Project Service]
+        OrgMem[Org / Membership Services]
+        UserSvc[User Service]
+        ITAuto[IT Automation Svcs]
+    end
+
+    GW --> V1
+    V1 -->|PCC -> PIS -> ITX| ITXAPI[ITX APIs]
+    V1 --> DB[(Platform Databases\nand Caches)]
+```
+
+Call chain: **PCC → PIS (`project-infrastructure-service`) → ITX**
+
+### Products
+
+| Product | Production URL |
+|---------|----------------|
+| Project Control Center | <https://projectadmin.lfx.linuxfoundation.org/> |
+| EasyCLA | <https://easycla.lfx.linuxfoundation.org/> |
+| Mentorship | <https://mentorship.lfx.linuxfoundation.org/> |
+| Crowdfunding | <https://crowdfunding.lfx.linuxfoundation.org/> |
+| Insights | <https://insights.linuxfoundation.org/> |
+| Org Dashboard | <https://myorg.lfx.dev/> |
+| My Profile | <https://openprofile.dev/> |
+
+### PCC Environment URLs
+
+| Environment | API / ReDoc | UI |
+|-------------|-------------|-----|
+| Production | <https://api-gw.platform.linuxfoundation.org/> | <https://projectadmin.lfx.linuxfoundation.org/> |
+| Staging | <https://api-gw.staging.platform.linuxfoundation.org/> | <https://pcc.staging.platform.linuxfoundation.org/> |
+| Development | <https://api-gw.dev.platform.linuxfoundation.org/> | <https://pcc.dev.platform.linuxfoundation.org/> |
+
+### PCC GitHub Repos
+
+| Repo | Purpose |
+|------|---------|
+| [`lfx-pcc`](https://github.com/linuxfoundation/lfx-pcc) | PCC frontend UI |
+| [`project-infrastructure-service`](https://github.com/linuxfoundation/project-infrastructure-service) | PIS — bridges PCC calls to ITX |
+| [`project-management`](https://github.com/linuxfoundation/project-management) | Project service |
+| [`lfx-gateway`](https://github.com/linuxfoundation/lfx-gateway) | LFX API gateway |
+
+### PCC AWS Accounts
+
+Region: **us-east-2** · Hosting: **Lambda & ECS**
+
+| Environment | Account name |
+|-------------|--------------|
+| Development | `prdct-dev` |
+| Staging | `prdct-stg` |
+| Production | `prdct-prod` |
+
+---
+
+## ITX (IT Automation)
+
+ITX is the backend automation platform maintained by the LF IT team. It provides the authoritative
+data store and service layer for LF operational data: projects, committees, mailing lists, meetings,
+and more. Both PCC/LFX v1 and LFXV2 ultimately read from and write to ITX.
+
+### ITX Architecture
+
+```mermaid
+graph TD
+    PCC[Project Control Center] -->|HTTP| APIGW[API Gateway\nProduct AWS Account]
+    APIGW --> PIS[Project Infrastructure Service]
+    APIGW --> IAM[IAM / ACS]
+    PIS -->|events| EQ[Event Queue\nSES / SQS]
+    PIS -->|HTTP| ITGW[ITX API Gateway]
+    EQ --> EH[Event Handler Lambda]
+
+    EH -->|calls| ITGW
+
+    ITGW --> MW[Middleware Lambda Services]
+    MW --> DB[(DynamoDB)]
+    MW --> GH[GitHub\nOrgs / Repos]
+    MW --> CI[Project CI]
+    MW --> GG[Google Groups]
+    MW --> DNS[DNSimple]
+```
+
+### Key services
+
+- **Middleware Lambdas** — serverless handlers for project, committee, mailing list, and user data
+- **DynamoDB** — primary data store for all ITX entities
+- **External integrations** — GitHub org/repo management, Google Groups, DNSimple DNS, Project CI
+
+### ITX Environment URLs
+
+| Environment | API / Swagger |
+|-------------|---------------|
+| Production | <https://api.prod.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
+| Staging | <https://api.stg.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
+| Development | <https://api.dev.itx.linuxfoundation.org/explore/?urls.primaryName=v1> |
+
+### ITX GitHub Repos
+
+All ITX source code lives in the
+[`linuxfoundation-it`](https://github.com/orgs/linuxfoundation-it/) GitHub organization.
+
+### ITX AWS Accounts
+
+Region: **us-west-2**
+
+| Environment | Account name |
+|-------------|--------------|
+| Development | `itx-dev` |
+| Staging | `itx-stage` |
+| Production | `itx-prod` |
 
 ---
 
