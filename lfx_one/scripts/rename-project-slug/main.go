@@ -116,7 +116,14 @@ func partitionArgs(args []string) (positional, flags []string) {
 func run(slugArgs []string) error {
 	oldSlug := strings.TrimSpace(*oldSlugFlag)
 	newSlug := strings.TrimSpace(*newSlugFlag)
-	if len(slugArgs) >= 2 {
+
+	hasFlagSlugs := oldSlug != "" || newSlug != ""
+	hasPosArgs := len(slugArgs) >= 2
+
+	if hasFlagSlugs && hasPosArgs {
+		return fmt.Errorf("provide slugs either as positional args OR via --old-slug/--new-slug flags, not both")
+	}
+	if hasPosArgs {
 		oldSlug = strings.TrimSpace(slugArgs[0])
 		newSlug = strings.TrimSpace(slugArgs[1])
 	}
@@ -351,7 +358,7 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 	defer nc.Close()
 
 	slog.InfoContext(ctx, "Connected to NATS",
-		"url", nc.ConnectedUrl(),
+		"url", redactNATSURL(nc.ConnectedUrl()),
 		"buckets", buckets,
 		"dry_run", *dryRun,
 	)
@@ -506,7 +513,7 @@ func processKVRecord(ctx context.Context, kvStore jetstream.KeyValue, key string
 		return errSlugMismatch
 	}
 
-	slog.InfoContext(ctx, "updating record slug fields",
+	slog.DebugContext(ctx, "updating record slug fields",
 		"key", key,
 		"fields", fields,
 		"old_slug", oldSlug,

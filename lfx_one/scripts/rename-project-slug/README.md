@@ -11,10 +11,26 @@ data stores that do not self-heal during a Core Services slug migration:
 
 ## Prerequisites
 
-- Go 1.24+
-- Network access (direct or via `kubectl port-forward`) to OpenSearch and NATS
+Network access (direct or via `kubectl port-forward`) to OpenSearch and NATS.
 
-## Build
+## Running the pre-built binary
+
+Pre-built binaries are included in `bin/` — no Go toolchain required:
+
+```bash
+# macOS Apple Silicon (M1/M2/M3)
+./bin/rename-project-slug-darwin-arm64 <old-slug> <new-slug> [flags]
+
+# macOS Intel
+./bin/rename-project-slug-darwin-amd64 <old-slug> <new-slug> [flags]
+
+# Linux x86-64
+./bin/rename-project-slug-linux-amd64 <old-slug> <new-slug> [flags]
+```
+
+## Building from source
+
+Requires Go 1.24+.
 
 ```bash
 go build -o bin/rename-project-slug .
@@ -61,7 +77,7 @@ Alternatively, use `--old-slug` / `--new-slug` flags.
 |----------------|---------|-------------|
 | `--nats-url` / `NATS_URL` | `nats://localhost:4222` | NATS server URL |
 | `--nats-buckets` | see below | Comma-separated KV bucket names to migrate |
-| `--concurrency` | `10` | Max concurrent record updates per bucket |
+| `--concurrency` | `50` | Max concurrent record updates per bucket |
 
 Default NATS buckets: `committee-members,committees,committee-settings,projects,project-settings`
 
