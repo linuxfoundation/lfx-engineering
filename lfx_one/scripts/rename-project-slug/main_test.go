@@ -7,26 +7,6 @@ import (
 	"testing"
 )
 
-func TestPartitionArgs_flagsAfterPositionals(t *testing.T) {
-	positional, flags := partitionArgs([]string{"gridfm", "opengridfm", "--dry-run=false", "--concurrency=20"})
-	assertEqual(t, []string{"gridfm", "opengridfm"}, positional)
-	assertEqual(t, []string{"--dry-run=false", "--concurrency=20"}, flags)
-}
-
-func TestPartitionArgs_flagsBeforePositionals(t *testing.T) {
-	positional, flags := partitionArgs([]string{"--dry-run=false", "gridfm", "opengridfm"})
-	assertEqual(t, []string{"gridfm", "opengridfm"}, positional)
-	assertEqual(t, []string{"--dry-run=false"}, flags)
-}
-
-func TestPartitionArgs_noFlags(t *testing.T) {
-	positional, flags := partitionArgs([]string{"old", "new"})
-	assertEqual(t, []string{"old", "new"}, positional)
-	if len(flags) != 0 {
-		t.Errorf("expected no flags, got %v", flags)
-	}
-}
-
 func TestBucketFieldsFor_knownBuckets(t *testing.T) {
 	cases := []struct {
 		bucket string

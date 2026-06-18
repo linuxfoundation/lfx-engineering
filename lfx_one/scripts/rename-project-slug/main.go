@@ -85,8 +85,6 @@ type bucketStats struct {
 }
 
 func main() {
-	slugArgs, flagArgs := partitionArgs(os.Args[1:])
-	os.Args = append([]string{os.Args[0]}, flagArgs...)
 	flag.Parse()
 
 	level := slog.LevelInfo
@@ -95,22 +93,9 @@ func main() {
 	}
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level})))
 
-	if err := run(slugArgs); err != nil {
+	if err := run(flag.Args()); err != nil {
 		log.Fatalf("rename-project-slug failed: %v", err)
 	}
-}
-
-// partitionArgs separates positional slug arguments from flag tokens so that
-// flags like --dry-run=false work in any position relative to the slug pair.
-func partitionArgs(args []string) (positional, flags []string) {
-	for _, arg := range args {
-		if strings.HasPrefix(arg, "-") {
-			flags = append(flags, arg)
-		} else {
-			positional = append(positional, arg)
-		}
-	}
-	return positional, flags
 }
 
 func run(slugArgs []string) error {
@@ -118,12 +103,15 @@ func run(slugArgs []string) error {
 	newSlug := strings.TrimSpace(*newSlugFlag)
 
 	hasFlagSlugs := oldSlug != "" || newSlug != ""
-	hasPosArgs := len(slugArgs) >= 2
+	hasPosArgs := len(slugArgs) > 0
 
 	if hasFlagSlugs && hasPosArgs {
 		return fmt.Errorf("provide slugs either as positional args OR via --old-slug/--new-slug flags, not both")
 	}
 	if hasPosArgs {
+		if len(slugArgs) != 2 {
+			return fmt.Errorf("expected exactly 2 positional args (<old-slug> <new-slug>), got %d", len(slugArgs))
+		}
 		oldSlug = strings.TrimSpace(slugArgs[0])
 		newSlug = strings.TrimSpace(slugArgs[1])
 	}
@@ -381,7 +369,11 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 	for _, bucket := range buckets {
 		stats, err := migrateBucket(ctx, js, bucket, oldSlug, newSlug)
 		if err != nil {
-			slog.ErrorContext(ctx, "bucket migration failed", "bucket", bucket, "error", err)
+			if errors.Is(err, jetstream.ErrBucketNotFound) {
+				slog.WarnContext(ctx, "bucket not found, skipping", "bucket", bucket)
+			} else {
+				slog.ErrorContext(ctx, "bucket migration failed", "bucket", bucket, "error", err)
+			}
 			bucketErrors++
 			continue
 		}
@@ -392,10 +384,18 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 	}
 
 	fmt.Println("\n" + strings.Repeat("=", 50))
-	fmt.Println("NATS KV Update Complete (all buckets)")
+	if *dryRun {
+		fmt.Println("NATS KV Audit (dry-run, no writes)")
+	} else {
+		fmt.Println("NATS KV Update Complete (all buckets)")
+	}
 	fmt.Println(strings.Repeat("=", 50))
 	fmt.Printf("Total records:    %d\n", grandTotal)
-	fmt.Printf("Updated:          %d\n", grandUpdated)
+	if *dryRun {
+		fmt.Printf("Would update:     %d\n", grandUpdated)
+	} else {
+		fmt.Printf("Updated:          %d\n", grandUpdated)
+	}
 	fmt.Printf("Skipped:          %d\n", grandSkipped)
 	fmt.Printf("Failed:           %d\n", grandFailed)
 	fmt.Printf("Bucket errors:    %d\n", bucketErrors)
@@ -486,10 +486,14 @@ func migrateBucket(ctx context.Context, js jetstream.JetStream, bucket, oldSlug,
 
 	fmt.Println("\n" + strings.Repeat("-", 50))
 	fmt.Printf("Bucket: %s\n", bucket)
-	fmt.Printf("  Total:    %d\n", stats.Total)
-	fmt.Printf("  Updated:  %d\n", stats.Updated)
-	fmt.Printf("  Skipped:  %d\n", stats.Skipped)
-	fmt.Printf("  Failed:   %d\n", stats.Failed)
+	fmt.Printf("  Total:        %d\n", stats.Total)
+	if *dryRun {
+		fmt.Printf("  Would update: %d\n", stats.Updated)
+	} else {
+		fmt.Printf("  Updated:      %d\n", stats.Updated)
+	}
+	fmt.Printf("  Skipped:      %d\n", stats.Skipped)
+	fmt.Printf("  Failed:       %d\n", stats.Failed)
 
 	return stats, nil
 }
