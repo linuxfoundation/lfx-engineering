@@ -168,7 +168,7 @@ func runOpenSearch(ctx context.Context, oldSlug, newSlug string) error {
 	}
 
 	slog.InfoContext(ctx, "OpenSearch migration",
-		"url", *opensearchURL,
+		"url", redactURL(*opensearchURL),
 		"index", "resources",
 		"dry_run", *dryRun,
 	)
@@ -373,8 +373,8 @@ func runNATS(ctx context.Context, oldSlug, newSlug string, buckets []string) err
 				slog.WarnContext(ctx, "bucket not found, skipping", "bucket", bucket)
 			} else {
 				slog.ErrorContext(ctx, "bucket migration failed", "bucket", bucket, "error", err)
+				bucketErrors++
 			}
-			bucketErrors++
 			continue
 		}
 		grandTotal += stats.Total
@@ -424,6 +424,7 @@ func migrateBucket(ctx context.Context, js jetstream.JetStream, bucket, oldSlug,
 	if err != nil {
 		return nil, fmt.Errorf("failed to list keys in bucket %q: %w", bucket, err)
 	}
+	defer keys.Stop() //nolint:errcheck
 
 	var recordKeys []string
 	for key := range keys.Keys() {
@@ -643,7 +644,7 @@ func parseBuckets(s string) []string {
 	return out
 }
 
-func redactNATSURL(raw string) string {
+func redactURL(raw string) string {
 	u, err := url.Parse(raw)
 	if err != nil {
 		return "<invalid>"
@@ -653,6 +654,8 @@ func redactNATSURL(raw string) string {
 	}
 	return u.String()
 }
+
+func redactNATSURL(raw string) string { return redactURL(raw) }
 
 func getEnvOrDefault(key, defaultValue string) string {
 	if v := os.Getenv(key); v != "" {
