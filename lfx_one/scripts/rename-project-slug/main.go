@@ -6,7 +6,7 @@
 //
 // Usage:
 //
-//	go run . <old-slug> <new-slug> [flags]
+//	go run . [flags] <old-slug> <new-slug>
 //
 // Examples:
 //
@@ -14,13 +14,13 @@
 //	go run . old-slug new-slug
 //
 //	# Apply changes to OpenSearch only
-//	OPENSEARCH_URL=http://... go run . old-slug new-slug --target=opensearch --dry-run=false
+//	OPENSEARCH_URL=http://... go run . --target=opensearch --dry-run=false old-slug new-slug
 //
 //	# Apply changes to NATS KV only
-//	NATS_URL=nats://... go run . old-slug new-slug --target=nats --dry-run=false --concurrency=20
+//	NATS_URL=nats://... go run . --target=nats --dry-run=false --concurrency=20 old-slug new-slug
 //
 //	# Apply changes to both stores
-//	go run . old-slug new-slug --dry-run=false
+//	go run . --dry-run=false old-slug new-slug
 package main
 
 import (
@@ -116,7 +116,7 @@ func run(slugArgs []string) error {
 		newSlug = strings.TrimSpace(slugArgs[1])
 	}
 	if oldSlug == "" || newSlug == "" {
-		return fmt.Errorf("usage: go run . <old-slug> <new-slug> [flags]\n       or use --old-slug and --new-slug flags")
+		return fmt.Errorf("usage: go run . [flags] <old-slug> <new-slug>\n       or use --old-slug and --new-slug flags")
 	}
 	if oldSlug == newSlug {
 		return fmt.Errorf("old-slug and new-slug must differ")
@@ -288,8 +288,7 @@ if (!changed) { ctx.op='noop'; }
 `
 
 	body, err := jsonBody(map[string]any{
-		"conflicts": "proceed",
-		"query":     query,
+		"query": query,
 		"script": map[string]any{
 			"lang":   "painless",
 			"source": strings.TrimSpace(painlessSource),
@@ -307,6 +306,7 @@ if (!changed) { ctx.op='noop'; }
 		[]string{"resources"},
 		client.UpdateByQuery.WithContext(ctx),
 		client.UpdateByQuery.WithBody(body),
+		client.UpdateByQuery.WithConflicts("proceed"),
 	)
 	if err != nil {
 		return fmt.Errorf("update_by_query request failed: %w", err)

@@ -39,13 +39,13 @@ go build -o bin/rename-project-slug .
 Or run directly without building:
 
 ```bash
-go run . <old-slug> <new-slug> [flags]
+go run . [flags] <old-slug> <new-slug>
 ```
 
 ## Usage
 
 ```text
-go run . <old-slug> <new-slug> [flags]
+go run . [flags] <old-slug> <new-slug>
 ```
 
 ### Required arguments
@@ -93,25 +93,25 @@ Default NATS buckets: `committee-members,committees,committee-settings,projects,
 go run . old-slug new-slug
 
 # Audit OpenSearch only
-OPENSEARCH_URL=http://localhost:9200 go run . old-slug new-slug --target=opensearch
+OPENSEARCH_URL=http://localhost:9200 go run . --target=opensearch old-slug new-slug
 
 # Apply OpenSearch changes
 OPENSEARCH_URL=http://localhost:9200 \
-  go run . old-slug new-slug --target=opensearch --dry-run=false
+  go run . --target=opensearch --dry-run=false old-slug new-slug
 
 # Apply NATS KV changes
 NATS_URL=nats://localhost:4222 \
-  go run . old-slug new-slug --target=nats --dry-run=false --concurrency=20
+  go run . --target=nats --dry-run=false --concurrency=20 old-slug new-slug
 
 # Apply both stores
 OPENSEARCH_URL=http://localhost:9200 \
 NATS_URL=nats://localhost:4222 \
-  go run . old-slug new-slug --dry-run=false
+  go run . --dry-run=false old-slug new-slug
 
 # Restrict NATS migration to specific buckets
-go run . old-slug new-slug \
-  --target=nats --dry-run=false \
-  --nats-buckets=committee-members,committees
+go run . --target=nats --dry-run=false \
+  --nats-buckets=committee-members,committees \
+  old-slug new-slug
 ```
 
 ## Port-forwarding (typical staging workflow)
@@ -126,7 +126,7 @@ kubectl port-forward -n lfx-v2 svc/nats 4222:4222
 # Terminal 3 — run the script
 OPENSEARCH_URL=http://localhost:9200 \
 NATS_URL=nats://localhost:4222 \
-  go run . <old-slug> <new-slug> --dry-run=false
+  go run . --dry-run=false <old-slug> <new-slug>
 ```
 
 ## What the OpenSearch migration rewrites
@@ -140,7 +140,8 @@ For every document in the `resources` index that matches on any of these fields:
 - `parent_refs` contains `project:<old-slug>`
 
 The painless script rewrites all matched fields to `<new-slug>` and marks the
-document as a noop if nothing changed (`conflicts: proceed`).
+document as a noop if nothing changed. The request uses `conflicts=proceed` so
+version conflicts are counted and reported rather than aborting the query mid-run.
 
 ## What the NATS KV migration rewrites
 
