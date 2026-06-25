@@ -50,34 +50,34 @@ go run . <old-slug> <new-slug> [flags]
 
 ### Required arguments
 
-| Argument | Description |
-|----------|-------------|
-| `<old-slug>` | The current project slug to replace |
-| `<new-slug>` | The new project slug to set |
+| Argument      | Description                         |
+|---------------|-------------------------------------|
+| `<old-slug>`  | The current project slug to replace |
+| `<new-slug>`  | The new project slug to set         |
 
 Alternatively, use `--old-slug` / `--new-slug` flags.
 
 ### Flags
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--target` | `both` | Stores to migrate: `opensearch`, `nats`, or `both` |
-| `--dry-run` | `true` | Preview changes without writing; pass `--dry-run=false` to apply |
-| `--debug` | `false` | Enable debug-level structured logging |
+| Flag        | Default | Description                                                      |
+|-------------|---------|------------------------------------------------------------------|
+| `--target`  | `both`  | Stores to migrate: `opensearch`, `nats`, or `both`               |
+| `--dry-run` | `true`  | Preview changes without writing; pass `--dry-run=false` to apply |
+| `--debug`   | `false` | Enable debug-level structured logging                            |
 
 #### OpenSearch flags
 
-| Flag / Env var | Default | Description |
-|----------------|---------|-------------|
+| Flag / Env var                        | Default                 | Description         |
+|---------------------------------------|-------------------------|---------------------|
 | `--opensearch-url` / `OPENSEARCH_URL` | `http://localhost:9200` | OpenSearch base URL |
 
 #### NATS flags
 
-| Flag / Env var | Default | Description |
-|----------------|---------|-------------|
-| `--nats-url` / `NATS_URL` | `nats://localhost:4222` | NATS server URL |
-| `--nats-buckets` | see below | Comma-separated KV bucket names to migrate |
-| `--concurrency` | `50` | Max concurrent record updates per bucket |
+| Flag / Env var              | Default                 | Description                                 |
+|-----------------------------|-------------------------|---------------------------------------------|
+| `--nats-url` / `NATS_URL`   | `nats://localhost:4222` | NATS server URL                             |
+| `--nats-buckets`            | see below               | Comma-separated KV bucket names to migrate  |
+| `--concurrency`             | `50`                    | Max concurrent record updates per bucket    |
 
 Default NATS buckets: `committee-members,committees,committee-settings,projects,project-settings`
 
@@ -146,14 +146,14 @@ document as a noop if nothing changed (`conflicts: proceed`).
 
 Per-bucket field mapping (which JSON field holds the project slug):
 
-| Bucket | Field rewritten |
-|--------|----------------|
-| `committee-members` | `project_slug` |
-| `committees` | `project_slug` |
-| `committee-settings` | `project_slug` |
-| `projects` | `slug` |
-| `project-settings` | `project_slug` |
-| _(any other bucket)_ | `project_slug` (default) |
+| Bucket                 | Field rewritten          |
+|------------------------|--------------------------|
+| `committee-members`    | `project_slug`           |
+| `committees`           | `project_slug`           |
+| `committee-settings`   | `project_slug`           |
+| `projects`             | `slug`                   |
+| `project-settings`     | `project_slug`           |
+| _(any other bucket)_   | `project_slug` (default) |
 
 Index/alias keys (prefixed `lookup/` or `slug/`) are skipped. Each record update
 uses an optimistic-lock retry (3 attempts with backoff).

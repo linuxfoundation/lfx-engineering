@@ -47,7 +47,8 @@ func TestParseBuckets(t *testing.T) {
 }
 
 func TestBuildOSQuery_containsOldSlug(t *testing.T) {
-	q := buildOSQuery("gridfm")
+	const slug = "old-slug"
+	q := buildOSQuery(slug)
 	b, ok := q["bool"].(map[string]any)
 	if !ok {
 		t.Fatal("expected bool key in query")
@@ -58,6 +59,34 @@ func TestBuildOSQuery_containsOldSlug(t *testing.T) {
 	}
 	if len(should) == 0 {
 		t.Fatal("expected non-empty should clauses")
+	}
+
+	// Collect all field keys present across term clauses.
+	fields := map[string]bool{}
+	for _, clause := range should {
+		termClause, ok := clause.(map[string]any)
+		if !ok {
+			continue
+		}
+		term, ok := termClause["term"].(map[string]any)
+		if !ok {
+			continue
+		}
+		for k, v := range term {
+			fields[k] = true
+			// Verify the slug value appears in the clause.
+			if str, ok := v.(string); ok {
+				if str != slug && str != "project:"+slug && str != "project_slug:"+slug {
+					t.Errorf("unexpected term value for field %q: %q", k, str)
+				}
+			}
+		}
+	}
+
+	for _, required := range []string{"data.project_slug", "object_ref", "parent_refs"} {
+		if !fields[required] {
+			t.Errorf("expected should clause for field %q, but it was missing", required)
+		}
 	}
 }
 

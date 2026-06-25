@@ -11,16 +11,16 @@
 // Examples:
 //
 //	# Preview changes (default) against both stores
-//	go run . gridfm opengridfm
+//	go run . old-slug new-slug
 //
 //	# Apply changes to OpenSearch only
-//	OPENSEARCH_URL=http://... go run . gridfm opengridfm --target=opensearch --dry-run=false
+//	OPENSEARCH_URL=http://... go run . old-slug new-slug --target=opensearch --dry-run=false
 //
 //	# Apply changes to NATS KV only
-//	NATS_URL=nats://... go run . gridfm opengridfm --target=nats --dry-run=false --concurrency=20
+//	NATS_URL=nats://... go run . old-slug new-slug --target=nats --dry-run=false --concurrency=20
 //
 //	# Apply changes to both stores
-//	go run . gridfm opengridfm --dry-run=false
+//	go run . old-slug new-slug --dry-run=false
 package main
 
 import (
@@ -337,6 +337,10 @@ if (!changed) { ctx.op='noop'; }
 	fmt.Printf("Noops:              %d\n", result.Noops)
 	fmt.Printf("Version conflicts:  %d\n", result.VersionConflicts)
 	fmt.Println(strings.Repeat("=", 50))
+
+	if result.VersionConflicts > 0 {
+		return fmt.Errorf("update_by_query completed with %d version conflicts — re-run after resolving concurrent writers", result.VersionConflicts)
+	}
 
 	return nil
 }
