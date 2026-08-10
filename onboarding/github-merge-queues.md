@@ -13,10 +13,11 @@ validates is what actually lands.
 
 ## How It Works
 
-1. A pull request is approved and its required checks pass against its own
-  branch.
-2. The author (or anyone with merge permission) adds the pull request to the
-  queue.
+1. Someone with merge permission (often the author) requests queuing —
+  see [Adding a Pull Request to the Queue](#adding-a-pull-request-to-the-queue)
+  below. This can happen before approvals or required checks finish.
+2. GitHub holds the request until the pull request's own required approvals
+  and checks pass, then adds it to the queue.
 3. GitHub creates a temporary branch (visible as
   `gh-readonly-queue/<base>/pr-<number>-<sha>`) containing the base branch plus
   every pull request already queued ahead of this one, plus this pull
@@ -32,16 +33,18 @@ faster than "N entries times one check run."
 
 ## Adding a Pull Request to the Queue
 
-The pull request must already satisfy branch protection: required approvals in
-place and required checks passing on the pull request's own branch. Once that
-is true:
+Anyone with merge permission can request queuing, and can do so even before
+the pull request's own approvals or required checks have finished:
 
 - From the pull request page, use the merge button (**Merge when ready** on
   repositories with a merge queue enabled), or
 - From the CLI: `gh pr merge --auto`.
 
-Once queued, the pull request header shows an amber **Queued** badge next to
-the title, replacing the usual merge button:
+GitHub holds the request and adds the pull request to the queue automatically
+once branch protection is satisfied — required approvals in place and required
+checks passing on the pull request's own branch. Once actually queued, the
+pull request header shows an amber **Queued** badge next to the title,
+replacing the usual merge button:
 
 ![Queued PR](./screenshots/github-merge-queue-pr-queued-badge.png)
 
@@ -69,6 +72,12 @@ This is the behavior a merge queue exists to handle:
 - Pull requests **behind** the failing one are rebuilt and retested without the
   failing change, since the queue removed it from the base they are tested
   against. In most cases they merge without the author needing to do anything.
+
+This is the default behavior. If a repository disables the **Only merge
+non-failing pull requests** queue setting, a pull request with a failed check
+can still be merged as part of a later batch if that batch's overall required
+checks pass — so treat the description above as the common case, not a
+guarantee, on repositories where that setting has been changed.
 
 Practical consequence: if your queued pull request shows a failed check, the
 failure may belong to a pull request that was ahead of you in the queue, not to
@@ -100,9 +109,13 @@ Two places show what is queued:
 
 - Don't force-push a branch while its pull request is queued — the entry is
   removed automatically, and you will need to re-add it.
-- Required checks must be configured to also run on `merge_group` trigger
-  events (not only `pull_request`), or a queued entry can hang waiting on a
-  check that never runs against the temporary queue branch.
+- Required checks must run against the temporary `gh-readonly-queue/*` branch
+  or a queued entry stays blocked until the status-check timeout, after which
+  GitHub removes the pull request for reporting no successful result. For
+  GitHub Actions, add the `merge_group` trigger alongside `pull_request`. For
+  third-party CI, configure it to run on pushes to `gh-readonly-queue/*`
+  branches instead — `merge_group` is an Actions-only event and won't fire for
+  other providers.
 - Queue position is not a guarantee of merge order: if an entry ahead of yours
   fails and is removed, entries behind it are retested and may merge sooner
   than their original position suggested.
