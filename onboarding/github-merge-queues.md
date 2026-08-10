@@ -58,8 +58,6 @@ A pull request leaves the queue if any of the following happen:
   to drop every entry at once. This is a broad, admin-level action — use it
   deliberately, not to unblock a single stuck pull request.
 
-![Queue entry status details](./screenshots/github-merge-queue-entry-status-details.png)
-
 ## What Happens When a Pull Request in the Middle Fails
 
 This is the behavior a merge queue exists to handle:
