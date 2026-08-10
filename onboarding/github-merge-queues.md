@@ -11,6 +11,10 @@ each pass CI individually, against a slightly stale `main`, and still break
 neither author's CI run could see. The merge queue closes that gap: what CI
 validates is what actually lands.
 
+See GitHub's docs on
+[merging a pull request with a merge queue](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/merging-a-pull-request-with-a-merge-queue)
+for the full reference.
+
 ## How It Works
 
 1. Someone with merge permission (often the author) requests queuing —
