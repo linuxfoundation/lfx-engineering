@@ -302,7 +302,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
   1. Request access to the specific diagram from your director or team lead
 
-### LFX-Datalake2
+### LFX-Datalake Github Repo
 
 - **Purpose**: GitHub-hosted data-flow diagram showing LFX services and system dependencies
 - **URL**: <https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md>
