@@ -115,7 +115,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
   1. Download and install Cursor
   2. Sign in with your Linux Foundation email
-  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/cursor.md)
+  3. Install the [recommended extensions](code-editor-extensions-and-plugins/cursor.md)
   4. Consider installing the Jira and GitHub Model Context Protocol servers.
 
 #### Zed
@@ -134,13 +134,14 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **How to get access:**
 
   1. Requesting access not required. Follow the online documentation to download and install.
-  2. Most users connect to The Linux Foundation GitHub account to access the Copilot AI models.
+  2. Most users connect their personal GitHub account (added to the Linux Foundation
+     organization) to access GitHub Copilot models.
 
 **Setup Steps:**
 
   1. Download and install Zed
   2. Sign in with your choice of email
-  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/zed.md)
+  3. Install the [recommended extensions](code-editor-extensions-and-plugins/zed.md)
 
 #### Neovim
 
@@ -158,12 +159,11 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **How to get access:**
 
   1. Requesting access not required. Follow the online documentation to download and install.
-  2. Most users connect to The Linux Foundation GitHub account to access the Copilot AI models.
 
 **Setup Steps:**
 
   1. Install Neovim using your system's package manager
-  2. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/neovim.md)
+  2. Install the [recommended extensions](code-editor-extensions-and-plugins/neovim.md)
 
 ---
 
@@ -258,7 +258,8 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
        [LFX Snowflake Terraform repository](https://github.com/linuxfoundation/lfx-snowflake-terraform)
        on your behalf.
 - Step 2: Developer: User Account Setup
-    1. Once Step 1 above is complete, users can now log into Snowflake.
+    1. Once the provisioning pull request from Step 1 has been approved, merged, and
+       deployed, your account will be active and you can log into Snowflake.
     2. [Direct Link to The Linux
        Foundation](https://app.snowflake.com/jnmhvwd/xpb85243/) Snowflake account.
     3. Users should log in using their LF email (e.g.,
@@ -303,7 +304,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ### LFX-Datalake2
 
 - **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
-- **URL**: [https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md](https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md)
+- **URL**: <https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md>
 
 ---
 

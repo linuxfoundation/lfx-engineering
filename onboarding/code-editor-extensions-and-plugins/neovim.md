@@ -29,7 +29,7 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 
 #### nvim-treesitter
 
-- **Repository**: [https://github.com/nvim-treesitter/nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+- **Repository**: <https://github.com/nvim-treesitter/nvim-treesitter>
 - **Purpose**: Advanced syntax highlighting and code understanding
 
 **What you'll use nvim-treesitter for:**
@@ -161,4 +161,4 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 
 ---
 
-You can find a list of more plugins at [https://github.com/rockerBOO/awesome-neovim](https://github.com/rockerBOO/awesome-neovim)
+You can find a list of more plugins at <https://github.com/rockerBOO/awesome-neovim>
