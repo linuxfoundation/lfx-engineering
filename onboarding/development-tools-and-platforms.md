@@ -260,8 +260,8 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 - Step 2: Developer: User Account Setup
     1. Once the provisioning pull request from Step 1 has been approved, merged, and
        deployed, your account will be active and you can log into Snowflake.
-    2. [Direct Link to The Linux
-       Foundation](https://app.snowflake.com/jnmhvwd/xpb85243/) Snowflake account.
+    2. Navigate to the [Snowflake console](https://app.snowflake.com/) and select The Linux
+       Foundation account.
     3. Users should log in using their LF email (e.g.,
        `your_lf_email@linuxfoundation.org`) via
        the Google SSO option.
@@ -279,7 +279,8 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ### LFX-Datalake
 
-- **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
+- **Purpose**: Access-controlled Whimsical architecture diagram showing LFX services, data flows, and system
+  dependencies
 
 **What you'll use LFX-Datalake diagram for:**
 
@@ -303,7 +304,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ### LFX-Datalake2
 
-- **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
+- **Purpose**: GitHub-hosted data-flow diagram showing LFX services and system dependencies
 - **URL**: <https://github.com/linuxfoundation/lfx-architecture/blob/main/diagrams/data-flow.md>
 
 ---
