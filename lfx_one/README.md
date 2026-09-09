@@ -12,6 +12,8 @@ release strategies, and deployment workflows.
   staging, and production environments
 - **[Secrets Management](./secrets-management.md)** - Complete guide for managing secrets using
   1Password and AWS Secrets Manager across environments
+- **[Distributed Tracing](./tracing.md)** - OpenTelemetry tracing setup with
+  Datadog for Go services
 
 ## Architecture Reference
 
@@ -24,6 +26,12 @@ For detailed information about the LFX v2 platform architecture and components:
 - **[Component List](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#components)**
   \- Detailed list of all platform components
 
+## AI Skills
+
+Claude Code skills for LFX development are maintained in the
+**[lfx-skills](https://github.com/linuxfoundation/lfx-skills)** repository. Follow the installation
+instructions there to get started.
+
 ## Getting Started
 
 1. Start with [Local Development Setup](./local-development.md) to configure your development environment
@@ -32,3 +40,5 @@ For detailed information about the LFX v2 platform architecture and components:
 4. Reference the [Component Diagram](https://github.com/linuxfoundation/lfx-v2-helm/blob/main/README.md#component-diagram)
    to understand the platform architecture
 5. Follow the established patterns for developing and deploying LFX v2 applications
+6. Install Claude Code skills from the [lfx-skills](https://github.com/linuxfoundation/lfx-skills)
+   repository for AI-assisted guidance on LFX development

@@ -1,6 +1,7 @@
 # Ko Build for LFX V2 Services
 
-This document explains how to use [ko](https://ko.build/) to build container images for Go-based services in the LFX v2 platform.
+This document explains how to use [ko](https://ko.build/) to build container images for Go-based services in the LFX v2
+platform.
 
 ## What is Ko?
 

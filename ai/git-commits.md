@@ -43,22 +43,28 @@ Use these exact attribution lines for common AI tools:
 
 ```text
 Generated with [Claude Code](https://claude.ai/code)
+Generated with [OpenCode](https://opencode.ai)
 Generated with [GitHub Copilot](https://github.com/features/copilot)
-Generated with [Cursor](https://cursor.com/)
-Generated with [Gemini](https://gemini.google.com/)
+Generated with [Cursor](https://cursor.com)
+Generated with [Gemini](https://gemini.google.com)
 ```
+
+The goal of this attribution is to enable a high-level understanding of which AI
+tools are being used throughout the organization, rather than tracking
+individual model usage. This information helps the leadership team gather
+overall metrics on AI tool adoption and make informed decisions about where to
+allocate future resources.
 
 #### Additional AI Services
 
-As new AI tools are released, the same convention should be followed. Here are
-some additional examples:
+As new AI tools are released, the same convention should be followed. Here are some additional examples:
 
 ```text
-Generated with [ChatGPT](https://chat.openai.com/)
-Generated with [Amazon CodeWhisperer](https://aws.amazon.com/codewhisperer/)
-Generated with [Tabnine](https://www.tabnine.com/)
-Generated with [Grok](https://grok.com/)
-Generated with [Kiro](https://kiro.dev/)
+Generated with [ChatGPT](https://chat.openai.com)
+Generated with [Amazon CodeWhisperer](https://aws.amazon.com/codewhisperer)
+Generated with [Tabnine](https://www.tabnine.com)
+Generated with [Grok](https://grok.com)
+Generated with [Kiro](https://kiro.dev)
 Generated with [Figma](https://figma.com)
 ```
 
@@ -79,8 +85,9 @@ For commits where AI provides partial assistance, consider using more specific l
 
 ```text
 Assisted by [Claude Code](https://claude.ai/code)
-Assisted by [Cursor](https://cursor.com/)
+Assisted by [Cursor](https://cursor.com)
 Reviewed with [GitHub Copilot](https://github.com/features/copilot)
+Reviewed with [CodeRabbit AI](https://www.coderabbit.ai)
 ```
 
 ## Example Commit Messages
@@ -120,7 +127,7 @@ Added comprehensive API documentation with examples and error codes.
 Updated OpenAPI specification to match current implementation.
 
 Generated with [Claude Code](https://claude.ai/code)
-Assisted by [Cursor](https://cursor.com/)
+Assisted by [Cursor](https://cursor.com)
 
 Signed-off-by: Alex Developer <alex@company.com>
 ```
@@ -276,6 +283,15 @@ echo "AI attribution will now be validated in commits"
 - Verify that tests are included for AI-generated functionality
 - Check that AI-generated documentation is accurate and complete
 
+> **Note:**  
+> Developers are strongly encouraged to install and use available AI-powered
+> review tools, such as [GitHub Copilot
+> Review](https://docs.github.com/en/copilot/copilot-review/about-github-copilot-review)
+> and [CodeRabbit AI Review](https://coderabbit.ai/), before submitting pull
+> requests. Running these tools locally provides early automated feedback on code
+> quality, security, and style—enabling you to address issues proactively prior to
+> sharing your changes with the team for review.
+
 ### Repository Management
 
 - Periodically review commits to track AI tool usage patterns
@@ -291,8 +307,7 @@ git log --grep="Claude Code" --oneline | wc -l
 
 ## Compliance and Legal Considerations
 
-- Ensure all AI-generated code complies with the Linux Foundation licensing
-  requirements
+- Ensure all AI-generated code complies with the Linux Foundation licensing requirements
 - Be aware of potential intellectual property implications
 - Maintain records of AI tool usage for audit purposes
 - Review AI tool terms of service regarding code ownership and attribution
