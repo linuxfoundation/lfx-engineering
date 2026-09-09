@@ -67,7 +67,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
   2. Configure SSH keys following our security guidelines
   3. Authorize the organization under SSH and GPG keys -> Configure SSO
   4. Set up Git configuration with your personal GitHub email: `git config --global user.email "your.email@gmail.com"`
-  5. Clone your project's repository and follow it's `Getting Started` guide
+  5. Clone your project's repository and follow its `Getting Started` guide
 
 ### Engineering Artifact and Notes
 
@@ -134,7 +134,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **How to get access:**
 
   1. Requesting access not required. Follow the online documentation to download and install.
-  2. Most users connect to The Linux Foundation GitHub account to access the CoPilot AI models.
+  2. Most users connect to The Linux Foundation GitHub account to access the Copilot AI models.
 
 **Setup Steps:**
 
@@ -158,7 +158,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **How to get access:**
 
   1. Requesting access not required. Follow the online documentation to download and install.
-  2. Most users connect to The Linux Foundation GitHub account to access the CoPilot AI models.
+  2. Most users connect to The Linux Foundation GitHub account to access the Copilot AI models.
 
 **Setup Steps:**
 
@@ -218,12 +218,12 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ## 📊 Monitoring and Analytics
 
-### DataDog
+### Datadog
 
 - **Purpose**: Application performance monitoring, logging, and infrastructure metrics
 - **URL**: [https://datadog.linuxfoundation.org/](https://datadog.linuxfoundation.org/)
 
-**What you'll use DataDog for:**
+**What you'll use Datadog for:**
 
 - Monitor application performance and uptime, including many LFX products and services
 - View logs and screen recorded sessions for debugging
@@ -250,21 +250,19 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 **How to get access:**
 
-- Step 1: Datalake Team: IT/Ops Team Account Setup
-    1. Determine which roles should be added to the new user(s).
-    2. Create a pull request to add the users and roles to the GitHub Snowflake
-       Terraform repository. Here’s a link [to the GitHub
-       repository](https://github.com/linuxfoundation/lfx-snowflake-terraform) and
-       the user configuration file. Anyone can create a pull request.
-    3. Request an IT/Ops team member review the pull request in the #lfx-devops
-       Slack channel. They will review and merge the pull request changes which
-       will trigger a deployment to the Snowflake production environment.
+- Step 1: Request access
+    1. Submit a support ticket at the [IT Service
+       Desk](https://jira.linuxfoundation.org/plugins/servlet/desk/portal/4/create/573)
+       to request a new Snowflake account. See [Snowflake onboarding](snowflake.md) for details.
+    2. A Datalake or IT/Ops team member will create the provisioning pull request in the
+       [LFX Snowflake Terraform repository](https://github.com/linuxfoundation/lfx-snowflake-terraform)
+       on your behalf.
 - Step 2: Developer: User Account Setup
     1. Once Step 1 above is complete, users can now log into Snowflake.
     2. [Direct Link to The Linux
        Foundation](https://app.snowflake.com/jnmhvwd/xpb85243/) Snowflake account.
     3. Users should log in using their LF email (e.g.,
-       [your_lf_email@linuxfoundation.org](your_lf_email@linuxfoundation.org)) via
+       `your_lf_email@linuxfoundation.org`) via
        the Google SSO option.
     4. Once logged in, the user should be redirected back to the Snowflake
        landing page.
@@ -378,7 +376,8 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
 ### Individual Dashboard
 
-- **Purpose**: Personal profile, view your events and meetings and technical contribution and training enrollment tracking
+- **Purpose**: Personal profile, event and meeting history, and technical contribution and training
+  enrollment tracking
 - **URL**: [https://openprofile.dev/](https://openprofile.dev/)
 
 **What you'll use Individual Dashboard for:**

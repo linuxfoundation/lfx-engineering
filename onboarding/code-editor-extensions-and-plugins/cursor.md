@@ -166,7 +166,7 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 #### Claude Code for VSCode
 
 - **Purpose**: AI-powered coding assistance integrated directly in your editor
-- **Extension ID**: `Anthropic.claude-dev`
+- **Extension ID**: `anthropic.claude-code`
 
 **What you'll use Claude Code for VSCode for:**
 
@@ -219,7 +219,7 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 #### PostgreSQL
 
 - **Purpose**: PostgreSQL syntax highlighting and query execution
-- **Extension ID**: `ms-ossdata.vscode-postgresql`
+- **Extension ID**: `ms-ossdata.vscode-pgsql`
 
 **What you'll use PostgreSQL for:**
 

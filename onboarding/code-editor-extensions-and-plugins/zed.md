@@ -16,21 +16,20 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 
 #### Git Firefly
 
-- **Purpose**: Enhanced Git workflow visualization and management
+- **Purpose**: Syntax highlighting for Git configuration files
 - **Extension ID**: `git-firefly`
 
 **What you'll use Git Firefly for:**
 
-- Advanced Git history visualization with interactive timelines
-- Enhanced branch management and merge conflict resolution
-- Commit message templates and conventional commit support
-- Git workflow automation and custom git command integration
-- Advanced diff viewing with side-by-side comparisons
+- Syntax highlighting for `.gitattributes` files
+- Syntax highlighting for `.gitconfig` files
+- Syntax highlighting for `.gitignore` files
+- Syntax highlighting for interactive rebase files
 
 #### Emmet
 
 - **Purpose**: High-speed HTML and CSS coding with abbreviation expansion
-- **Extension ID**: `emmet` (Built-in to Zed)
+- **Extension ID**: `emmet` (install from Zed's extension registry)
 
 **What you'll use Emmet for:**
 
