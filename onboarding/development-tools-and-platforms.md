@@ -115,7 +115,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
   1. Download and install Cursor
   2. Sign in with your Linux Foundation email
-  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/code-editor-extensions-and-plugins/cursor.md)
+  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/cursor.md)
   4. Consider installing the Jira and GitHub Model Context Protocol servers.
 
 #### Zed
@@ -140,7 +140,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 
   1. Download and install Zed
   2. Sign in with your choice of email
-  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/code-editor-extensions-and-plugins/zed.md)
+  3. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/zed.md)
 
 #### Neovim
 
@@ -163,7 +163,7 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **Setup Steps:**
 
   1. Install Neovim using your system's package manager
-  2. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/tree/main/onboarding/code-editor-extensions-and-plugins/neovim.md)
+  2. Install the [recommended extensions](https://github.com/linuxfoundation/lfx-engineering/blob/main/onboarding/code-editor-extensions-and-plugins/neovim.md)
 
 ---
 
@@ -281,7 +281,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ### LFX-Datalake
 
 - **Purpose**: Architecture diagram showing LFX services, data flows, and system dependencies
-- **URL**: [https://whimsical.com/lfx-datalake-Qgy1wT6KC4RtrhCbfVQ37X](https://whimsical.com/lfx-datalake-Qgy1wT6KC4RtrhCbfVQ37X)
 
 **What you'll use LFX-Datalake diagram for:**
 
@@ -294,7 +293,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 ### Linux Product & Engineering organization
 
 - **Purpose**: Organizational chart with team structure, roles and reporting relationships
-- **URL**: [https://lucid.app/lucidchart/a39693e8-9f93-4f6e-9f31-77cb28de4f81/edit?page=0_0#](https://lucid.app/lucidchart/a39693e8-9f93-4f6e-9f31-77cb28de4f81/edit?page=0_0#)
 
 **What you'll use the organization chart for:**
 
@@ -303,8 +301,6 @@ Welcome to the Linux Foundation development team! This guide provides an overvie
 **How to get access:**
 
   1. Request access to the specific diagram from your director or team lead
-
-TODO: Leaving for David Deal to update
 
 ### LFX-Datalake2
 
