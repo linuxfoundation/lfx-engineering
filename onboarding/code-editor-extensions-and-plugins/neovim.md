@@ -147,6 +147,11 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 - Natural language code generation and modification
 - Inline AI suggestions and code improvements
 
+> **Note:** This plugin sends code context to an external AI provider. Before
+> using it, confirm the provider is approved for LF work (ask in the `#lf-ai`
+> Slack channel) and store the API key in a secure password manager such as
+> 1Password — never commit it to dotfiles or your shell profile.
+
 #### supermaven-nvim
 
 - **Repository**: <https://github.com/supermaven-inc/supermaven-nvim>
@@ -158,6 +163,11 @@ Welcome to the Linux Foundation development team! This guide provides recommende
 - Context-aware code generation based on your entire codebase
 - Multi-language support with optimized performance
 - Seamless integration with existing completion workflows
+
+> **Note:** This plugin sends code context to an external AI provider. Before
+> using it, confirm the provider is approved for LF work (ask in the `#lf-ai`
+> Slack channel) and store the API key in a secure password manager such as
+> 1Password — never commit it to dotfiles or your shell profile.
 
 ---
 
