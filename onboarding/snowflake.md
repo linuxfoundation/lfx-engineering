@@ -55,14 +55,14 @@ sequenceDiagram
 
 ## Console Login
 
-1. Navigate to the [Snowflake console](https://app.snowflake.com/jnmhvwd/xpb85243/) in your web browser.
+1. Navigate to the [Snowflake console](https://app.snowflake.com/) in your web browser and select
+   The Linux Foundation account.
 2. Log in using your LF email address (e.g., [user@linuxfoundation.org](user@linuxfoundation.org)) via the SSO option.
 3. After authentication, you will be redirected to the Snowflake landing page.
 
 ## Dashboard Access
 
-View available dashboards in the [Projects → Dashboards](https://app.snowflake.com/jnmhvwd/xpb85243/dashboards) section
-of the Snowflake console.
+View available dashboards in the Projects → Dashboards section of the Snowflake console.
 
 To request access to specific dashboards, contact the Datalake team in the #lfx-snowflake-dev Slack channel. The team will
 review your request and adjust dashboard permissions as needed.
