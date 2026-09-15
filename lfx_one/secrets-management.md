@@ -13,6 +13,7 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
   - [Tags](#tags)
   - [Service Tag Integration](#service-tag-integration)
   - [Vault Requirements](#vault-requirements)
+  - [1Password Item Field Names](#1password-item-field-names)
   - [AWS Destination Accounts](#aws-destination-accounts)
   - [Region](#region)
   - [Path Format](#path-format)
@@ -27,7 +28,7 @@ This document provides comprehensive guidance for managing secrets in the LFX V2
   - [8. Use the Secret in Kubernetes](#8-use-the-secret-in-kubernetes)
 - [Configuration Example](#configuration-example)
   - [Configuration Breakdown](#configuration-breakdown)
-- [Deploying Secrets](#deployment)
+- [Deployment](#deployment)
   - [Using GitHub Actions](#using-github-actions)
 - [Validation and Testing](#validation-and-testing)
   - [Verify Deployment](#verify-deployment)
@@ -63,12 +64,16 @@ these secrets, see the [Service Account Management documentation](https://github
 - **Tag-Based Access**: Services only access secrets tagged with their service name
 - **External Secrets Operator**: Automatically discovers and merges secrets into Kubernetes
 - **IRSA Authentication**: Secure role assumption without storing credentials
-- **Event-Based Refresh**: An AWS Lambda listens for tagged secret updates/creations for automatic
-  refreshing of External Secrets Operator
+- **Event-Based Refresh**: An AWS Lambda listens for tagged secret updates/creations and triggers
+  an immediate refresh of the matching ExternalSecret. `refreshInterval: 10m` remains configured
+  on each ExternalSecret as a polling fallback in case the event-based trigger is missed
 
 ### Secrets Flow Architecture
 
-The following diagram illustrates how secrets flow from 1Password through to application deployment:
+The following diagram illustrates how secrets flow from 1Password through to application deployment.
+It uses `lfx-self-serve`'s legacy resource names (`pcc-sa`, `pcc-secrets`, `pcc-secret-store`) as
+the example; new services follow the `lfx-v2-<service>` naming pattern shown in the
+[Step-by-Step Process](#step-by-step-process) instead.
 
 ```mermaid
 graph TB
@@ -96,7 +101,7 @@ graph TB
 
         subgraph "Dev External Secrets"
             SS1["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES1["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
+            ES1["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Event refresh + 10m poll fallback"]
         end
 
         subgraph "Dev Kubernetes Secrets"
@@ -116,7 +121,7 @@ graph TB
 
         subgraph "Staging External Secrets"
             SS2["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES2["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
+            ES2["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Event refresh + 10m poll fallback"]
         end
 
         subgraph "Staging Kubernetes Secrets"
@@ -136,7 +141,7 @@ graph TB
 
         subgraph "Prod External Secrets"
             SS3["pcc-secret-store<br/>🏪 SecretStore<br/>🔗 Uses IRSA"]
-            ES3["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Refreshes every 10m"]
+            ES3["pcc-secrets<br/>📊 ExternalSecret<br/>🏷️ Filters by service-pcc: enabled<br/>⏱️ Event refresh + 10m poll fallback"]
         end
 
         subgraph "Prod Kubernetes Secrets"
@@ -206,7 +211,8 @@ graph TB
 2. **Configuration**: YAML files define the secret mapping and deployment rules
 3. **Deployment**: GitHub Actions deploy secrets to AWS Secrets Manager with appropriate tags
 4. **Discovery**: External Secrets Operator uses IRSA to authenticate and discover tagged secrets
-5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed upon event via Lambda
+5. **Synchronization**: Secrets are merged into Kubernetes secrets and refreshed immediately on
+   change via the Lambda-triggered event, with a 10-minute poll as a fallback
 6. **Consumption**: Applications reference the service account and secret to access environment variables
 
 ## Prerequisites
@@ -245,7 +251,7 @@ secret. When secrets are deployed to AWS Secrets Manager, they receive a `servic
    `lfx-v2-pcc` service account uses role `arn:aws:iam::788942260905:role/lfx-v2-pcc` in dev to only
    access secrets tagged `"aws:ResourceTag/service-pcc": "enabled"`
 2. **Auto-Discovery**: The External Secrets Operator automatically finds and merges all secrets with the
-   service tag into a single Kubernetes Secret. Then, the appropriate Secret Store is annotated for sync.
+   service tag into a single Kubernetes Secret. The matching ExternalSecret is annotated/triggered for sync.
    New secrets will be in the Secret Store after sync within minutes.
 3. **Environment Variables**: All tagged secrets are made available as environment variables in the
    service's pods
@@ -536,6 +542,16 @@ The `serviceAccountRef` instructs ESO to present the ServiceAccount's OIDC token
 AWS. Kubernetes projects this token with the OIDC subject that satisfies the IRSA trust policy
 created in Step 1, allowing ESO to assume the role and read tagged secrets.
 
+Before moving on to Step 4, verify the first-time setup (Steps 1–3) is working:
+
+```bash
+kubectl get secretstore -n lfx-v2-myresource-service
+kubectl get externalsecret -n lfx-v2-myresource-service
+```
+
+Both should report `Valid`/`SecretSynced` in their `STATUS` column. If not, check
+`kubectl describe` on the resource for IRSA/OIDC trust errors before continuing.
+
 #### Explicit data
 
 Use this pattern in addition to tag discovery, when you need custom Kubernetes key names,
@@ -573,7 +589,7 @@ spec:
   data:
     - secretKey: username
       remoteRef:
-        key: /cloudops/lfx-v2/myresource-username
+        key: /cloudops/managed-secrets/3rd-party-service/lfx-v2-myresource-service
         property: username
 ```
 
@@ -581,12 +597,14 @@ Each entry maps a Kubernetes Secret key (`secretKey`) to a specific AWS Secrets 
 (`remoteRef.key`) and field (`remoteRef.property`).
 
 Create the Kubernetes Secret manually in your local cluster to supply values during development.
-See the service chart `README.md` for the exact `kubectl create secret` command.
+Use synthetic, non-production values only — never reuse real credentials in a local cluster or
+paste them into your shell history — and avoid committing generated manifests that contain secret
+values. See the service chart `README.md` for the exact `kubectl create secret` command.
 
 **PR order:** Merge changes in this sequence — (1) `lfx-v2-opentofu` to create the IAM role,
 (2) the service chart to add the templates, (3) `lfx-v2-argocd` to activate ESO per environment.
 
-Once wired, adding new secrets only requires Steps 4–7 (tag discovery) or Steps 4–7 plus
+Once wired, adding new secrets only requires Steps 4–8 (tag discovery) or Steps 4–8 plus
 extending the `data` list in `custom-resources/<service>/ExternalSecret.yaml` (explicit
 data).
 
@@ -716,7 +734,7 @@ LiteLLM API key for LFXv2:
 
 - **Name**: Descriptive title for the secret configuration
 - **Tags**: Must include `lfx_v2`, the full LFX V2 service name (`lfx-self-serve`), and upstream service (`litellm`)
-- **Environments**: List of environments where this secret should be deployed
+- **envs**: List of environments where this secret should be deployed
 - **Source**: 1Password configuration with vault mappings and item details
 - **source.onepassword.fields**: Specifies which fields from the 1Password item to include in the secret
 - **source.onepassword.vaults**: Maps environments to their respective 1Password vaults
@@ -746,7 +764,8 @@ After deployment, verify the secret exists in AWS Secrets Manager:
 
 1. Access the AWS Console for the target environment
 2. Navigate to AWS Secrets Manager in the us-west-2 region
-3. Search for your secret using the configured path
+3. Search for your secret using the full path, including the `/cloudops/managed-secrets/` prefix
+   (e.g., `/cloudops/managed-secrets/litellm/lfx-self-serve`)
 4. Verify the secret contains the expected values
 
 ### Test Service Access
@@ -815,5 +834,5 @@ For additional support:
 - Check existing issues and discussions in the repository
 - Contact the LFX engineering team through established channels
 - Reference the
-  [services documentation](https://github.com/linuxfoundation/lfx-secrets-management/blob/main/secretsmanagement/services/README.md)
+  [architecture documentation](https://github.com/linuxfoundation/lfx-secrets-management/blob/main/docs/ARCHITECTURE.md)
   for service-specific guidance
