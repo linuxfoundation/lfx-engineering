@@ -30,7 +30,7 @@ Pre-built binaries are included in `bin/` — no Go toolchain required:
 
 ## Building from source
 
-Requires Go 1.26+.
+Requires Go 1.27.4 or later.
 
 ```bash
 go build -o bin/rename-project-slug .
